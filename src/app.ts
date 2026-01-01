@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { errorHandler } from "./middlewares/errorHandler";
 import { AppError } from "./errors/AppError";
+import router from "./routes/routes";
 
 const app = express();
 
@@ -9,14 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Ruta base de prueba
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
-});
-
-app.get("/error-test", () => {
-  throw new AppError("Error de prueba", 400, "Detalle de prueba");
-});
+app.use("/api", router);
 
 app.use(errorHandler);
 

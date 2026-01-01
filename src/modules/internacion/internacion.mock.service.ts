@@ -4,7 +4,7 @@ import { InternacionService } from "./internacion.service";
 
 
 export const mockInternacionService: InternacionService = {
-  async obtenerPedidos() {
+  async obtenerPedidos(fecha?: string) {
     return estudios.map(mapearPedidoInternacion);
   },
 };

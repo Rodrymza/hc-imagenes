@@ -1,7 +1,23 @@
-import { IpedidoInternacion } from "./internacion.types";
+// internacion.controller.ts
+import { Request, Response, NextFunction } from "express";
+import { internacionService } from "./utils/internacion.factory";
 
-export const mapApiEstudoToPedidoInternacion = (
-  apiEstudio: any
-): IpedidoInternacion | null => {
-  return null;
+export const internacionController = {
+  async obtenerPedidosInternacion(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { fecha } = req.query;
+
+      const pedidos = await internacionService.obtenerPedidos(
+        typeof fecha === "string" ? fecha : undefined
+      );
+
+      res.json(pedidos);
+    } catch (error) {
+      next(error);
+    }
+  },
 };

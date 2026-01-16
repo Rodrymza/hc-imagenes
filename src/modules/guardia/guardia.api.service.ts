@@ -1,3 +1,5 @@
+import { isAxiosError } from "axios";
+import { AppError } from "../../errors/AppError";
 import { guardiaApi } from "./guardia.api";
 import { getGuardiaToken } from "./guardia.auth";
 import {
@@ -8,6 +10,7 @@ import {
   IDetallePedidoGuardia,
   IHsiPagedResponse,
   IHsiRawPedido,
+  IHsiSearchResult,
   IPedidoGuardia,
   IRawDetallePedido,
 } from "./guardia.types";
@@ -51,22 +54,63 @@ export const apiGuardiaService = {
 
   async finalizarPedido(
     idEstudio: string,
-    idPaciente: string
+    idPatient: string
   ): Promise<boolean> {
-    const token = await getGuardiaToken(username, password);
-    const url = `https://hsi.mendoza.gov.ar/api/institutions/108/patient/${idPaciente}/service-requests/${idEstudio}/complete`;
+    try {
+      const token = await getGuardiaToken(username, password);
+      const url = `https://hsi.mendoza.gov.ar/api/institutions/108/patient/${idPatient}/service-requests/${idEstudio}/complete`;
+      const body = { observations: "Realizado" };
 
-    const response = await guardiaApi.put(url, {
+      const config = {
+        headers: {
+          Origin: "https://hsi.mendoza.gov.ar",
+          Referer: `https://hsi.mendoza.gov.ar/institucion/108/paciente/${idPatient}/estudios`,
+          Cookie: `token=${token}`,
+        },
+      };
+
+      const response = await guardiaApi.put(url, body, config);
+
+      return response.data;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        const data = error.response.data;
+
+        const hsiMessage =
+          Array.isArray(data.errors) && data.errors.length > 0
+            ? data.errors[0]
+            : "No se puede completar el estudio en este momento.";
+
+        throw new AppError("Error al finalizar el estudio", 400, hsiMessage);
+      }
+
+      throw error;
+    }
+  },
+
+  async buscarDatosPacienteGuardia(dni: string): Promise<IHsiSearchResult> {
+    const token = await getGuardiaToken(username, password);
+    const filter = {
+      identificationNumber: dni,
+      identificationTypeId: 1,
+    };
+
+    const response = await guardiaApi.get("/api/patient/optionalfilter", {
+      params: {
+        searchFilterStr: JSON.stringify(filter), // Axios lo codificará automáticamente
+        pageSize: 5,
+        pageNumber: 0,
+      },
       headers: {
-        Origin: "https://hsi.mendoza.gov.ar",
-        Referer: `https://hsi.mendoza.gov.ar/institucion/108/ambulatoria/paciente/${idPaciente}`,
+        Referer: "https://hsi.mendoza.gov.ar/institucion/108/ambulatoria",
         Cookie: `token=${token}`,
       },
     });
 
-    return response.status === 200 || response.status === 204;
+    return response.data.content[0];
   },
 };
+
 function crearUrlPedidosGuardia(fecha?: string): string {
   let fechaParaFiltro;
 

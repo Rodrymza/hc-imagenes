@@ -1,14 +1,3 @@
-export interface IDatosPacienteGuardia {
-  idPaciente: string;
-  dni: string;
-  dniString: string;
-  apellido: string;
-  nombres: string;
-  fechaNacimiento: Date;
-  fechaNacimientoString: string;
-  edad: number | string;
-}
-
 export interface IHsiDate {
   year: number;
   month: number;
@@ -87,4 +76,42 @@ export interface IDetallePedidoGuardia {
   lugar: string;
   doctor: string;
   realizado: boolean;
+}
+
+export interface IHsiPersonAge {
+  years: number;
+  months: number;
+  days: number;
+  totalDays: number;
+}
+
+export interface IHsiPerson {
+  id: number; // Historia Clínica (HC)
+  firstName: string;
+  middleNames: string | null;
+  lastName: string;
+  otherLastNames: string | null;
+  identificationNumber: string;
+  birthDate: string;
+  personAge: IHsiPersonAge;
+}
+
+export interface IHsiSearchResult {
+  person: IHsiPerson;
+  idPatient: number; // ID para gestión de estudios
+  activo: boolean;
+  ranking: number;
+}
+
+// Estructura interna de la App
+export interface IDatosPacienteGuardia {
+  idPatient: number;
+  historiaClinica: number;
+  dni: string;
+  dniString: string;
+  apellido: string;
+  nombres: string;
+  fechaNacimiento: Date | null;
+  fechaNacimientoString: string;
+  edad: number;
 }

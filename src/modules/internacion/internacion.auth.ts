@@ -5,8 +5,12 @@ let tokenTimestamp: number | null = null;
 
 const TOKEN_TTL = 1000 * 60 * 30; // 30 min
 
-export async function getInternacionToken(): Promise<string> {
+// 1. Agregamos el parámetro opcional, por defecto false
+export async function getInternacionToken(
+  forceRefresh: boolean = false
+): Promise<string> {
   if (
+    !forceRefresh &&
     cachedToken &&
     tokenTimestamp &&
     Date.now() - tokenTimestamp < TOKEN_TTL

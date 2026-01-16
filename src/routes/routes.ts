@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { AppError } from "../errors/AppError";
 import internacionRoutes from "../modules/internacion/internacion.routes";
+import guardiaRoutes from "../modules/guardia/guardia.routes";
 
 const router = Router();
 
@@ -14,5 +15,6 @@ router.get("/error-test", () => {
 });
 
 router.use("/internacion", internacionRoutes);
+router.use("/guardia", guardiaRoutes);
 
 export default router;

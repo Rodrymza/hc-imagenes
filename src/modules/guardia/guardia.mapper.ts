@@ -4,34 +4,38 @@ import {
   IDatosPacienteGuardia,
   IDetallePedidoGuardia,
   IHsiRawPedido,
+  IHsiSearchResult,
   IPedidoGuardia,
   IRawDetallePedido,
 } from "./guardia.types";
 import { calcularEdad, crearFecha, definirTipoEstudio } from "./guardia.utils";
 
 export const cleanPacienteGuardia = (
-  apiPaciente: any
+  apiPaciente: IHsiSearchResult
 ): IDatosPacienteGuardia => {
-  const idPaciente = apiPaciente?.id || "Sin id";
-  const apellido = apiPaciente?.lastName.toUpperCase() || "Sin apellido";
-  const nombres =
-    `${capitalize(apiPaciente?.firstName)} ${capitalize(
-      apiPaciente.middleNames
-    )}` || "Sin nombres";
-  const dni = apiPaciente?.identificationNumber || "Sin DNI";
-  const dniString = dni.toLocaleString("es-AR") || "Sin DNI";
-  const fechaNacimiento = new Date(apiPaciente?.birthDate) || null;
-  const fechaNacimientoString = formatearFecha(fechaNacimiento, false);
-  const edad = apiPaciente.personAge?.years || "Sin edad";
+  const { person, idPatient } = apiPaciente;
+  const apellidoCompleto = `${person.lastName} ${person.otherLastNames || ""}`
+    .trim()
+    .toUpperCase();
+  const nombresCompletos = `${capitalize(person.firstName)} ${capitalize(
+    person.middleNames || ""
+  )}`.trim();
+  const fechaNac = person.birthDate ? new Date(person.birthDate) : null;
+
   return {
-    idPaciente,
-    dni,
-    dniString,
-    apellido,
-    nombres,
-    fechaNacimiento,
-    fechaNacimientoString,
-    edad,
+    idPatient: idPatient,
+    historiaClinica: person.id,
+
+    // 👤 Datos Personales (todos dentro de person)
+    dni: person.identificationNumber,
+    dniString: Number(person.identificationNumber).toLocaleString("es-AR"),
+    apellido: apellidoCompleto,
+    nombres: nombresCompletos,
+    fechaNacimiento: fechaNac,
+    fechaNacimientoString: fechaNac
+      ? formatearFecha(fechaNac, false)
+      : "Sin fecha",
+    edad: person.personAge.years,
   };
 };
 

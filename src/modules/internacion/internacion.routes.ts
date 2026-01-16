@@ -3,7 +3,10 @@ import { internacionController } from "./internacion.controller";
 
 const internacionRoutes = Router();
 
-internacionRoutes.get("/", internacionController.obtenerPedidosInternacion);
-internacionRoutes.post("/comentario", internacionController.guardarComentario);
+internacionRoutes.get(
+  "/pedidos",
+  internacionController.obtenerPedidosInternacion
+);
+internacionRoutes.post("/comentarios", internacionController.guardarComentario);
 
 export default internacionRoutes;

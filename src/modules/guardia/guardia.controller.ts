@@ -4,6 +4,7 @@ import { IloginRequest, ILoginResponse } from "../../types/login.types";
 import { IPedidoGuardia } from "./guardia.types";
 import { apiGuardiaService } from "./guardia.api.service";
 import { AppError } from "../../errors/AppError";
+import { cleanPacienteGuardia } from "./guardia.mapper";
 
 export const guardiaControler = {
   async loginGuardia(
@@ -46,19 +47,19 @@ export const guardiaControler = {
 
   async getPedidosPaciente(req: Request, res: Response, next: NextFunction) {
     try {
-      const { idPaciente } = req.params;
+      const { idPatient } = req.params;
 
-      if (idPaciente && typeof idPaciente !== "string") {
+      if (idPatient && typeof idPatient !== "string") {
         throw new AppError("Formato de fecha inválido", 400);
       }
-      if (!idPaciente) {
+      if (!idPatient) {
         throw new AppError(
           "Falta ID del paciente para obtener los pedidos",
           400
         );
       }
       const pedidosPaciente = await apiGuardiaService.obtenerPedidosPaciente(
-        idPaciente
+        idPatient
       );
 
       return res.json(pedidosPaciente);
@@ -69,12 +70,41 @@ export const guardiaControler = {
 
   async finalizarPedido(req: Request, res: Response, next: NextFunction) {
     try {
-      const { idEstudio, idPaciente } = req.params;
-      await apiGuardiaService.finalizarPedido(idEstudio, idPaciente);
+      const { idEstudio, idPatient } = req.params;
+      await apiGuardiaService.finalizarPedido(idEstudio, idPatient);
       return res.json({
         succes: true,
         message: `Estudio ${idEstudio} finalizado correctamente`,
       });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async findPacienteGuardia(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { dniPaciente } = req.params;
+
+      if (!dniPaciente) {
+        throw new AppError("Falta dni para la busqueda", 400);
+      }
+      if (dniPaciente && typeof dniPaciente !== "string") {
+        throw new AppError("Formato de documento inválido", 400);
+      }
+
+      const paciente = await apiGuardiaService.buscarDatosPacienteGuardia(
+        dniPaciente
+      );
+
+      if (!paciente) {
+        throw new AppError(
+          "Paciente no encontrado",
+          404,
+          "No se encontro paciente con el DNI especificado"
+        );
+      }
+
+      return res.json(cleanPacienteGuardia(paciente));
     } catch (error) {
       next(error);
     }

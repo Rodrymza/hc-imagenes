@@ -20,4 +20,20 @@ export const internacionController = {
       next(error);
     }
   },
+
+  async guardarComentario(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { idEstudio, idMovimiento, comentario, nota } = req.body;
+
+      const response = await internacionService.guardarComentario(
+        idEstudio,
+        idMovimiento,
+        comentario,
+        nota
+      );
+      return res.json(response);
+    } catch (error) {
+      next(error);
+    }
+  },
 };

@@ -1,0 +1,18 @@
+[
+  {
+    "_id": "1",
+    "username": "admin",
+    "password": "admin123",
+    "rol": "ADMIN",
+    "apellido": "Administrador",
+    "nombre": " "
+  },
+  {
+    "_id": "2",
+    "username": "rramirez",
+    "password": "rr1236",
+    "rol": "ADMIN",
+    "apellido": "Ramirez",
+    "nombre": "Rodrigo"
+  }
+]

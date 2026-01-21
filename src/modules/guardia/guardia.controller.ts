@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { getGuardiaToken } from "./guardia.auth";
+import { getGuardiaToken } from "./guardia.auth.service";
 import { IloginRequest, ILoginResponse } from "../../types/login.types";
 import { IPedidoGuardia } from "./guardia.types";
 import { apiGuardiaService } from "./guardia.api.service";
@@ -10,7 +10,7 @@ export const guardiaControler = {
   async loginGuardia(
     req: Request<IloginRequest>,
     res: Response<ILoginResponse>,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       //const { username, password } = req.body;
@@ -30,7 +30,7 @@ export const guardiaControler = {
   async getPedidosGuardia(
     req: Request,
     res: Response<IPedidoGuardia[]>,
-    next: NextFunction
+    next: NextFunction,
   ) {
     try {
       const { fecha } = req.query;
@@ -55,12 +55,11 @@ export const guardiaControler = {
       if (!idPatient) {
         throw new AppError(
           "Falta ID del paciente para obtener los pedidos",
-          400
+          400,
         );
       }
-      const pedidosPaciente = await apiGuardiaService.obtenerPedidosPaciente(
-        idPatient
-      );
+      const pedidosPaciente =
+        await apiGuardiaService.obtenerPedidosPaciente(idPatient);
 
       return res.json(pedidosPaciente);
     } catch (error) {
@@ -71,7 +70,11 @@ export const guardiaControler = {
   async finalizarPedido(req: Request, res: Response, next: NextFunction) {
     try {
       const { idEstudio, idPatient } = req.params;
-      await apiGuardiaService.finalizarPedido(idEstudio, idPatient);
+
+      await apiGuardiaService.finalizarPedido(
+        idEstudio as string,
+        idPatient as string,
+      );
       return res.json({
         succes: true,
         message: `Estudio ${idEstudio} finalizado correctamente`,
@@ -92,15 +95,14 @@ export const guardiaControler = {
         throw new AppError("Formato de documento inválido", 400);
       }
 
-      const paciente = await apiGuardiaService.buscarDatosPacienteGuardia(
-        dniPaciente
-      );
+      const paciente =
+        await apiGuardiaService.buscarDatosPacienteGuardia(dniPaciente);
 
       if (!paciente) {
         throw new AppError(
           "Paciente no encontrado",
           404,
-          "No se encontro paciente con el DNI especificado"
+          "No se encontro paciente con el DNI especificado",
         );
       }
 

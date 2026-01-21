@@ -1,0 +1,307 @@
+[
+  {
+    "id": "EX-1.340213",
+    "nombre": "CODO, MANO, MUÑECA, TOBILLO, PIE, RODILLA, PIERNA, FRENTE",
+    "descripcion": "Radiografía de Codo (Frente y Perfil)",
+    "tag": "codo",
+    "exposiciones": 1,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340213",
+    "nombre": "CODO, MANO, MUÑECA, TOBILLO, PIE, RODILLA, PIERNA, FRENTE",
+    "descripcion": "Radiografía de Mano (Frente y Perfil)",
+    "tag": "mano",
+    "exposiciones": 1,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340213",
+    "nombre": "CODO, MANO, MUÑECA, TOBILLO, PIE, RODILLA, PIERNA, FRENTE",
+    "descripcion": "Radiografía de Muñeca (Frente y Perfil)",
+    "tag": "muñeca",
+    "exposiciones": 1,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340213",
+    "nombre": "CODO, MANO, MUÑECA, TOBILLO, PIE, RODILLA, PIERNA, FRENTE",
+    "descripcion": "Radiografía de Tobillo (Frente y Perfil)",
+    "tag": "tobillo",
+    "exposiciones": 1,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340213",
+    "nombre": "CODO, MANO, MUÑECA, TOBILLO, PIE, RODILLA, PIERNA, FRENTE",
+    "descripcion": "Radiografía de Pie (Frente y Perfil)",
+    "tag": "pie",
+    "exposiciones": 1,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340213",
+    "nombre": "CODO, MANO, MUÑECA, TOBILLO, PIE, RODILLA, PIERNA, FRENTE",
+    "descripcion": "Radiografía de Rodilla (Frente y Perfil)",
+    "tag": "rodilla",
+    "exposiciones": 1,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340213",
+    "nombre": "CODO, MANO, MUÑECA, TOBILLO, PIE, RODILLA, PIERNA, FRENTE",
+    "descripcion": "Radiografía de Antebrazo (Frente y Perfil)",
+    "tag": "antebrazo",
+    "exposiciones": 1,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340213",
+    "nombre": "CODO, MANO, MUÑECA, TOBILLO, PIE, RODILLA, PIERNA, FRENTE",
+    "descripcion": "Radiografía de Pierna (Frente y Perfil)",
+    "tag": "pierna",
+    "exposiciones": 1,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340301",
+    "nombre": "TORAX FRENTE",
+    "descripcion": "Radiografía de Tórax Frente",
+    "tag": "torax",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340302",
+    "nombre": "TÓRAX PERFIL",
+    "descripcion": "Radiografía de Tórax Perfil",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340211",
+    "nombre": "FÉMUR, CADERA, HOMBRO, PANORÁMICA PELVIS, FRENTE",
+    "descripcion": "Radiografía de Fémur Frente",
+    "tag": "femur",
+    "exposiciones": 2,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340211",
+    "nombre": "FÉMUR, CADERA, HOMBRO, PANORÁMICA PELVIS, FRENTE",
+    "descripcion": "Radiografía de Cadera Frente",
+    "tag": "cadera",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340211",
+    "nombre": "FÉMUR, CADERA, HOMBRO, PANORÁMICA PELVIS, FRENTE",
+    "descripcion": "Radiografía de Hombro Frente",
+    "tag": "hombro",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340211",
+    "nombre": "FÉMUR, CADERA, HOMBRO, PANORÁMICA PELVIS, FRENTE",
+    "descripcion": "Radiografía Panorámica de Pelvis",
+    "tag": "pelvis",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340212",
+    "nombre": "P/PELVIS, FÉMUR, CADERA, HOMBRO, HÚMERO, AXI P",
+    "descripcion": "Radiografía de Pelvis (Exposición subsiguiente)",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340212",
+    "nombre": "P/PELVIS, FÉMUR, CADERA, HOMBRO, HÚMERO, AXI P",
+    "descripcion": "Radiografía de Fémur Perfil",
+    "visible": true,
+    "tag": "femur"
+  },
+  {
+    "id": "EX-1.340212",
+    "nombre": "P/PELVIS, FÉMUR, CADERA, HOMBRO, HÚMERO, AXI P",
+    "descripcion": "Radiografía de Cadera Perfil",
+    "visible": true,
+    "tag": "cadera"
+  },
+  {
+    "id": "EX-1.340212",
+    "nombre": "P/PELVIS, FÉMUR, CADERA, HOMBRO, HÚMERO, AXI P",
+    "descripcion": "Radiografía de Hombro Axial",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340211",
+    "nombre": "FÉMUR, CADERA, HOMBRO, PANORÁMICA PELVIS, FRENTE",
+    "descripcion": "Radiografía de Húmero Frente",
+    "tag": "humero",
+    "exposiciones": 2,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340212",
+    "nombre": "P/PELVIS, FÉMUR, CADERA, HOMBRO, HÚMERO, AXI P",
+    "descripcion": "Radiografía de Húmero Perfil",
+    "visible": true,
+    "tag": "humero"
+  },
+  {
+    "id": "EX-1.340209",
+    "nombre": "COLUMNA LS. CERVICAL, DORSAL FRENTES",
+    "descripcion": "Radiografía de Columna Cervical Frente",
+    "tag": "cervical",
+    "exposiciones": 2,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340209",
+    "nombre": "COLUMNA LS. CERVICAL, DORSAL FRENTES",
+    "descripcion": "Radiografía de Columna Dorsal Frente",
+    "tag": "dorsal",
+    "exposiciones": 2
+  },
+  {
+    "id": "EX-1.340209",
+    "nombre": "COLUMNA LS. CERVICAL, DORSAL FRENTES",
+    "descripcion": "Radiografía de Columna Lumbar Frente",
+    "tag": "lumbar",
+    "exposiciones": 2,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340209",
+    "nombre": "COLUMNA LS. CERVICAL, DORSAL FRENTES",
+    "descripcion": "Radiografía de Columna Sacra Frente",
+    "tag": "sacra",
+    "exposiciones": 2,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340210",
+    "nombre": "COLUMNA LS., CC, DL, PERFILES",
+    "descripcion": "Radiografía de Columna Cervical Perfil",
+    "visible": true,
+    "tag": "cervical"
+  },
+  {
+    "id": "EX-1.340210",
+    "nombre": "COLUMNA LS., CC, DL, PERFILES",
+    "descripcion": "Radiografía de Columna Dorsal Perfil",
+    "visible": true,
+    "tag": "dorsal"
+  },
+  {
+    "id": "EX-1.340210",
+    "nombre": "COLUMNA LS., CC, DL, PERFILES",
+    "descripcion": "Radiografía de Columna Lumbar Perfil",
+    "visible": true,
+    "tag": "lumbar"
+  },
+  {
+    "id": "EX-1.340210",
+    "nombre": "COLUMNA LS., CC, DL, PERFILES",
+    "descripcion": "Radiografía de Columna Sacra Perfil",
+    "visible": true,
+    "tag": "sacra"
+  },
+  {
+    "id": "EX-1.340601",
+    "nombre": "MAMOGRAFÍA",
+    "descripcion": "Mamografía"
+  },
+  {
+    "id": "EX-1.340422",
+    "nombre": "ABDOMEN DE PIE",
+    "descripcion": "Radiografía de Abdomen de Pie",
+    "tag": "abdomen",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340421",
+    "nombre": "ABDOMEN ACOSTADO",
+    "descripcion": "Radiografía de Abdomen Acostado",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340201",
+    "nombre": "CRÁNEO, SENOS PARA NASALES FRENTES",
+    "descripcion": "Radiografía de Cráneo Frente",
+    "tag": "craneo",
+    "exposiciones": 2,
+    "visible": true
+  },
+  {
+    "id": "EX-1.340201",
+    "nombre": "CRÁNEO, SENOS PARA NASALES FRENTES",
+    "descripcion": "Radiografía de Senos Paranasales Frente",
+    "tag": "senos paranasales",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340202",
+    "nombre": "CRÁNEO, SENOS PARA NASALES PERFIL",
+    "descripcion": "Radiografía de Cráneo Perfil",
+    "visible": true,
+    "tag": "craneo"
+  },
+  {
+    "id": "EX-1.340202",
+    "nombre": "CRÁNEO, SENOS PARA NASALES PERFIL",
+    "descripcion": "Radiografía de Senos Paranasales Subsiguiente"
+  },
+  {
+    "id": "EX-1.340101",
+    "nombre": "RADIOSCOPIA",
+    "descripcion": "Radioscopia Ambulatoria",
+    "visible": false
+  },
+  {
+    "id": "EX-1.340905",
+    "nombre": "PLACAS EN CAMA Y QUIRÓFANO T.I.O FRENTE",
+    "descripcion": "Radiografía en Cama o Intraoperatoria",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340906",
+    "nombre": "PLACAS EN CAMA Y QUIRÓFANO T.I.O PERFIL",
+    "descripcion": "Radiografía en Cama o Intraoperatoria (Subsiguiente)",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340419",
+    "nombre": "COLANGIO RETRÓGRADA",
+    "descripcion": "Colangiografía Retrógrada",
+    "visible": false
+  },
+  {
+    "id": "EX-1.340907",
+    "nombre": "RADIOSC. INTRA OPE",
+    "descripcion": "Radioscopia Intraoperatoria",
+    "visible": true
+  },
+  {
+    "id": "EX-1.340507",
+    "nombre": "CISTOURETROGRAFÍA",
+    "descripcion": "Cistouroretrografía",
+    "visible": false
+  },
+  {
+    "id": "EX-1.340501",
+    "nombre": "DIRECTA DE ÁRBOL URINARIO",
+    "descripcion": "Directa de Árbol Urinario",
+    "visible": false
+  },
+  {
+    "id": "EX-1.340416",
+    "nombre": "COLANGIO INTRAOPERATORIA",
+    "descripcion": "Colangiografía Intraoperatoria",
+    "visible": false
+  },
+  {
+    "id": "EX-1.340405",
+    "nombre": "ESOFAGOGASTRODUODENAL",
+    "descripcion": "Radiografía Esofagogastroduodenal",
+    "visible": false
+  }
+]

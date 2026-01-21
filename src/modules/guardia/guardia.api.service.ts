@@ -1,7 +1,7 @@
 import { isAxiosError } from "axios";
 import { AppError } from "../../errors/AppError";
 import { guardiaApi } from "./guardia.api";
-import { getGuardiaToken } from "./guardia.auth";
+import { getGuardiaToken } from "./guardia.auth.service";
 import {
   cleanDetallePedidoGuardia,
   cleanPedidoListaHsi,
@@ -30,7 +30,7 @@ export const apiGuardiaService = {
           Cookie: `token=${token}`,
           Referer: `https://hsi.mendoza.gov.ar/institucion/108/imagenes/lista-trabajos/`,
         },
-      }
+      },
     );
 
     const pedidos = response.data.content;
@@ -38,7 +38,7 @@ export const apiGuardiaService = {
   },
 
   async obtenerPedidosPaciente(
-    idPaciente: string
+    idPaciente: string,
   ): Promise<IDetallePedidoGuardia[]> {
     const token = await getGuardiaToken(username, password);
     const url = `/api/institutions/108/patient/${idPaciente}/service-requests/studyOrder`;
@@ -54,7 +54,7 @@ export const apiGuardiaService = {
 
   async finalizarPedido(
     idEstudio: string,
-    idPatient: string
+    idPatient: string,
   ): Promise<boolean> {
     try {
       const token = await getGuardiaToken(username, password);

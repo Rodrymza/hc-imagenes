@@ -13,7 +13,9 @@ export const tieneSesionActiva = async (): Promise<boolean> => {
   return cookies.length > 0;
 };
 
-export const loginInterno = async (forzarRelogueo: boolean = false) => {
+export const loginInterno = async (
+  forzarRelogueo: boolean = false,
+): Promise<boolean> => {
   try {
     // 1. Si ya estamos logueados, no hacemos nada
     if (!forzarRelogueo && (await tieneSesionActiva())) {

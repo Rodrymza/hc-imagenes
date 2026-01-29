@@ -14,12 +14,8 @@ import { Link } from "react-router-dom"; // O tu router
 
 export default function BuscarPaciente() {
   const [dni, setDni] = useState("");
-  const {
-    pacienteInterno,
-    buscarPacienteInterno,
-    loadingPaciente,
-    errorPaciente,
-  } = useConsumos([], dni);
+  const { pacienteInterno, buscarPacienteInterno, loadingPaciente } =
+    useConsumos([], dni);
 
   return (
     <div className="min-h-screen bg-slate-50 p-4 lg:p-8">
@@ -106,21 +102,6 @@ export default function BuscarPaciente() {
                 >
                   <ExternalLink className="w-5 h-5" /> CARGAR NUEVO CONSUMO
                 </Link>
-                <button className="flex items-center justify-center gap-3 p-4 bg-white border-2 border-slate-200 text-slate-600 rounded-2xl font-bold hover:bg-slate-50 transition-all shadow-sm">
-                  <Printer className="w-5 h-5" /> IMPRIMIR FICHA
-                </button>
-              </div>
-
-              {/* Bloque Historial Reciente (Placeholder) */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <History className="w-5 h-5 text-indigo-500" /> Últimos
-                  Consumos (Nodo Guardia/Int)
-                </h3>
-                <div className="text-center py-8 text-slate-400 italic text-sm">
-                  {/* Aquí mapearías los últimos 5 estudios cargados */}
-                  Próximamente: Integración con historial histórico...
-                </div>
               </div>
             </div>
           </div>

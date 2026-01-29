@@ -6,13 +6,13 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"), // <--- ESTO ES LA CLAVE
+      "@": path.resolve(__dirname, "./src"),
     },
   },
   server: {
     proxy: {
       // Cualquier petición que empiece con /api se va al backend
-      "/api": {
+      "^/api/.*": {
         target: "http://localhost:3000",
         changeOrigin: true,
         secure: false,

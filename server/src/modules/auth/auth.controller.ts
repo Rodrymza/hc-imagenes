@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { authService } from "./auth.service";
+import { protegerRuta } from "./auth.middleware";
 
 export const authController = {
   async login(req: Request, res: Response, next: NextFunction) {
@@ -22,7 +23,7 @@ export const authController = {
       // Devolvemos datos del usuario (el token va oculto en la cookie)
       res.status(200).json({
         success: true,
-        data: user,
+        user: user,
       });
     } catch (error) {
       next(error);
@@ -35,5 +36,14 @@ export const authController = {
       httpOnly: true,
     });
     res.status(200).json({ status: "success" });
+  },
+
+  verifyUser: (req: Request, res: Response) => {
+    // Si llegamos aquí, el middleware 'protegerRuta' ya hizo su trabajo
+    // y puso los datos en req.user
+    res.status(200).json({
+      status: "success",
+      user: req.user, // Devolvemos los datos decodificados al frontend
+    });
   },
 };

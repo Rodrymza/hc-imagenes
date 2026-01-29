@@ -15,12 +15,12 @@ export function mapearPedidoInternacion(apiEstudio: any): IPedidoInternacion {
 
   // === PACIENTE ===
   const datosPaciente = obtenerDatosPacienteInternacion(
-    apiEstudio?.paciente_a_la_fecha
+    apiEstudio?.paciente_a_la_fecha,
   );
 
   const fechaNacimiento = formatearFecha(
     apiEstudio?.paciente_a_la_fecha?.nacimiento,
-    false
+    false,
   );
 
   // === ESTUDIO ===
@@ -30,9 +30,7 @@ export function mapearPedidoInternacion(apiEstudio: any): IPedidoInternacion {
   const diagnostico =
     apiEstudio?.movimiento?.diagnostico1?.termino || "Sin diagnóstico";
 
-  const solicitud =
-    apiEstudio?.movimiento?.detalle?.trim()?.replace(/\n/g, "<br>") ||
-    "Sin solicitud";
+  const solicitud = apiEstudio?.movimiento?.detalle || "Sin solicitud";
 
   const tipoEstudio =
     obtenerTipoEstudio(apiEstudio?.movimiento?.detalle) || "Otro";
@@ -46,7 +44,7 @@ export function mapearPedidoInternacion(apiEstudio: any): IPedidoInternacion {
   const lugar = esTac
     ? "Tomógrafo"
     : capitalize(
-        apiEstudio?.movimiento?.lugar_realizacion?.replace("_", " ")
+        apiEstudio?.movimiento?.lugar_realizacion?.replace("_", " "),
       ) || "No especificado";
 
   const urgente = apiEstudio?.movimiento?.urgente || "No";
@@ -57,7 +55,7 @@ export function mapearPedidoInternacion(apiEstudio: any): IPedidoInternacion {
       ?.trim();
 
     const apellido = capitalize(
-      apiEstudio?.legajo_a_la_fecha?.apellido
+      apiEstudio?.legajo_a_la_fecha?.apellido,
     )?.trim();
 
     if (!nombre && !apellido) return "Sin solicitante";

@@ -36,9 +36,9 @@ export interface IHsiRawPedido {
 
 export interface IPedidoGuardia {
   idEstudio: number | string;
-  fecha: Date | null;
+  fecha: Date | string | string;
   fechaString: string;
-  descripcion: string;
+  solicitud: string;
   tipoEstudio: string;
   idPaciente: number | string;
   apellido: string;

@@ -17,5 +17,6 @@ export interface IUserPayload {
   username: string;
   rol: string;
   nombre: string;
+  apellido: string;
   // Agrega aquí cualquier otro dato que necesites leer rápido en los controllers
 }

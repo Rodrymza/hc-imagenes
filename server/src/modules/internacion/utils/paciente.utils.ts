@@ -3,7 +3,7 @@ export function obtenerDatosPacienteInternacion(paciente: any) {
   const nombres = paciente?.nombres?.trim() || "Sin nombre";
 
   const dni = paciente?.dni || "";
-  const dniString = dni ? dni.toString() : "Sin DNI";
+  const dniString = dni ? Number(dni).toLocaleString("ES-AR") : "Sin DNI";
 
   const hclinica = paciente?.numero?.toString() || "Sin HC";
 

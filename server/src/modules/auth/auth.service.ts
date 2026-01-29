@@ -9,12 +9,12 @@ const EXPIRES_IN = "4h";
 const USERS_FILE_PATH = path.join(process.cwd(), "src/data/users.json");
 
 export const authService = {
-  // Generamos token usando la interfaz Payload
   generarToken(user: IUsuarioDB | IUsuarioResponse): string {
     const payload: IUserPayload = {
       id: user._id,
       username: user.username,
       rol: user.rol,
+      apellido: user.apellido,
       nombre: user.nombre,
     };
     return jwt.sign(payload, SECRET, { expiresIn: EXPIRES_IN });

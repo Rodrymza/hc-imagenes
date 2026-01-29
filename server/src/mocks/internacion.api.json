@@ -1464,7 +1464,7 @@
     "guardiaid": 0,
     "internacionid": 291115,
     "movimiento": {
-      "detalle": "RX Torax Frente\n",
+      "detalle": "RX Torax Frente\n RX Mano derecha F y P\n RX tobillo y pie derecho",
       "urgente": "Si",
       "lugar_realizacion": "rayos",
       "diagnostico1": {

@@ -48,7 +48,7 @@ export const apiInternacionService: InternacionService = {
         } catch (error) {
           throw new AppError(
             "No se pudo autenticar con el sistema de Internación.",
-            502
+            502,
           );
         }
       }
@@ -56,21 +56,21 @@ export const apiInternacionService: InternacionService = {
       if (error.code === "ECONNABORTED" || error.code === "ETIMEDOUT") {
         throw new AppError(
           "El sistema hospitalario tarda demasiado en responder.",
-          504
+          504,
         );
       }
 
       if (error.response?.status === 404) {
         throw new AppError(
           "No se encontraron pedidos de internación para esa fecha.",
-          404
+          404,
         );
       }
 
       if (error.response?.status >= 500) {
         throw new AppError(
           "El sistema de Internación está fuera de servicio temporalmente.",
-          502
+          502,
         );
       }
 
@@ -81,7 +81,7 @@ export const apiInternacionService: InternacionService = {
     idEstudio: string,
     idMovimiento: string,
     comentario: string,
-    nota: string
+    nota: string,
   ): Promise<IServiceResponse<any>> {
     let data: any = {
       movimiento_id: idEstudio,
@@ -115,7 +115,7 @@ export const apiInternacionService: InternacionService = {
 
       return {
         success: true,
-        message: `Comentario guardado correctamente`,
+        message: `Comentario guardado correctamente: ${comentario}`,
         data: resultado,
       };
     } catch (error: any) {
@@ -128,14 +128,14 @@ export const apiInternacionService: InternacionService = {
 
           return {
             success: true,
-            message: `Comentario guardado correctamente (tras reintento)`,
+            message: `Comentario guardado correctamente (tras reintento): ${comentario}`,
             data: resultado,
           };
         } catch (retryError) {
           // Si falla el segundo intento, lanzamos error específico
           throw new AppError(
             "No se pudo autenticar con el sistema de Internación tras reintentar.",
-            502
+            502,
           );
         }
       }
@@ -143,7 +143,7 @@ export const apiInternacionService: InternacionService = {
       console.error("❌ Error guardando comentario:", error);
       throw new AppError(
         "Ocurrió un error al intentar guardar el comentario en el sistema hospitalario.",
-        500
+        500,
       );
     }
   },

@@ -4,6 +4,7 @@ import { guardiaApi } from "./guardia.api";
 import { getGuardiaToken } from "./guardia.auth.service";
 import {
   cleanDetallePedidoGuardia,
+  cleanPacienteGuardia,
   cleanPedidoListaHsi,
 } from "./guardia.mapper";
 import {
@@ -14,11 +15,12 @@ import {
   IPedidoGuardia,
   IRawDetallePedido,
 } from "./guardia.types";
+import { GuardiaService } from "./guardia.service";
 
 const username = process.env.GUARDIA_USER!;
 const password = process.env.GUARDIA_PASS!;
 
-export const apiGuardiaService = {
+export const apiGuardiaService: GuardiaService = {
   async obtenerPedidosGuardia(fecha?: string): Promise<IPedidoGuardia[]> {
     const token = await getGuardiaToken(username, password);
     const url = crearUrlPedidosGuardia(fecha);
@@ -34,7 +36,15 @@ export const apiGuardiaService = {
     );
 
     const pedidos = response.data.content;
-    return pedidos.map((pedido) => cleanPedidoListaHsi(pedido));
+    const pedidosLimpios: IPedidoGuardia[] = pedidos.map((pedido) =>
+      cleanPedidoListaHsi(pedido),
+    );
+
+    return [
+      ...pedidosLimpios.sort(
+        (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
+      ),
+    ];
   },
 
   async obtenerPedidosPaciente(
@@ -49,13 +59,21 @@ export const apiGuardiaService = {
       },
     });
 
-    return response.data.map((pedido) => cleanDetallePedidoGuardia(pedido));
+    const pedidosLimpios = response.data.map((pedido) =>
+      cleanDetallePedidoGuardia(pedido),
+    );
+
+    pedidosLimpios.sort((a, b) => {
+      if (a.realizado !== b.realizado) {
+        return a.realizado ? 1 : -1; // false primero
+      }
+
+      return parseFecha(b.fecha).getTime() - parseFecha(a.fecha).getTime();
+    });
+    return pedidosLimpios;
   },
 
-  async finalizarPedido(
-    idEstudio: string,
-    idPatient: string,
-  ): Promise<boolean> {
+  async finalizarPedido(idEstudio: string, idPatient: string): Promise<string> {
     try {
       const token = await getGuardiaToken(username, password);
       const url = `https://hsi.mendoza.gov.ar/api/institutions/108/patient/${idPatient}/service-requests/${idEstudio}/complete`;
@@ -88,7 +106,7 @@ export const apiGuardiaService = {
     }
   },
 
-  async buscarDatosPacienteGuardia(dni: string): Promise<IHsiSearchResult> {
+  async buscarDatosPacienteGuardia(dni: string) {
     const token = await getGuardiaToken(username, password);
     const filter = {
       identificationNumber: dni,
@@ -107,7 +125,8 @@ export const apiGuardiaService = {
       },
     });
 
-    return response.data.content[0];
+    const rawPatient = response.data.content[0];
+    return cleanPacienteGuardia(rawPatient);
   },
 };
 
@@ -166,3 +185,11 @@ function crearUrlPedidosGuardia(fecha?: string): string {
   };
   return baseUrl + encodeURIComponent(JSON.stringify(filter));
 }
+
+const parseFecha = (fecha: string) => {
+  const [fechaParte, horaParte] = fecha.split(" ");
+  const [dia, mes, anio] = fechaParte.split("/").map(Number);
+  const [hora, minuto] = horaParte.split(":").map(Number);
+
+  return new Date(anio, mes - 1, dia, hora, minuto);
+};

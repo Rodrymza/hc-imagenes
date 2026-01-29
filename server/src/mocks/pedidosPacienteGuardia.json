@@ -1,0 +1,101 @@
+[
+  {
+    "idEstudio": "641772",
+    "fecha": "11/04/2025 10:53",
+    "pedido": "radiografía de tibia",
+    "diagnostico": "Traumatismo",
+    "observaciones": "F y P",
+    "tipoEstudio": "Radiografia",
+    "lugar": "Guardia",
+    "doctor": "Caceres, Maria",
+    "realizado": false
+  },
+  {
+    "idEstudio": "641770",
+    "fecha": "13/01/2026 14:11",
+    "pedido": "radiografía simple de tórax, proyección combinada posteroanterior y lateral",
+    "diagnostico": "fiebre",
+    "observaciones": "Sin observaciones",
+    "tipoEstudio": "Radiografia",
+    "lugar": "Guardia",
+    "doctor": "Carvajal, Ariel",
+    "realizado": true
+  },
+  {
+    "idEstudio": "142355",
+    "fecha": "11/04/2025 10:53",
+    "pedido": "radiografía simple de pelvis",
+    "diagnostico": "ingestión de cuerpo extraño",
+    "observaciones": "Sin observaciones",
+    "tipoEstudio": "Radiografia",
+    "lugar": "Guardia",
+    "doctor": "Caceres, Maria",
+    "realizado": true
+  },
+  {
+    "idEstudio": "140182",
+    "fecha": "09/04/2025 16:47",
+    "pedido": "radiografía de tórax y abdomen",
+    "diagnostico": "ingestión de cuerpo extraño",
+    "observaciones": "Sin observaciones",
+    "tipoEstudio": "Radiografia",
+    "lugar": "Guardia",
+    "doctor": "Villach, Marianela",
+    "realizado": true
+  },
+  {
+    "idEstudio": "140199",
+    "fecha": "09/04/2025 16:47",
+    "pedido": "radiografía simple de pelvis",
+    "diagnostico": "ingestión de cuerpo extraño",
+    "observaciones": "Sin observaciones",
+    "tipoEstudio": "Radiografia",
+    "lugar": "Guardia",
+    "doctor": "Villach, Marianela",
+    "realizado": true
+  },
+  {
+    "idEstudio": "142354",
+    "fecha": "11/04/2025 10:53",
+    "pedido": "radiografía de tórax estándar",
+    "diagnostico": "ingestión de cuerpo extraño",
+    "observaciones": "Sin observaciones",
+    "tipoEstudio": "Radiografia",
+    "lugar": "Guardia",
+    "doctor": "Caceres, Maria",
+    "realizado": true
+  },
+  {
+    "idEstudio": "179657",
+    "fecha": "11/05/2025 20:46",
+    "pedido": "ecografía de abdomen",
+    "diagnostico": "fiebre",
+    "observaciones": "Agregar Via Urinaria",
+    "tipoEstudio": "Ecografia",
+    "lugar": "Guardia",
+    "doctor": "Fernandez, Juan",
+    "realizado": false
+  },
+  {
+    "idEstudio": "142353",
+    "fecha": "11/04/2025 11:59",
+    "pedido": "radiografía abdominal en bipedestación",
+    "diagnostico": "ingestión de cuerpo extraño",
+    "observaciones": "Rx Directa De Abdomen Con Visualizacion De Cupulas Diafragmaticas",
+    "tipoEstudio": "Radiografia",
+    "lugar": "Guardia",
+    "doctor": "Tessoni, Franco",
+    "realizado": true
+  },
+  {
+    "idEstudio": "642048",
+    "fecha": "13/01/2026 16:43",
+    "pedido": "TC de abdomen y pelvis",
+    "diagnostico": "fiebre",
+    "observaciones": "Sin observaciones",
+    "tipoEstudio": "Tomografia",
+    "lugar": "Guardia",
+    "doctor": "Ibañez, Rodrigo",
+    "realizado": true
+  }
+]

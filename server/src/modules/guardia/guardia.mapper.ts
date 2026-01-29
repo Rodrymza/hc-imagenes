@@ -11,14 +11,14 @@ import {
 import { calcularEdad, crearFecha, definirTipoEstudio } from "./guardia.utils";
 
 export const cleanPacienteGuardia = (
-  apiPaciente: IHsiSearchResult
+  apiPaciente: any,
 ): IDatosPacienteGuardia => {
   const { person, idPatient } = apiPaciente;
   const apellidoCompleto = `${person.lastName} ${person.otherLastNames || ""}`
     .trim()
     .toUpperCase();
   const nombresCompletos = `${capitalize(person.firstName)} ${capitalize(
-    person.middleNames || ""
+    person.middleNames || "",
   )}`.trim();
   const fechaNac = person.birthDate ? new Date(person.birthDate) : null;
 
@@ -40,13 +40,12 @@ export const cleanPacienteGuardia = (
 };
 
 export const cleanPedidoListaHsi = (
-  apiPedido: IHsiRawPedido
+  apiPedido: IHsiRawPedido,
 ): IPedidoGuardia => {
   // 1. Procesamiento de Fechas
-  const fechaObjeto = crearFecha(
-    apiPedido.createdDate?.date,
-    apiPedido.createdDate?.time
-  );
+  const fechaObjeto =
+    crearFecha(apiPedido.createdDate?.date, apiPedido.createdDate?.time) ||
+    new Date();
   const fechaString = fechaObjeto
     ? formatearFecha(fechaObjeto, true)
     : "Sin fecha";
@@ -74,7 +73,7 @@ export const cleanPedidoListaHsi = (
     idEstudio: apiPedido.studyId || "Sin id",
     fecha: fechaObjeto,
     fechaString,
-    descripcion,
+    solicitud: descripcion,
     tipoEstudio,
     idPaciente: pacienteRaw?.id || "Sin id",
     apellido: pacienteRaw?.lastName || "Sin apellido",
@@ -91,7 +90,7 @@ export const cleanPedidoListaHsi = (
       ? calcularEdad(
           pacienteRaw.birthDate.day,
           pacienteRaw.birthDate.month,
-          pacienteRaw.birthDate.year
+          pacienteRaw.birthDate.year,
         )
       : "Sin Edad",
     ubicacion,
@@ -99,7 +98,7 @@ export const cleanPedidoListaHsi = (
 };
 
 export const cleanDetallePedidoGuardia = (
-  apiPedido: IRawDetallePedido
+  apiPedido: IRawDetallePedido,
 ): IDetallePedidoGuardia => {
   const idEstudio = apiPedido.diagnosticReportId.toString() || "Sin id";
 
@@ -110,7 +109,7 @@ export const cleanDetallePedidoGuardia = (
     capitalize(apiPedido.observationsFromServiceRequest?.trim()) ||
     "Sin observaciones";
   const tipoEstudio = (() => {
-    let tipo = definirTipoEstudio(observaciones);
+    let tipo = definirTipoEstudio(pedido + " " + observaciones);
     if (tipo == "Otros") {
       tipo = definirTipoEstudio(pedido);
     }

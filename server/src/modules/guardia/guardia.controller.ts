@@ -2,9 +2,8 @@ import { NextFunction, Request, Response } from "express";
 import { getGuardiaToken } from "./guardia.auth.service";
 import { IloginRequest, ILoginResponse } from "../../types/login.types";
 import { IPedidoGuardia } from "./guardia.types";
-import { apiGuardiaService } from "./guardia.api.service";
 import { AppError } from "../../errors/AppError";
-import { cleanPacienteGuardia } from "./guardia.mapper";
+import { guardiaService } from "./utils/guardia.factory";
 
 export const guardiaControler = {
   async loginGuardia(
@@ -38,7 +37,7 @@ export const guardiaControler = {
       if (fecha && typeof fecha !== "string") {
         throw new AppError("Formato de fecha inválido", 400);
       }
-      const pedidos = await apiGuardiaService.obtenerPedidosGuardia(fecha);
+      const pedidos = await guardiaService.obtenerPedidosGuardia(fecha);
       return res.json(pedidos);
     } catch (error) {
       next(error);
@@ -59,7 +58,7 @@ export const guardiaControler = {
         );
       }
       const pedidosPaciente =
-        await apiGuardiaService.obtenerPedidosPaciente(idPatient);
+        await guardiaService.obtenerPedidosPaciente(idPatient);
 
       return res.json(pedidosPaciente);
     } catch (error) {
@@ -71,7 +70,7 @@ export const guardiaControler = {
     try {
       const { idEstudio, idPatient } = req.params;
 
-      await apiGuardiaService.finalizarPedido(
+      await guardiaService.finalizarPedido(
         idEstudio as string,
         idPatient as string,
       );
@@ -96,7 +95,7 @@ export const guardiaControler = {
       }
 
       const paciente =
-        await apiGuardiaService.buscarDatosPacienteGuardia(dniPaciente);
+        await guardiaService.buscarDatosPacienteGuardia(dniPaciente);
 
       if (!paciente) {
         throw new AppError(
@@ -106,7 +105,7 @@ export const guardiaControler = {
         );
       }
 
-      return res.json(cleanPacienteGuardia(paciente));
+      return res.json(paciente);
     } catch (error) {
       next(error);
     }

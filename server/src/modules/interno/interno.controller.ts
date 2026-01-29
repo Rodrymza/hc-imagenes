@@ -7,11 +7,12 @@ import {
   SistemaConsumoInterno,
   TipoSistemaKey,
 } from "./interno.types";
+import { internoService } from "./interno.factory";
 
 export const internoController = {
   async getPrestaciones(req: Request, res: Response, next: NextFunction) {
     try {
-      const prestaciones = await apiInternoService.obtenerPrestaciones();
+      const prestaciones = await internoService.obtenerPrestaciones();
       return res.json(prestaciones);
     } catch (error) {
       next(error);
@@ -61,7 +62,7 @@ export const internoController = {
         esHc = false; // ✅ Buscamos por DNI
       }
 
-      const paciente = await apiInternoService.buscarPacienteInterno(
+      const paciente = await internoService.buscarPacienteInterno(
         numeroId,
         esHc,
       );
@@ -301,7 +302,7 @@ export const internoController = {
 
       // 5. LLAMADA AL ORQUESTADOR
       // El backend se encarga de buscar planilla, turno y consumoId por su cuenta
-      const reporte = await apiInternoService.crearLoteConsumos(
+      const reporte = await internoService.crearLoteConsumos(
         idPaciente as string,
         idCobertura,
         consumos, // Pasamos el array directo

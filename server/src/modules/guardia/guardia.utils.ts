@@ -2,7 +2,7 @@ import { IHsiDate, IHsiTime } from "./guardia.types";
 
 export function crearFecha(
   date?: IHsiDate,
-  time: IHsiTime | null = null
+  time: IHsiTime | null = null,
 ): Date | null {
   if (!date || !date.year || !date.month || !date.day) return null;
 
@@ -22,8 +22,8 @@ export function crearFecha(
 
 export function definirTipoEstudio(descripcion: string): string {
   const texto = descripcion.toLowerCase();
-  if (/rx|radiogra|radio/.test(texto)) return "Radiografia";
   if (/tomo|tac|tc/.test(texto)) return "Tomografia";
+  if (/rx|radiogra|radio/.test(texto)) return "Radiografia";
   if (/eco|ecogra/.test(texto)) return "Ecografia";
   return "Otros";
 }

@@ -6,5 +6,6 @@ const authRoutes = Router();
 
 authRoutes.post("/login", authController.login);
 authRoutes.get("/logout", protegerRuta, authController.logout);
+authRoutes.get("/verify", protegerRuta, authController.verifyUser);
 
 export default authRoutes;

@@ -66,7 +66,7 @@ export function Navbar() {
             Guardia
           </Link>
 
-          <Link to="/buscar" className={linkClass("/buscar")}>
+          <Link to="/buscar-paciente" className={linkClass("/buscar-paciente")}>
             <Search className="h-4 w-4 text-amber-500" />
             Buscar
           </Link>

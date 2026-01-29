@@ -58,8 +58,8 @@
   {
     "id": "EX-1.340213",
     "nombre": "CODO, MANO, MUÑECA, TOBILLO, PIE, RODILLA, PIERNA, FRENTE",
-    "descripcion": "Radiografía de Pierna (Frente y Perfil)",
-    "tag": "pierna",
+    "descripcion": "Radiografía de Tibia (Frente y Perfil)",
+    "tag": "tibia",
     "exposiciones": 1,
     "visible": true
   },
@@ -260,6 +260,7 @@
     "id": "EX-1.340905",
     "nombre": "PLACAS EN CAMA Y QUIRÓFANO T.I.O FRENTE",
     "descripcion": "Radiografía en Cama o Intraoperatoria",
+    "tag": "cama",
     "visible": true
   },
   {
@@ -272,36 +273,42 @@
     "id": "EX-1.340419",
     "nombre": "COLANGIO RETRÓGRADA",
     "descripcion": "Colangiografía Retrógrada",
-    "visible": false
+    "visible": false,
+    "tag": "colangio"
   },
   {
     "id": "EX-1.340907",
     "nombre": "RADIOSC. INTRA OPE",
     "descripcion": "Radioscopia Intraoperatoria",
-    "visible": true
+    "visible": true,
+    "tag": "radioscopia"
   },
   {
     "id": "EX-1.340507",
     "nombre": "CISTOURETROGRAFÍA",
     "descripcion": "Cistouroretrografía",
-    "visible": false
+    "visible": false,
+    "tag": "cisto"
   },
   {
     "id": "EX-1.340501",
     "nombre": "DIRECTA DE ÁRBOL URINARIO",
     "descripcion": "Directa de Árbol Urinario",
-    "visible": false
+    "visible": false,
+    "tag": "urinario"
   },
   {
     "id": "EX-1.340416",
     "nombre": "COLANGIO INTRAOPERATORIA",
     "descripcion": "Colangiografía Intraoperatoria",
-    "visible": false
+    "visible": false,
+    "tag": "intraoperatoria"
   },
   {
     "id": "EX-1.340405",
     "nombre": "ESOFAGOGASTRODUODENAL",
     "descripcion": "Radiografía Esofagogastroduodenal",
-    "visible": false
+    "visible": false,
+    "tag": "esofago"
   }
 ]

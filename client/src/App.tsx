@@ -8,6 +8,8 @@ import InternacionPage from "./pages/InternacionPage"; // 2. La página nueva
 import { ProtectedRoute } from "./components/protectedRoute";
 import { MainLayout } from "./components/layouts/MainLayout";
 import PedidosGuardiaPage from "./pages/PedidosGuardiaPage";
+import ConsuomsPage from "./pages/ConsumosPage";
+import BuscarPaciente from "./pages/BuscarPaciente";
 
 // Dashboard temporal (puedes borrarlo si ya vas a usar Internacion como home)
 const Dashboard = () => (
@@ -35,6 +37,8 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/internacion" element={<InternacionPage />} />
               <Route path="/guardia" element={<PedidosGuardiaPage />} />
+              <Route path="/consumos" element={<ConsuomsPage />} />
+              <Route path="/buscar-paciente" element={<BuscarPaciente />} />
               {/* Aquí agregarás guardia, configuración, etc. */}
             </Route>
           </Route>

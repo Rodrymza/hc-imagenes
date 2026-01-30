@@ -10,34 +10,39 @@ export const usePedidosInternacion = () => {
   >([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const traerPedidosInternacion = useCallback(async (fecha?: string) => {
-    setIsLoading(true);
+  const traerPedidosInternacion = useCallback(
+    async (silenRefresh: boolean = false, fecha?: string) => {
+      if (!silenRefresh) {
+        setIsLoading(true);
+      }
 
-    //await new Promise((resolve) => setTimeout(resolve, 3000));
-    // 1. Definimos la función de carga
-    const fetchData = async () => {
-      const pedidosApi = await InternacionService.getPedidos(fecha);
-      setPedidosInternacion(pedidosApi);
-      return pedidosApi;
-    };
+      //await new Promise((resolve) => setTimeout(resolve, 3000));
+      // 1. Definimos la función de carga
+      const fetchData = async () => {
+        const pedidosApi = await InternacionService.getPedidos(fecha);
+        setPedidosInternacion(pedidosApi);
+        return pedidosApi;
+      };
 
-    const traerDatosPromise = fetchData();
+      const traerDatosPromise = fetchData();
 
-    toast.promise(traerDatosPromise, {
-      id: "carga-pedidos", // ID único para evitar duplicados visuales
-      loading: "Actualizando lista de pedidos...", // Agregado para mejor UX
-      success: (data) => `Se cargaron ${data.length} pedidos correctamente`,
-      error: (err) => `No se pudo cargar: ${getErrorMessage(err)}`,
-    });
+      toast.promise(traerDatosPromise, {
+        id: "carga-pedidos", // ID único para evitar duplicados visuales
+        loading: "Actualizando lista de pedidos...", // Agregado para mejor UX
+        success: (data) => `Se cargaron ${data.length} pedidos correctamente`,
+        error: (err) => `No se pudo cargar: ${getErrorMessage(err)}`,
+      });
 
-    try {
-      await traerDatosPromise;
-    } catch (err) {
-      console.error("Error en la carga:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+      try {
+        await traerDatosPromise;
+      } catch (err) {
+        console.error("Error en la carga:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [],
+  );
 
   const alternarEstadoPedido = useCallback(
     async (item: IPedidoInternacion) => {

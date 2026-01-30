@@ -1,4 +1,5 @@
 import { GuardiaService } from "@/services/guardia.service";
+import type { IPacienteGuardia } from "@/types/pacientes";
 import type { IDetallePedidoGuardia, IPedidoGuardia } from "@/types/pedidos";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 import { useCallback, useState } from "react";
@@ -9,63 +10,72 @@ export const useServicioGuardia = () => {
   const [pedidosPaciente, setPedidosPaciente] = useState<
     IDetallePedidoGuardia[]
   >([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [pacienteGuardia, setPacienteGuardia] =
+    useState<IPacienteGuardia | null>(null);
 
-  const traerPedidosGuardia = useCallback(async (fecha?: string) => {
-    setIsLoading(true);
-    const fetchData = async () => {
-      const pedidosApi = await GuardiaService.getPedidos(fecha);
-      setPedidosGuardia(pedidosApi);
-      return pedidosApi;
-    };
+  const [loadingGuardia, setLoadingGuardia] = useState(false);
+  const [loadingPaciente, setLoadingPaciente] = useState(false);
+  const [loadingPedidosPaciente, setLoadingPedidosPaciente] = useState(false);
 
-    const traerDatosPromise = fetchData();
+  /* ================== PEDIDOS GUARDIA ================== */
+  const traerPedidosGuardia = useCallback(
+    async (silent = false, fecha?: string) => {
+      if (!silent) setLoadingGuardia(true);
 
-    toast.promise(traerDatosPromise, {
-      id: "pedidos-guardia",
-      loading: "Actualizando pedidos Guardia...",
-      success: (data) => `Se cargaron ${data.length} pedidos correctamente`,
-      error: (error) =>
-        `No se pudieron cargar los pedidos de guardia: ${getErrorMessage(error)} `,
-    });
+      const promise = GuardiaService.getPedidos(fecha);
+
+      toast.promise(promise, {
+        id: "pedidos-guardia",
+        loading: "Actualizando pedidos Guardia...",
+        success: (data) => `Se cargaron ${data.length} pedidos`,
+        error: (e) => `Error: ${getErrorMessage(e)}`,
+      });
+
+      try {
+        const data = await promise;
+        setPedidosGuardia(data);
+      } finally {
+        setLoadingGuardia(false);
+      }
+    },
+    [],
+  );
+
+  /* ================== PACIENTE ================== */
+  const buscarPacienteGuardia = useCallback(async (dni: string) => {
+    if (!dni) return;
+
+    setPacienteGuardia(null);
+    setLoadingPaciente(true);
 
     try {
-      await traerDatosPromise;
-    } catch (error) {
-      console.error("Error al cargar pedidos de Guardia", error);
-      throw error;
+      const paciente = await GuardiaService.buscarPacienteGuardia(dni);
+      setPacienteGuardia(paciente ?? null);
+    } catch (e) {
+      toast.error("Paciente no encontrado en Guardia");
     } finally {
-      setIsLoading(false);
+      setLoadingPaciente(false);
     }
   }, []);
 
+  /* ================== PEDIDOS DEL PACIENTE ================== */
   const buscarPedidosPaciente = useCallback(async (dni: string) => {
-    setIsLoading(true);
+    if (!dni) return;
 
-    const fetchData = async () => {
-      const pedidosApi = await GuardiaService.getPedidosPaciente(dni);
-      setPedidosPaciente(pedidosApi);
-      return pedidosApi;
-    };
+    setPedidosPaciente([]);
+    setLoadingPedidosPaciente(true);
 
-    const traerDatosPromise = fetchData();
-
-    toast.promise(traerDatosPromise, {
-      id: "pedidos-paciente-guardia",
-      loading: "Cargando pedidos de paciente",
-      success: (data) => `Se cargaron ${data.length} pedidos`,
-      error: (error) => `Error al cargar los pedidos ${getErrorMessage(error)}`,
-    });
     try {
-      await traerDatosPromise;
-    } catch (error) {
-      console.error("No se pudieron cargar los pedidos:", error);
-      throw error;
+      const pedidos = await GuardiaService.getPedidosPaciente(dni);
+      setPedidosPaciente(pedidos);
+    } catch (e) {
+      toast.error(`Error al cargar pedidos: ${getErrorMessage(e)}`);
     } finally {
-      setIsLoading(false);
+      setLoadingPedidosPaciente(false);
     }
   }, []);
 
+  /* ================== FINALIZAR ================== */
   const marcarFinalizado = useCallback((idEstudio: string) => {
     setPedidosPaciente((prev) =>
       prev.map((p) =>
@@ -76,37 +86,36 @@ export const useServicioGuardia = () => {
 
   const finalizarEstudio = useCallback(
     async (idEstudio: string, dniPaciente: string) => {
-      const postFinalizarPromise = GuardiaService.finalizarPedidoPorDni(
+      const promise = GuardiaService.finalizarPedidoPorDni(
         idEstudio,
         dniPaciente,
       );
-      toast.promise(postFinalizarPromise, {
-        id: "finalizar-pedido-guardia",
-        loading: "Finalizando pedido de Guardia",
-        success: (data) => data.message || "Pedido finalizado correctamente",
-        error: (error) =>
-          `No se pudo finalizar el estudio: ${getErrorMessage(error)}`,
+
+      toast.promise(promise, {
+        loading: "Finalizando pedido...",
+        success: "Pedido finalizado",
+        error: (e) => `Error: ${getErrorMessage(e)}`,
       });
 
-      try {
-        await postFinalizarPromise;
-        marcarFinalizado(idEstudio);
-      } catch (error) {
-        console.error("No se pudo finalizar el pedido:", error);
-        throw error;
-      } finally {
-      }
+      await promise;
+      marcarFinalizado(idEstudio);
+      traerPedidosGuardia(true);
     },
-    [marcarFinalizado],
+    [marcarFinalizado, traerPedidosGuardia],
   );
 
   return {
     pedidosGuardia,
     pedidosPaciente,
-    isLoading,
+    pacienteGuardia,
+
+    loadingGuardia,
+    loadingPaciente,
+    loadingPedidosPaciente,
+
     traerPedidosGuardia,
+    buscarPacienteGuardia,
     buscarPedidosPaciente,
     finalizarEstudio,
-    marcarFinalizado,
   };
 };

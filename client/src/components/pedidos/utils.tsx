@@ -54,17 +54,17 @@ export const getLugarEstilo = (lugar: string) => {
   const l = lugar.toLowerCase();
   if (l.includes("cama"))
     return {
-      bg: "bg-amber-100 text-amber-900 border-amber-300",
+      bg: "bg-purple-200 text-purple-900 border-purple-300",
       icon: <Bed className="w-5 h-5 mr-2" />,
     };
   if (l.includes("tomó") || l.includes("tc"))
     return {
-      bg: "bg-blue-50 text-blue-800 border-blue-200",
+      bg: "bg-blue-100 text-blue-800 border-blue-200",
       icon: <Brain className="w-5 h-5 mr-2" />,
     };
   return {
-    bg: "bg-lime-200 text-green-800 border-lime-400",
-    icon: <Radiation className="w-5 h-5 mr-2 text-black fill-yellow-400" />,
+    bg: "bg-lime-100 text-green-800 border-lime-400",
+    icon: <Radiation className="w-5 h-5 mr-2 text-black fill-green-500" />,
   };
 };
 

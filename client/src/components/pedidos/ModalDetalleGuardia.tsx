@@ -18,16 +18,18 @@ import {
 } from "lucide-react";
 import type { IPedidoGuardia, IDetallePedidoGuardia } from "@/types/pedidos";
 import { capitalize, getEstiloEstudio } from "./utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useConsumos } from "@/hooks/useConsumos";
 import { PanelConsumos } from "./PanelConsumos";
 import { PanelPacienteEncontrado } from "./PanelPacienteEncontrado";
 import { toast } from "sonner";
+import type { IPacienteGuardia } from "@/types/pacientes";
 
 interface ModalDetalleGuardiaProps {
   isOpen: boolean;
   onClose: () => void;
-  paciente: IPedidoGuardia | null;
+  paciente: IPacienteGuardia;
+  pedidoGeneral: IPedidoGuardia;
   pedidos: IDetallePedidoGuardia[];
   isLoading: boolean;
   onFinalizarEstudio: (idEstudio: string, dni: string) => void;
@@ -37,13 +39,14 @@ export const ModalDetalleGuardia = ({
   isOpen,
   onClose,
   paciente,
+  pedidoGeneral,
   pedidos,
   isLoading,
   onFinalizarEstudio,
 }: ModalDetalleGuardiaProps) => {
   const ID_COBERTURA_PARTICULAR = "099999";
   const SISTEMA_GUARDIA = "guardia";
-  const dniPaciente = paciente?.dni.toString() || null;
+  const [dniPaciente, setDniPaciente] = useState("");
   const [procesando, setProcesando] = useState<Set<string>>(new Set());
   const [coberturaSeleccionada, setCoberturaSeleccionada] = useState("");
   const {
@@ -57,7 +60,7 @@ export const ModalDetalleGuardia = ({
     loadingPaciente,
     buscarPacienteInterno,
     pacienteInterno,
-  } = useConsumos(pedidos, dniPaciente);
+  } = useConsumos(pedidos);
 
   const handleImputar = async () => {
     if (!pacienteInterno) {
@@ -80,8 +83,19 @@ export const ModalDetalleGuardia = ({
   };
 
   const reintentarBusqueda = async () => {
-    await buscarPacienteInterno();
+    await buscarPacienteInterno(dniPaciente);
   };
+  useEffect(() => {
+    if (paciente?.dni) {
+      setDniPaciente(paciente.dni.toString());
+    }
+  }, [paciente]);
+
+  useEffect(() => {
+    if (dniPaciente.length >= 7) {
+      buscarPacienteInterno(dniPaciente);
+    }
+  }, [dniPaciente, buscarPacienteInterno]);
 
   if (!isOpen || !paciente) return null;
   return (
@@ -106,13 +120,13 @@ export const ModalDetalleGuardia = ({
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
               {/* CAMBIO: Fuente más grande (text-3xl) */}
               <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-none">
-                {paciente.apellido}, {capitalize(paciente.nombre)}
+                {paciente.apellido}, {capitalize(paciente.nombres)}
               </h2>
 
               <div className="flex items-center gap-2 bg-red-100 text-red-800 px-4 py-1.5 rounded-full border border-red-200 w-fit shadow-sm">
                 <MapPin className="w-5 h-5 fill-red-800/20" />
                 <span className="text-base font-bold uppercase">
-                  {paciente.ubicacion || "Sin ubicación"}
+                  {pedidoGeneral?.ubicacion || "Sin ubicación"}
                 </span>
               </div>
             </div>
@@ -124,7 +138,7 @@ export const ModalDetalleGuardia = ({
                 <span>
                   DNI:{" "}
                   <span className="text-slate-900 font-bold">
-                    {paciente.dni.toLocaleString("ES-AR")}
+                    {paciente.dniString}
                   </span>
                 </span>
               </div>
@@ -147,12 +161,6 @@ export const ModalDetalleGuardia = ({
                   <span className="text-slate-700 font-bold">
                     {paciente.fechaNacimientoString}
                   </span>
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2 ml-auto sm:ml-0">
-                <span className="uppercase text-xs font-bold bg-slate-200 px-3 py-1 rounded text-slate-600 border border-slate-300">
-                  {paciente.sexo}
                 </span>
               </div>
             </div>

@@ -11,14 +11,16 @@ import type {
   IPedidoInternacion,
 } from "@/types/pedidos";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import type { IPacienteGuardia } from "@/types/pacientes";
 
 const REGLAS_DETECCION = [
   { regex: /t[oó]rax|pecho/i, match: "TORAX" },
-  { regex: /mu[ñ]neca/i, match: "MUÑECA" },
+  { regex: /mu[nñ]eca/i, match: "MUÑECA" },
   { regex: /mano/i, match: "MANO" },
   { regex: /pie/i, match: "PIE" },
-  { regex: /cervical/i, match: "COLUMNA CERVICAL" },
-  { regex: /lumb[ao]/i, match: "COLUMNA LUMBAR" },
+  { regex: /cervical/i, match: "CERVICAL" },
+  { regex: /lumb[ao]/i, match: "LUMBAR" },
+  { regex: /dorsal/i, match: "DORSAL" },
   { regex: /abdomen/i, match: "ABDOM" },
   { regex: /tobillo/i, match: "TOBILLO" },
   { regex: /codo/i, match: "CODO" }, // Ojo aquí, tenías rodilla matcheando codo
@@ -37,7 +39,6 @@ const REGLAS_DETECCION = [
 
 export const useConsumos = (
   pedidos: IDetallePedidoGuardia[] | IPedidoInternacion[],
-  dniPaciente: string | null,
 ) => {
   const [prestaciones, setPrestaciones] = useState<IConsumoItem[]>([]);
   const [exposiciones, setExposiciones] = useState<IConsumoItem[]>([]);
@@ -47,6 +48,8 @@ export const useConsumos = (
   const [errorPaciente, setErrorPaciente] = useState(false);
   const [pacienteInterno, setPacienteInterno] =
     useState<IPacienteInterno | null>(null);
+  useState<IPacienteGuardia | null>(null);
+
   const [autoDeteccionRealizada, setAutoDeteccionRealizada] = useState(false);
 
   // 1. Cargar Catálogo
@@ -64,12 +67,6 @@ export const useConsumos = (
     };
     cargarPrestaciones();
   }, []);
-
-  useEffect(() => {
-    setAutoDeteccionRealizada(false);
-    setExposiciones([]); // Limpiamos por seguridad visual
-    setPacienteInterno(null); // Reseteamos paciente interno
-  }, [dniPaciente]);
 
   // 2. Lógica de Auto-Detección Corregida
   useEffect(() => {
@@ -105,11 +102,8 @@ export const useConsumos = (
         if (pedido.realizado) return;
       }
 
-      // Probamos cada regla contra el texto
-
       REGLAS_DETECCION.forEach((regla) => {
         if (regla.regex.test(textoSolicitud)) {
-          // --- AQUÍ ESTABA EL ERROR ---
           const encontrado = prestaciones.find((item) => {
             const textoComparar = item.tag || item.descripcion;
             // IMPORTANTE: El 'return' es obligatorio si usas { }
@@ -200,8 +194,8 @@ export const useConsumos = (
     }
   };
 
-  const buscarPacienteInterno = useCallback(async () => {
-    if (!dniPaciente) return;
+  const buscarPacienteInterno = useCallback(async (dni: string | null) => {
+    if (!dni || dni.length < 7) return;
 
     setLoadingPaciente(true);
     setErrorPaciente(false);
@@ -209,10 +203,7 @@ export const useConsumos = (
 
     try {
       // Asumimos que buscas por DNI, el segundo param es HC (null por ahora)
-      const paciente = await InternoService.buscarPacienteInterno(
-        dniPaciente,
-        null,
-      );
+      const paciente = await InternoService.buscarPacienteInterno(dni, null);
 
       if (paciente) {
         setPacienteInterno(paciente);
@@ -228,14 +219,7 @@ export const useConsumos = (
     } finally {
       setLoadingPaciente(false);
     }
-  }, [dniPaciente]);
-
-  // EFECTO AUTOMÁTICO: Buscar apenas cambia el DNI
-  useEffect(() => {
-    if (dniPaciente) {
-      buscarPacienteInterno();
-    }
-  }, [dniPaciente, buscarPacienteInterno]);
+  }, []);
 
   return {
     prestaciones,

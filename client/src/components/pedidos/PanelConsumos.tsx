@@ -94,7 +94,7 @@ export const PanelConsumos = ({
             </div>
 
             {/* Dropdown de Resultados */}
-            {mostrarResultados && busqueda.length > 1 && (
+            {mostrarResultados && busqueda.length > 2 && (
               <div className="absolute bottom-full mb-1 left-0 w-full bg-white border border-slate-200 rounded-lg shadow-xl max-h-60 overflow-y-auto z-50">
                 {resultados.length === 0 ? (
                   <div className="p-3 text-base text-slate-400 text-center">

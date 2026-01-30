@@ -2,27 +2,30 @@ import spinnerGif from "@/assets/spinner.gif";
 import { GuardiaPedidoRow } from "@/components/pedidos/GuardiaPedidoRow"; // <--- CAMBIO IMPORTANTE
 import { ModalDetalleGuardia } from "@/components/pedidos/ModalDetalleGuardia";
 import { useServicioGuardia } from "@/hooks/usePedidosGuardia";
+import type { IPacienteGuardia } from "@/types/pacientes";
 import type { IPedidoGuardia } from "@/types/pedidos";
-import { CalendarClock, Search, Siren } from "lucide-react"; // Agregué Siren para el ícono
+import { CalendarClock, RefreshCw, Search, Siren } from "lucide-react"; // Agregué Siren para el ícono
 import { useCallback, useEffect, useState } from "react";
 
 export default function PedidosGuardiaPage() {
   // 1. Destructuramos alternarEstadoPedido si ya lo creaste en el hook (como hicimos en Internación)
   const {
-    isLoading,
+    loadingGuardia,
     pedidosGuardia,
     pedidosPaciente,
     traerPedidosGuardia,
     buscarPedidosPaciente,
     finalizarEstudio,
+    pacienteGuardia,
+    buscarPacienteGuardia,
   } = useServicioGuardia();
   // Estados de los filtros
   const [busqueda, setBusqueda] = useState("");
   const [filtroLugar, setFiltroLugar] = useState("todos");
   const [filtroModalidad, setFiltroModalidad] = useState("todos");
-  const [modalOpen, setModalOpen] = useState(false);
-  const [pacienteSeleccionado, setPacienteSeleccionado] =
+  const [pedidoSeleccionado, setPedidoSeleccionado] =
     useState<IPedidoGuardia | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   // Inicializamos con la fecha de hoy
   const hoy = new Date().toISOString().split("T")[0];
@@ -30,13 +33,14 @@ export default function PedidosGuardiaPage() {
 
   const cargarPedidos = useCallback(
     async (fecha?: string) => {
-      await traerPedidosGuardia(fecha);
+      await traerPedidosGuardia(false, fecha);
     },
     [traerPedidosGuardia],
   );
 
   const handleVerDetalle = async (item: IPedidoGuardia) => {
-    setPacienteSeleccionado(item);
+    await buscarPacienteGuardia(item.dni.toString());
+    setPedidoSeleccionado(item);
     setModalOpen(true);
     await buscarPedidosPaciente(item.dni.toString());
   };
@@ -81,7 +85,7 @@ export default function PedidosGuardiaPage() {
       >
         <div className="w-full 8xl mx-auto space-y-6">
           {/* HEADER & TOOLBAR */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col flex-between gap-4">
             <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
               <div className="bg-white p-2 rounded-lg text-red-700 shadow-sm">
                 <Siren className="w-6 h-6 animate-pulse" />
@@ -89,6 +93,14 @@ export default function PedidosGuardiaPage() {
               <h1 className="text-2xl font-black text-white tracking-tight uppercase">
                 Guardia / Emergencias
               </h1>
+              <button
+                onClick={() => traerPedidosGuardia(true)}
+                className="p-2 text-slate-300 hover:text-red-600 hover:bg-emerald-50 rounded-full transition-all hidden sm:flex flex-row items-center justify-center gap-1"
+                title="Recargar Pedidos página"
+              >
+                <RefreshCw className="h-5 w-5 text-green" />{" "}
+                {"Recargar Pedidos"}
+              </button>
             </div>
 
             <div className="bg-white/10 backdrop-blur-md p-5 rounded-xl border border-white/20 shadow-xl">
@@ -157,7 +169,7 @@ export default function PedidosGuardiaPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-50">
-                {isLoading ? (
+                {loadingGuardia ? (
                   <tr>
                     <td colSpan={5} className="py-20">
                       <div className="flex flex-col items-center justify-center gap-4">
@@ -205,9 +217,10 @@ export default function PedidosGuardiaPage() {
       <ModalDetalleGuardia
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        paciente={pacienteSeleccionado} // Datos del Header
+        paciente={pacienteGuardia!} // Datos del Header
+        pedidoGeneral={pedidoSeleccionado!} // Datos del Header
         pedidos={pedidosPaciente} // Datos del Body (vienen del hook)
-        isLoading={isLoading} // Spinner del hook
+        isLoading={loadingGuardia} // Spinner del hook
         onFinalizarEstudio={handleFinalizarPedido}
       />
     </>

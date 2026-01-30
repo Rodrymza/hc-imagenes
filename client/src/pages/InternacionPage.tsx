@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Search, Activity, CalendarClock } from "lucide-react";
+import { Search, Activity, CalendarClock, RefreshCw } from "lucide-react";
 import { InternacionPedidoRow } from "@/components/pedidos/InternacionPedidoRow";
 import { usePedidosInternacion } from "@/hooks/usePedidosInternacion";
 import spinnerGif from "@/assets/spinner.gif";
@@ -27,7 +27,7 @@ export default function InternacionPage() {
     useState<IPedidoInternacion | null>(null);
 
   const cargarPedidos = useCallback(async (fecha?: string) => {
-    await traerPedidosInternacion(fecha);
+    await traerPedidosInternacion(false, fecha);
   }, []);
 
   const handleVerDetalle = (pedido: IPedidoInternacion) => {
@@ -77,6 +77,14 @@ export default function InternacionPage() {
               <h1 className="text-2xl font-black text-white tracking-tight uppercase">
                 Internación
               </h1>
+              <button
+                onClick={() => traerPedidosInternacion(true, filtroFecha)}
+                className="p-2 text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-all hidden sm:flex flex-row items-center justify-center gap-1"
+                title="Recargar Pedidos página"
+              >
+                <RefreshCw className="h-5 w-5 text-green" />
+                {"Recargar Pedidos"}
+              </button>
             </div>
 
             <div className="bg-white/10 backdrop-blur-md p-5 rounded-xl border border-white/20 shadow-xl">

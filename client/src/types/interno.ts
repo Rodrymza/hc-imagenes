@@ -2,7 +2,7 @@ export interface IConsumoItem {
   id: string;
   nombre: string;
   descripcion: string;
-  tag?: string;
+  tag: string;
 }
 
 export interface ICobertura {

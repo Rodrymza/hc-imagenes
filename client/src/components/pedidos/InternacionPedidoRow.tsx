@@ -1,14 +1,5 @@
 import type { IPedidoInternacion } from "@/types/pedidos";
-import {
-  Eye,
-  BedDouble,
-  Activity,
-  MapPin,
-  AlertTriangle,
-  CalendarClock,
-  Check,
-  X,
-} from "lucide-react";
+import { Eye, CalendarClock, Check, X } from "lucide-react";
 import { capitalize, getLugarEstilo } from "./utils";
 
 interface PedidoRowProps {

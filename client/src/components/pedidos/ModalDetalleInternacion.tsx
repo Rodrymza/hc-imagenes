@@ -18,8 +18,7 @@ import { capitalize, getEstiloEstudio, getLugarEstilo } from "./utils";
 import { useConsumos } from "@/hooks/useConsumos";
 import { PanelConsumos } from "./PanelConsumos";
 import { PanelPacienteEncontrado } from "./PanelPacienteEncontrado";
-import { useState } from "react";
-import clsx from "clsx";
+import { useEffect, useState } from "react";
 
 interface ModalDetalleInternacionProps {
   isOpen: boolean;
@@ -44,9 +43,10 @@ export const ModalDetalleInternacion = ({
     loadingPaciente,
     buscarPacienteInterno,
     pacienteInterno,
-  } = useConsumos([pedido], pedido.dni);
+  } = useConsumos([pedido]);
 
   const [coberturaSeleccionada, setCoberturaSeleccionada] = useState("");
+  const [dniBusqueda, setDniBusqueda] = useState(pedido.dni.toString());
   const estilo = getEstiloEstudio(pedido.tipoEstudio);
   const esUrgente = pedido.urgente === "SI";
   const ID_COBERTURA_PARTICULAR = "09999";
@@ -67,8 +67,14 @@ export const ModalDetalleInternacion = ({
   };
 
   const reintentarBusqueda = async () => {
-    await buscarPacienteInterno();
+    await buscarPacienteInterno(pedido.dni.toString());
   };
+
+  useEffect(() => {
+    if (dniBusqueda.length >= 7) {
+      buscarPacienteInterno(dniBusqueda);
+    }
+  }, [dniBusqueda, buscarPacienteInterno]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   Search,
-  User,
   Database,
   PlusCircle,
   ArrowRight,
@@ -9,7 +8,6 @@ import {
   ClipboardList,
   AlertCircle,
   Loader2,
-  ChevronRight,
   Clock,
   Zap,
 } from "lucide-react";
@@ -27,13 +25,16 @@ export default function ConsuomsPage() {
   const dniDesdeUrl = searchParams.get("dni"); // Captura el ?dni=12345678
   const [dniBusqueda, setDniBusqueda] = useState(dniDesdeUrl || "");
 
-  // Reutilizamos nuestro hook (pedidos vacíos porque es manual)
+  // No buscar hasta que se haga click en el boton
 
   const {
     pedidosPaciente,
-    isLoading: loadingGuardia,
+    loadingGuardia,
     buscarPedidosPaciente,
+    buscarPacienteGuardia,
+    pacienteGuardia,
   } = useServicioGuardia();
+
   const {
     pacienteInterno,
     buscarPacienteInterno,
@@ -45,24 +46,34 @@ export default function ConsuomsPage() {
     quitarExposicionPorDescripcion,
     confirmarConsumo,
     guardandoConsumos,
-  } = useConsumos(pedidosPaciente, dniBusqueda);
+  } = useConsumos(pedidosPaciente);
 
   useEffect(() => {
     if (dniDesdeUrl) {
+      console.log("DNI desde URL:", dniDesdeUrl);
       setDniBusqueda(dniDesdeUrl);
-      buscarPacienteInterno();
+      buscarPacienteInterno(dniDesdeUrl);
     }
-  }, []);
+  }, [dniDesdeUrl, buscarPacienteInterno]);
 
   useEffect(() => {
-    if (pacienteInterno?.dni) {
-      buscarPedidosPaciente(pacienteInterno.dni);
-      setSistema("guardia");
-    }
-  }, [pacienteInterno, buscarPedidosPaciente]);
+    console.log(
+      "DNI de búsqueda cambiado:",
+      dniBusqueda,
+      dniBusqueda.length < 7,
+    );
+    if (dniBusqueda.length < 7) return;
+
+    buscarPedidosPaciente(dniBusqueda);
+    setSistema("guardia");
+  }, [dniBusqueda, buscarPedidosPaciente]);
+
   const handleBuscar = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (dniBusqueda.length > 5) buscarPacienteInterno();
+    if (dniBusqueda.length > 7) {
+      buscarPacienteInterno(dniBusqueda);
+      buscarPacienteGuardia(dniBusqueda);
+    }
   };
 
   const handleFinalizar = async () => {
@@ -128,7 +139,7 @@ export default function ConsuomsPage() {
           </section>
 
           {/* 2. FICHA PACIENTE + CONTEXTO */}
-          {pacienteInterno && (
+          {(pacienteInterno || pacienteGuardia) && (
             <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden animate-in fade-in slide-in-from-left-4 duration-300">
               <div className="bg-emerald-500 p-4 text-white">
                 <div className="flex justify-between items-start">
@@ -137,7 +148,8 @@ export default function ConsuomsPage() {
                       Paciente Identificado
                     </p>
                     <h2 className="text-xl font-black uppercase leading-tight">
-                      {pacienteInterno.apellidos}, {pacienteInterno.nombres}
+                      {pacienteInterno?.apellidos || pacienteGuardia?.apellido},{" "}
+                      {pacienteInterno?.nombres || pacienteGuardia?.nombres}
                     </h2>
                   </div>
                   <ShieldCheck className="w-8 h-8 opacity-40" />
@@ -151,7 +163,8 @@ export default function ConsuomsPage() {
                       HC Interna
                     </span>
                     <span className="font-bold text-slate-700">
-                      {pacienteInterno.idPaciente}
+                      {pacienteInterno?.idPaciente ||
+                        pacienteGuardia?.historiaClinica}
                     </span>
                   </div>
                   <div className="flex flex-col">
@@ -159,7 +172,7 @@ export default function ConsuomsPage() {
                       Documento
                     </span>
                     <span className="font-bold text-slate-700">
-                      {pacienteInterno.dni}
+                      {pacienteInterno?.dni || pacienteGuardia?.dni}
                     </span>
                   </div>
                 </div>
@@ -189,11 +202,11 @@ export default function ConsuomsPage() {
                       onChange={(e) => setCoberturaId(e.target.value)}
                       className="w-full p-2 bg-slate-50 border border-slate-200 rounded-md text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
                     >
-                      {pacienteInterno.coberturas.map((cob) => (
+                      {pacienteInterno?.coberturas.map((cob) => (
                         <option key={cob.idCobertura} value={cob.idCobertura}>
                           {cob.sigla}
                         </option>
-                      ))}
+                      )) || null}
                       <option value="09999">PACIENTES PARTICULAR</option>
                     </select>
                   </div>
@@ -204,50 +217,52 @@ export default function ConsuomsPage() {
         </div>
 
         {/* COLUMNA DERECHA: CONSUMOS (7 Cols) */}
-        <div className="lg:col-span-7">
-          <section className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col h-full min-h-[500px]">
-            <div className="p-5 border-b border-slate-100 flex justify-between items-center">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                <ClipboardList className="w-4 h-4" /> Detalle de Prestaciones
-              </h3>
-              <span className="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">
-                Carga Manual
-              </span>
-            </div>
-
-            <div className="flex-1 flex flex-col justify-between">
-              {/* Aquí reutilizamos el componente PanelConsumos que ya tenemos */}
-              {/* Lo ajustamos para que se comporte como el "Cuerpo" de esta tarjeta */}
-              <div className="p-2">
-                <PanelConsumos
-                  exposiciones={exposiciones}
-                  prestaciones={prestaciones}
-                  onAdd={agregarExposicion}
-                  onRemove={quitarExposicionPorDescripcion}
-                  onConfirm={handleFinalizar}
-                  isSaving={guardandoConsumos}
-                  disabled={!pacienteInterno} // Bloqueado si no hay paciente
-                />
+        {pacienteInterno && (
+          <div className="lg:col-span-7">
+            <section className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col h-full min-h-[500px]">
+              <div className="p-5 border-b border-slate-100 flex justify-between items-center">
+                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                  <ClipboardList className="w-4 h-4" /> Detalle de Prestaciones
+                </h3>
+                <span className="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">
+                  Carga Manual
+                </span>
               </div>
 
-              {/* FOOTER INFORMATIVO */}
-              <div className="p-5 bg-slate-50 border-t border-slate-100 rounded-b-2xl">
-                <div className="flex items-center gap-3 text-red-800">
-                  <Database className="w-5 h-5 opacity-50" />
-                  <p className="text-base leading-tight italic">
-                    Al confirmar, los consumos se enviarán al sistema
-                    administrativo bajo el nodo de{" "}
-                    <strong>{sistema.toUpperCase()}</strong>. Asegúrese de que
-                    el paciente y la cobertura coincidan con la orden física.
-                  </p>
+              <div className="flex-1 flex flex-col justify-between">
+                {/* Aquí reutilizamos el componente PanelConsumos que ya tenemos */}
+                {/* Lo ajustamos para que se comporte como el "Cuerpo" de esta tarjeta */}
+                <div className="p-2">
+                  <PanelConsumos
+                    exposiciones={exposiciones}
+                    prestaciones={prestaciones}
+                    onAdd={agregarExposicion}
+                    onRemove={quitarExposicionPorDescripcion}
+                    onConfirm={handleFinalizar}
+                    isSaving={guardandoConsumos}
+                    disabled={!pacienteInterno} // Bloqueado si no hay paciente
+                  />
+                </div>
+
+                {/* FOOTER INFORMATIVO */}
+                <div className="p-5 bg-slate-50 border-t border-slate-100 rounded-b-2xl">
+                  <div className="flex items-center gap-3 text-red-800">
+                    <Database className="w-5 h-5 opacity-50" />
+                    <p className="text-base leading-tight italic">
+                      Al confirmar, los consumos se enviarán al sistema
+                      administrativo bajo el nodo de{" "}
+                      <strong>{sistema.toUpperCase()}</strong>. Asegúrese de que
+                      el paciente y la cobertura coincidan con la orden física.
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </section>
-        </div>
+            </section>
+          </div>
+        )}
       </div>
       {/* --- SECCIÓN INFERIOR: PEDIDOS DE GUARDIA --- */}
-      {pacienteInterno && (
+      {
         <div className="max-w-7xl mx-auto mt-6 animate-in slide-in-from-bottom-4 duration-500">
           <div className="bg-white rounded-2xl border-2 border-amber-100 shadow-md overflow-hidden">
             {/* Header de Sección */}
@@ -282,7 +297,9 @@ export default function ConsuomsPage() {
                       <div className="flex items-center gap-4">
                         <div className="flex flex-col items-center justify-center bg-amber-100 rounded-lg py-2 px-3 min-w-[60px]">
                           <Clock className="w-4 h-4 text-amber-600 mb-1" />
-                          <span className="text-[10px] font-black text-amber-800">
+                          <span className="text-[10px] text-center font-black text-amber-800 whitespace-pre-line">
+                            {pedido.fecha.split(" ")[0] || "---"}
+                            {"\n"}
                             {pedido.fecha.split(" ")[1] || "---"}
                           </span>
                         </div>
@@ -336,7 +353,7 @@ export default function ConsuomsPage() {
             </div>
           </div>
         </div>
-      )}
+      }
     </div>
   );
 }

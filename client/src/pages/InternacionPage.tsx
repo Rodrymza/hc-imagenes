@@ -61,6 +61,15 @@ export default function InternacionPage() {
     console.log(filtroFecha);
   }, [cargarPedidos, filtroFecha]);
 
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      if (!document.hidden) traerPedidosInternacion(true);
+    }, 30000);
+
+    // LIMPIEZA: Muy importante limpiar el intervalo al desmontar
+    return () => clearInterval(intervalo);
+  }, [traerPedidosInternacion]);
+
   return (
     <>
       <div

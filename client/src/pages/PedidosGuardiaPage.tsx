@@ -2,7 +2,6 @@ import spinnerGif from "@/assets/spinner.gif";
 import { GuardiaPedidoRow } from "@/components/pedidos/GuardiaPedidoRow"; // <--- CAMBIO IMPORTANTE
 import { ModalDetalleGuardia } from "@/components/pedidos/ModalDetalleGuardia";
 import { useServicioGuardia } from "@/hooks/usePedidosGuardia";
-import type { IPacienteGuardia } from "@/types/pacientes";
 import type { IPedidoGuardia } from "@/types/pedidos";
 import { CalendarClock, RefreshCw, Search, Siren } from "lucide-react"; // Agregué Siren para el ícono
 import { useCallback, useEffect, useState } from "react";
@@ -18,6 +17,7 @@ export default function PedidosGuardiaPage() {
     finalizarEstudio,
     pacienteGuardia,
     buscarPacienteGuardia,
+    loadingPedidosPaciente,
   } = useServicioGuardia();
   // Estados de los filtros
   const [busqueda, setBusqueda] = useState("");
@@ -39,9 +39,10 @@ export default function PedidosGuardiaPage() {
   );
 
   const handleVerDetalle = async (item: IPedidoGuardia) => {
-    await buscarPacienteGuardia(item.dni.toString());
     setPedidoSeleccionado(item);
     setModalOpen(true);
+
+    await buscarPacienteGuardia(item.dni.toString());
     await buscarPedidosPaciente(item.dni.toString());
   };
 
@@ -75,13 +76,21 @@ export default function PedidosGuardiaPage() {
     cargarPedidos(filtroFecha);
   }, [cargarPedidos, filtroFecha]);
 
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      if (!document.hidden) traerPedidosGuardia(true);
+    }, 30000);
+
+    // LIMPIEZA: Muy importante limpiar el intervalo al desmontar
+    return () => clearInterval(intervalo);
+  }, [traerPedidosGuardia]);
+
   return (
     <>
       <div
         className="min-h-screen p-4 md:p-6 font-sans"
         // Cambié levemente el gradiente a rojizo para diferenciar visualmente "Guardia" de "Internación"
-        // Si prefieres verde, vuelve a usar: from-[#0e6d55] to-[#6fd3b6]
-        style={{ background: "linear-gradient(135deg, #8a1c1c, #d64545)" }}
+        style={{ background: "linear-gradient(135deg, #7c1919, #d44545)" }}
       >
         <div className="w-full 8xl mx-auto space-y-6">
           {/* HEADER & TOOLBAR */}
@@ -214,15 +223,17 @@ export default function PedidosGuardiaPage() {
           </div>
         </div>
       </div>
-      <ModalDetalleGuardia
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        paciente={pacienteGuardia!} // Datos del Header
-        pedidoGeneral={pedidoSeleccionado!} // Datos del Header
-        pedidos={pedidosPaciente} // Datos del Body (vienen del hook)
-        isLoading={loadingGuardia} // Spinner del hook
-        onFinalizarEstudio={handleFinalizarPedido}
-      />
+      {modalOpen && (
+        <ModalDetalleGuardia
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          paciente={pacienteGuardia!}
+          pedidoGeneral={pedidoSeleccionado!}
+          pedidos={pedidosPaciente}
+          loadingPedidosPaciente={loadingPedidosPaciente}
+          onFinalizarEstudio={handleFinalizarPedido}
+        />
+      )}
     </>
   );
 }

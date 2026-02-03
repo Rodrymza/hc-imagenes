@@ -38,7 +38,7 @@ const REGLAS_DETECCION = [
 ];
 
 export const useConsumos = (
-  pedidos: IDetallePedidoGuardia[] | IPedidoInternacion[],
+  pedidos: IDetallePedidoGuardia[] | IPedidoInternacion[] | null,
 ) => {
   const [prestaciones, setPrestaciones] = useState<IConsumoItem[]>([]);
   const [exposiciones, setExposiciones] = useState<IConsumoItem[]>([]);
@@ -48,7 +48,6 @@ export const useConsumos = (
   const [errorPaciente, setErrorPaciente] = useState(false);
   const [pacienteInterno, setPacienteInterno] =
     useState<IPacienteInterno | null>(null);
-  useState<IPacienteGuardia | null>(null);
 
   const [autoDeteccionRealizada, setAutoDeteccionRealizada] = useState(false);
 
@@ -68,13 +67,23 @@ export const useConsumos = (
     cargarPrestaciones();
   }, []);
 
+  //Reset cuando cambian los pedidos
+  useEffect(() => {
+    setExposiciones([]);
+    setAutoDeteccionRealizada(false);
+  }, [pedidos]);
+
   // 2. Lógica de Auto-Detección Corregida
   useEffect(() => {
     // Si no hay datos, no hacemos nada
-    if (!pedidos || pedidos.length === 0 || prestaciones.length === 0) return;
-    if (autoDeteccionRealizada) return;
-    // Si ya detectamos, no volver a detectar (opcional, según tu UX)
-    if (exposiciones.length > 0) return;
+    if (
+      !pedidos ||
+      pedidos.length === 0 ||
+      prestaciones.length === 0 ||
+      autoDeteccionRealizada
+    ) {
+      return;
+    }
 
     const nuevasDetectadas: IConsumoItem[] = [];
 
@@ -123,8 +132,6 @@ export const useConsumos = (
     // Actualizamos el estado UNA SOLA VEZ al final del proceso
     if (nuevasDetectadas.length > 0) {
       setExposiciones(nuevasDetectadas);
-
-      toast("Se han detectado sugerencias de consumo");
     }
     setAutoDeteccionRealizada(true);
   }, [pedidos, prestaciones]);
@@ -207,7 +214,6 @@ export const useConsumos = (
 
       if (paciente) {
         setPacienteInterno(paciente);
-        console.log("Paciente encontrado:", paciente);
       } else {
         // Si el servicio devuelve null/undefined pero no lanza error
         setErrorPaciente(true);

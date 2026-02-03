@@ -31,7 +31,7 @@ interface ModalDetalleGuardiaProps {
   paciente: IPacienteGuardia;
   pedidoGeneral: IPedidoGuardia;
   pedidos: IDetallePedidoGuardia[];
-  isLoading: boolean;
+  loadingPedidosPaciente: boolean;
   onFinalizarEstudio: (idEstudio: string, dni: string) => void;
 }
 
@@ -41,7 +41,7 @@ export const ModalDetalleGuardia = ({
   paciente,
   pedidoGeneral,
   pedidos,
-  isLoading,
+  loadingPedidosPaciente,
   onFinalizarEstudio,
 }: ModalDetalleGuardiaProps) => {
   const ID_COBERTURA_PARTICULAR = "099999";
@@ -49,6 +49,8 @@ export const ModalDetalleGuardia = ({
   const [dniPaciente, setDniPaciente] = useState("");
   const [procesando, setProcesando] = useState<Set<string>>(new Set());
   const [coberturaSeleccionada, setCoberturaSeleccionada] = useState("");
+  const [modalReady, setModalReady] = useState(false);
+  const [dniBuscado, setDniBuscado] = useState("");
   const {
     exposiciones,
     agregarExposicion,
@@ -85,17 +87,33 @@ export const ModalDetalleGuardia = ({
   const reintentarBusqueda = async () => {
     await buscarPacienteInterno(dniPaciente);
   };
+
   useEffect(() => {
+    if (!isOpen) return;
+
     if (paciente?.dni) {
       setDniPaciente(paciente.dni.toString());
     }
-  }, [paciente]);
+  }, [isOpen, paciente]);
 
   useEffect(() => {
-    if (dniPaciente.length >= 7) {
+    if (!isOpen) {
+      setModalReady(false);
+      return;
+    }
+
+    // dejamos que el modal se pinte primero
+    requestAnimationFrame(() => setModalReady(true));
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!modalReady) return;
+
+    if (dniPaciente.length >= 7 && dniPaciente !== dniBuscado) {
+      setDniBuscado(dniPaciente);
       buscarPacienteInterno(dniPaciente);
     }
-  }, [dniPaciente, buscarPacienteInterno]);
+  }, [modalReady, dniPaciente, dniBuscado, buscarPacienteInterno]);
 
   if (!isOpen || !paciente) return null;
   return (
@@ -169,7 +187,7 @@ export const ModalDetalleGuardia = ({
 
         {/* --- 2. CUERPO --- */}
         <div className="overflow-y-auto p-6 bg-slate-100/50 flex-grow">
-          {isLoading ? (
+          {loadingPedidosPaciente ? (
             <div className="flex flex-col items-center justify-center gap-4 py-10">
               <div className="flex items-center gap-2 text-slate-500">
                 <Clock className="w-10 h-10 animate-spin" />
@@ -332,7 +350,7 @@ export const ModalDetalleGuardia = ({
             )}
 
             {/* CASO B: PACIENTE NO ENCONTRADO (Bloqueo Amarillo) */}
-            {!loadingPaciente && errorPaciente && (
+            {errorPaciente && (
               <div className="bg-amber-50 border-t-4 border-amber-400 p-4 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-amber-100 rounded-full text-amber-700">

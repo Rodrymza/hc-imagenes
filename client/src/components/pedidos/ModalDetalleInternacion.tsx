@@ -18,7 +18,7 @@ import { capitalize, getEstiloEstudio, getLugarEstilo } from "./utils";
 import { useConsumos } from "@/hooks/useConsumos";
 import { PanelConsumos } from "./PanelConsumos";
 import { PanelPacienteEncontrado } from "./PanelPacienteEncontrado";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface ModalDetalleInternacionProps {
   isOpen: boolean;
@@ -32,6 +32,8 @@ export const ModalDetalleInternacion = ({
   pedido,
 }: ModalDetalleInternacionProps) => {
   if (!isOpen || !pedido) return null;
+  const pedidosMemo = useMemo(() => [pedido], [pedido]);
+
   const {
     exposiciones,
     agregarExposicion,
@@ -43,7 +45,7 @@ export const ModalDetalleInternacion = ({
     loadingPaciente,
     buscarPacienteInterno,
     pacienteInterno,
-  } = useConsumos([pedido]);
+  } = useConsumos(pedidosMemo);
 
   const [coberturaSeleccionada, setCoberturaSeleccionada] = useState("");
   const [dniBusqueda, setDniBusqueda] = useState(pedido.dni.toString());
@@ -74,7 +76,7 @@ export const ModalDetalleInternacion = ({
     if (dniBusqueda.length >= 7) {
       buscarPacienteInterno(dniBusqueda);
     }
-  }, [dniBusqueda, buscarPacienteInterno]);
+  }, [dniBusqueda]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">

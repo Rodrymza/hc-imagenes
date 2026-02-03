@@ -26,8 +26,7 @@ export const useServicioGuardia = () => {
 
       toast.promise(promise, {
         id: "pedidos-guardia",
-        loading: "Actualizando pedidos Guardia...",
-        success: (data) => `Se cargaron ${data.length} pedidos`,
+        success: (data) => `Se cargaron ${data.length} pedidos de Guardia`,
         error: (e) => `Error: ${getErrorMessage(e)}`,
       });
 
@@ -92,6 +91,7 @@ export const useServicioGuardia = () => {
       );
 
       toast.promise(promise, {
+        id: "pedidos-guardia",
         loading: "Finalizando pedido...",
         success: "Pedido finalizado",
         error: (e) => `Error: ${getErrorMessage(e)}`,

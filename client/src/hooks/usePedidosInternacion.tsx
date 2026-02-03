@@ -28,8 +28,7 @@ export const usePedidosInternacion = () => {
 
       toast.promise(traerDatosPromise, {
         id: "carga-pedidos", // ID único para evitar duplicados visuales
-        loading: "Actualizando lista de pedidos...", // Agregado para mejor UX
-        success: (data) => `Se cargaron ${data.length} pedidos correctamente`,
+        success: (data) => `Se cargaron ${data.length} pedidos de Internacion`,
         error: (err) => `No se pudo cargar: ${getErrorMessage(err)}`,
       });
 

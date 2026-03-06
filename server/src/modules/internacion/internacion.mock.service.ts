@@ -1,4 +1,4 @@
-import estudios from "../../mocks/internacion.api.json" with { type: "json" };
+import estudios from "../../mocks/internacion.api.json";
 import { mapearPedidoInternacion } from "./internacion.mapper";
 import { InternacionService } from "./internacion.service";
 

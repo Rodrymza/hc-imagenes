@@ -11,7 +11,6 @@ import type {
   IPedidoInternacion,
 } from "@/types/pedidos";
 import { getErrorMessage } from "@/utils/getErrorMessage";
-import type { IPacienteGuardia } from "@/types/pacientes";
 
 const REGLAS_DETECCION = [
   { regex: /t[oó]rax|pecho/i, match: "TORAX" },

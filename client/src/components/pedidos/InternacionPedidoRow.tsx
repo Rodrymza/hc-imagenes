@@ -32,7 +32,7 @@ export const InternacionPedidoRow = ({
     item.comentario.toLocaleLowerCase().includes("realiz");
 
   return (
-    <tr className="hover:bg-emerald-50/60 transition-colors group border-b-8 border-slate-100 last:border-0">
+    <tr className="hover:bg-emerald-50/60 transition-colors group border-slate-100 last:border-0">
       {/* 1. FECHA */}
       <td className="px-6 py-4 whitespace-nowrap text-center align-middle">
         <div className="flex items-center justify-center gap-2">
@@ -150,8 +150,8 @@ export const InternacionPedidoRow = ({
                 }}
                 title={
                   isFinalizado
-                    ? "Marcar como finalizado"
-                    : "Marcar como pendiente"
+                    ? "Marcar como Pendiente"
+                    : "Marcar como Finalizado"
                 }
                 className={`
     flex items-center justify-center gap-2 

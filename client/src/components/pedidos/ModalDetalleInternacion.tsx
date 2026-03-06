@@ -48,7 +48,6 @@ export const ModalDetalleInternacion = ({
   } = useConsumos(pedidosMemo);
 
   const [coberturaSeleccionada, setCoberturaSeleccionada] = useState("");
-  const [dniBusqueda, setDniBusqueda] = useState(pedido.dni.toString());
   const estilo = getEstiloEstudio(pedido.tipoEstudio);
   const esUrgente = pedido.urgente === "SI";
   const ID_COBERTURA_PARTICULAR = "09999";
@@ -73,10 +72,10 @@ export const ModalDetalleInternacion = ({
   };
 
   useEffect(() => {
-    if (dniBusqueda.length >= 7) {
-      buscarPacienteInterno(dniBusqueda);
+    if (isOpen && pedido?.dni) {
+      buscarPacienteInterno(pedido.dni.toString());
     }
-  }, [dniBusqueda]);
+  }, [isOpen, pedido?.dni]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">

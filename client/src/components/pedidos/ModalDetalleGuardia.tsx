@@ -5,8 +5,6 @@ import {
   Calendar,
   Stethoscope,
   Activity, // Para Eco
-  Layers, // Para Tomografía
-  Image, // Para Rayos X
   FileText,
   CheckCircle2,
   AlertTriangle,

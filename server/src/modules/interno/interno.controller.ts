@@ -66,6 +66,15 @@ export const internoController = {
         numeroId,
         esHc,
       );
+
+      if (!paciente) {
+        // Le respondemos un 404 limpio al frontend.
+        // Al usar res.status().json(), evitamos que pase al manejador de errores global.
+        return res.status(404).json({
+          success: false,
+          message: "Paciente no registrado en el Sistema Interno",
+        });
+      }
       return res.json(paciente);
     } catch (error) {
       next(error);

@@ -102,7 +102,7 @@ export const apiInternoService = {
   async buscarPacienteInterno(
     numeroId: string,
     esHc: boolean = false,
-  ): Promise<IPacienteInterno> {
+  ): Promise<IPacienteInterno | null> {
     return ejecutarPeticionInterna("Buscar Paciente", async () => {
       const queryParam = esHc
         ? `Pacientes-Pacientes-Search1-pacienteid=${numeroId}`
@@ -124,10 +124,8 @@ export const apiInternoService = {
       let rowData = rawData?.Response?.Content?.Pacientes?.ResultSet?.Row;
 
       if (!rowData) {
-        throw new AppError(
-          "No se encontraron datos del paciente en la respuesta XML",
-          404,
-        );
+        console.info("Pacienteno registrado en el Sistema Interno");
+        return null;
       }
 
       // Manejo de duplicados (Array)

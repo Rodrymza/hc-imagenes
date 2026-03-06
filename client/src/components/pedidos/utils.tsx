@@ -1,12 +1,4 @@
-import {
-  Layers,
-  Activity,
-  Image,
-  Bed,
-  Brain,
-  Hospital,
-  Radiation,
-} from "lucide-react";
+import { Layers, Activity, Image, Bed, Brain, Radiation } from "lucide-react";
 import type { JSX } from "react";
 
 export interface EstiloEstudio {
@@ -54,7 +46,7 @@ export const getLugarEstilo = (lugar: string) => {
   const l = lugar.toLowerCase();
   if (l.includes("cama"))
     return {
-      bg: "bg-purple-200 text-purple-900 border-purple-300",
+      bg: "bg-yellow-200 text-yellow-900 border-yellow-300",
       icon: <Bed className="w-5 h-5 mr-2" />,
     };
   if (l.includes("tomó") || l.includes("tc"))

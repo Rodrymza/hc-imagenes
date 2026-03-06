@@ -18,7 +18,7 @@ import { useSearchParams } from "react-router-dom";
 import { useServicioGuardia } from "@/hooks/usePedidosGuardia";
 import { getEstiloEstudio } from "@/components/pedidos/utils";
 
-export default function ConsuomsPage() {
+export default function ConsumosPage() {
   const [sistema, setSistema] = useState("ambulatorio");
   const [coberturaId, setCoberturaId] = useState("");
   const [searchParams] = useSearchParams();
@@ -57,11 +57,6 @@ export default function ConsuomsPage() {
   }, [dniDesdeUrl, buscarPacienteInterno]);
 
   useEffect(() => {
-    console.log(
-      "DNI de búsqueda cambiado:",
-      dniBusqueda,
-      dniBusqueda.length < 7,
-    );
     if (dniBusqueda.length < 7) return;
 
     buscarPedidosPaciente(dniBusqueda);
@@ -159,8 +154,8 @@ export default function ConsuomsPage() {
               <div className="p-5 space-y-4">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">
-                      HC Interna
+                    <span className="text-sm font-bold text-slate-400 uppercase">
+                      Historia Clinica
                     </span>
                     <span className="font-bold text-slate-700">
                       {pacienteInterno?.idPaciente ||
@@ -168,11 +163,20 @@ export default function ConsuomsPage() {
                     </span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase">
+                    <span className="text-sm font-bold text-slate-400 uppercase">
                       Documento
                     </span>
                     <span className="font-bold text-slate-700">
                       {pacienteInterno?.dni || pacienteGuardia?.dni}
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-sm font-bold text-slate-400 uppercase">
+                      Fecha Nacimiento
+                    </span>
+                    <span className="font-bold text-slate-700">
+                      {pacienteInterno?.fechaNacimientoString ||
+                        pacienteGuardia?.fechaNacimientoString}
                     </span>
                   </div>
                 </div>

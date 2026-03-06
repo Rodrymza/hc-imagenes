@@ -1,13 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import {
   X,
-  Plus,
   Zap,
   Search,
   Save,
   Loader2,
   AlertCircle,
-  Bone,
   Radiation,
 } from "lucide-react";
 import type { IConsumoItem } from "@/types/interno";
@@ -34,6 +32,7 @@ export const PanelConsumos = ({
   // Estado local para el buscador manual
   const [busqueda, setBusqueda] = useState("");
   const [mostrarResultados, setMostrarResultados] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   // Cerrar buscador si clic fuera
@@ -65,6 +64,32 @@ export const PanelConsumos = ({
           .slice(0, 5)
       : [];
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!mostrarResultados || resultados.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault(); // Evita que el cursor se mueva en el input
+      setSelectedIndex((prev) =>
+        prev < resultados.length - 1 ? prev + 1 : prev,
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (selectedIndex >= 0 && resultados[selectedIndex]) {
+        // Si hay uno resaltado, lo agregamos
+        onAdd(resultados[selectedIndex]);
+        setBusqueda("");
+        setMostrarResultados(false);
+        setSelectedIndex(-1);
+      }
+    } else if (e.key === "Escape") {
+      setMostrarResultados(false);
+      setSelectedIndex(-1);
+    }
+  };
+
   return (
     <div className="bg-indigo-50/50 border-t-4 border-indigo-500 p-4 shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] z-20 relative">
       <div className="flex flex-col gap-4">
@@ -80,13 +105,16 @@ export const PanelConsumos = ({
             <div className="relative">
               <input
                 type="text"
+                autoComplete="off"
                 placeholder="Agregar prestación manual..."
                 className="w-full pl-8 pr-3 py-1.5 text-base border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
                 value={busqueda}
                 onChange={(e) => {
                   setBusqueda(e.target.value);
                   setMostrarResultados(true);
+                  setSelectedIndex(0);
                 }}
+                onKeyDown={handleKeyDown}
                 onFocus={() => setMostrarResultados(true)}
                 disabled={disabled}
               />
@@ -101,15 +129,21 @@ export const PanelConsumos = ({
                     No se encontraron resultados
                   </div>
                 ) : (
-                  resultados.map((res) => (
+                  resultados.map((res, index) => (
                     <button
                       key={res.id}
                       onClick={() => {
                         onAdd(res);
                         setBusqueda("");
                         setMostrarResultados(false);
+                        setSelectedIndex(-1);
                       }}
-                      className="w-full text-left px-3 py-2 text-sm hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 transition-colors border-b border-slate-50 last:border-0"
+                      className={`w-full text-left px-3 py-2 text-sm transition-colors border-b border-slate-50 last:border-0
+                        ${
+                          index === selectedIndex
+                            ? "bg-indigo-600 text-white" // Resaltado
+                            : "hover:bg-indigo-50 text-slate-700" // Normal
+                        }`}
                     >
                       {res.descripcion}
                     </button>

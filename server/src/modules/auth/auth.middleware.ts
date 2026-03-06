@@ -18,7 +18,7 @@ export interface AuthRequest extends Request {
 }
 
 export const protegerRuta = (
-  req: AuthRequest, // Usamos nuestra interfaz extendida
+  req: Request, // Usamos nuestra interfaz extendida
   res: Response,
   next: NextFunction,
 ) => {

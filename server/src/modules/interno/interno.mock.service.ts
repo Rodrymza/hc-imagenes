@@ -6,7 +6,7 @@ import {
   IResultadoLote,
 } from "./interno.types";
 import { AppError } from "../../errors/AppError";
-import datosPaciente from "../../mocks/pacienteInterno.json" with { type: "json" };
+import datosPaciente from "../../mocks/pacienteInterno.json";
 
 export const mockInternoService: InternoService = {
   async crearLoteConsumos(idPaciente, idCobertura, items, sistema) {

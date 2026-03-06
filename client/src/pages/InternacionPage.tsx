@@ -174,7 +174,7 @@ export default function InternacionPage() {
                   <th className="px-6 py-4 font-bold text-center">Acciones</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-100">
+              <tbody className="divide-y divide-slate-100 [&>tr:nth-child(even)]:bg-slate-200">
                 {isLoading ? (
                   <tr>
                     <td colSpan={5} className="py-20">

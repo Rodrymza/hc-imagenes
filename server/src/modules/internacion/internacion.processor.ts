@@ -1,9 +1,9 @@
-import { apiInternacionService } from "./internacion.api.service";
 import { IPedidoInternacion } from "./internacion.types";
 import { enviarNotificacionTelegram } from "../telegram/telegram.service";
 import { internacionService } from "./utils/internacion.factory";
 
 const CONFIG = {
+  ENVIOS_DESACTIVADOS: true,
   HORA_INICIO: 8,
   HORA_FIN: 14,
   LUGAR_CRITICO: "en cama",
@@ -16,7 +16,9 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 // --- LÓGICA DE NEGOCIO ---
 
 const esParaNotificar = (estudio: IPedidoInternacion): boolean => {
-  // Regla 1: Lugar (Case insensitive)
+  if (CONFIG.ENVIOS_DESACTIVADOS) {
+    return false;
+  }
   const lugarActual = estudio.lugar?.toLowerCase() || "";
   if (!lugarActual.includes(CONFIG.LUGAR_CRITICO)) return false;
 
@@ -39,7 +41,7 @@ const crearComentarioAutomatico = (estudio: IPedidoInternacion): string => {
   const lugar = estudio.lugar || "";
 
   if (tipoLower.includes("tomogra")) return "TAC";
-  if (tipoLower.includes("radiogra")) return `RX ${lugar} automatico`;
+  if (tipoLower.includes("radiogra")) return `RX ${lugar}`;
   if (tipoLower.includes("eco")) return `ECO ${lugar}`;
 
   return "No especificado";
@@ -87,9 +89,9 @@ const enviarConRetry = async (mensaje: string) => {
 export const procesarEstudiosBackend = async (
   estudios: IPedidoInternacion[],
 ) => {
-  if (!estudios) {
+  if (!estudios || estudios.length === 0) {
     console.error("No hay estudios para procesar");
-    return;
+    return estudios; // Devolvemos el array vacío para no romper el frontend
   }
 
   let mensajesAEnviar = [];
@@ -100,7 +102,6 @@ export const procesarEstudiosBackend = async (
     if (tieneComentario) continue;
 
     const comentarioAuto = crearComentarioAutomatico(estudio);
-    console.log("Comentario creado:", comentarioAuto);
 
     if (esParaNotificar(estudio)) {
       console.log(
@@ -108,26 +109,57 @@ export const procesarEstudiosBackend = async (
       );
       try {
         const mensajeTelegram = armarMensajeTelegram(estudio);
-        await enviarConRetry(mensajeTelegram);
         mensajesAEnviar.push(mensajeTelegram);
-        //await sleep(1000);
       } catch (error: any) {
-        console.error(error.message);
+        console.error("Error armando mensaje Telegram:", error.message);
       }
     }
 
     const id_movimiento =
       estudio.idMovimiento === null ? "null" : estudio.idMovimiento;
 
-    //Activar en producción
+    // 1. Envío de comentario en segundo plano
+    internacionService
+      .guardarComentario(
+        estudio.idEstudio,
+        id_movimiento,
+        comentarioAuto,
+        estudio.nota,
+      )
+      .then(() => console.log("Comentario automatico enviado correctamente"))
+      .catch((error: any) => {
+        console.warn(
+          `⚠️ Error guardando comentario (Estudio ${estudio.idEstudio}): El hospital rechazó el dato o hubo un fallo de red.`,
+        );
+      });
+  }
 
-    await internacionService.guardarComentario(
-      id_movimiento,
-      estudio.idEstudio,
-      comentarioAuto,
-      estudio.nota,
+  // 🔥 2. Envío de notificaciones en segundo plano AQUÍ
+  if (mensajesAEnviar.length > 0) {
+    enviarMensajesPendientes(mensajesAEnviar).catch((err) =>
+      console.error(
+        "Error enviando notificaciones Telegram en background:",
+        err,
+      ),
     );
   }
 
-  return { estudios, mensajesAEnviar };
+  return estudios;
+};
+
+export const enviarMensajesPendientes = async (mensajes: string[]) => {
+  console.log(
+    `🚀 Iniciando envío de ${mensajes.length} notificaciones en segundo plano...`,
+  );
+
+  for (const msj of mensajes) {
+    try {
+      await enviarConRetry(msj);
+
+      await new Promise((r) => setTimeout(r, 1000));
+    } catch (error) {
+      // Logueamos pero no cortamos el bucle, que siga con el siguiente mensaje
+      console.error("Fallo envío de mensaje individual:", error);
+    }
+  }
 };

@@ -1,7 +1,6 @@
 import { isAxiosError } from "axios";
 import { AppError } from "../../errors/AppError";
 import { guardiaApi } from "./guardia.api";
-import { getGuardiaToken } from "./guardia.auth.service";
 import {
   cleanDetallePedidoGuardia,
   cleanPacienteGuardia,
@@ -11,122 +10,145 @@ import {
   IDetallePedidoGuardia,
   IHsiPagedResponse,
   IHsiRawPedido,
-  IHsiSearchResult,
   IPedidoGuardia,
   IRawDetallePedido,
 } from "./guardia.types";
 import { GuardiaService } from "./guardia.service";
-
-const username = process.env.GUARDIA_USER!;
-const password = process.env.GUARDIA_PASS!;
+import { ejecutarPeticionInterna } from "../commonUtils";
+import { loginGuardiaAuth } from "./guardia.auth.service";
 
 export const apiGuardiaService: GuardiaService = {
   async obtenerPedidosGuardia(fecha?: string): Promise<IPedidoGuardia[]> {
-    const token = await getGuardiaToken(username, password);
-    const url = crearUrlPedidosGuardia(fecha);
+    return ejecutarPeticionInterna(
+      "Obtener Pedidos de Guardia",
+      async (forzar) => {
+        await loginGuardiaAuth(forzar);
+      },
+      async () => {
+        const url = crearUrlPedidosGuardia(fecha);
 
-    const response = await guardiaApi.get<IHsiPagedResponse<IHsiRawPedido>>(
-      url,
-      {
-        headers: {
-          Cookie: `token=${token}`,
-          Referer: `https://hsi.mendoza.gov.ar/institucion/108/imagenes/lista-trabajos/`,
-        },
+        const response = await guardiaApi.get<IHsiPagedResponse<IHsiRawPedido>>(
+          url,
+          {
+            headers: {
+              Referer: `https://hsi.mendoza.gov.ar/institucion/108/imagenes/lista-trabajos/`,
+            },
+          },
+        );
+
+        const pedidos = response.data.content;
+        const pedidosLimpios: IPedidoGuardia[] = pedidos.map((pedido) =>
+          cleanPedidoListaHsi(pedido),
+        );
+
+        return [
+          ...pedidosLimpios.sort(
+            (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
+          ),
+        ];
       },
     );
-
-    const pedidos = response.data.content;
-    const pedidosLimpios: IPedidoGuardia[] = pedidos.map((pedido) =>
-      cleanPedidoListaHsi(pedido),
-    );
-
-    return [
-      ...pedidosLimpios.sort(
-        (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
-      ),
-    ];
   },
 
   async obtenerPedidosPaciente(
     idPaciente: string,
   ): Promise<IDetallePedidoGuardia[]> {
-    const token = await getGuardiaToken(username, password);
-    const url = `/api/institutions/108/patient/${idPaciente}/service-requests/studyOrder`;
-
-    const response = await guardiaApi.get<IRawDetallePedido[]>(url, {
-      headers: {
-        Cookie: `token=${token}`,
+    return ejecutarPeticionInterna(
+      `Obtener Pedidos de Guaardia de paciente ${idPaciente}`,
+      async (forzar) => {
+        await loginGuardiaAuth(forzar);
       },
-    });
+      async () => {
+        const url = `/api/institutions/108/patient/${idPaciente}/service-requests/studyOrder`;
 
-    const pedidosLimpios = response.data.map((pedido) =>
-      cleanDetallePedidoGuardia(pedido),
+        const response = await guardiaApi.get<IRawDetallePedido[]>(url);
+
+        const pedidosLimpios = response.data.map((pedido) =>
+          cleanDetallePedidoGuardia(pedido),
+        );
+
+        pedidosLimpios.sort((a, b) => {
+          if (a.realizado !== b.realizado) {
+            return a.realizado ? 1 : -1; // false primero
+          }
+
+          return parseFecha(b.fecha).getTime() - parseFecha(a.fecha).getTime();
+        });
+        return pedidosLimpios;
+      },
     );
-
-    pedidosLimpios.sort((a, b) => {
-      if (a.realizado !== b.realizado) {
-        return a.realizado ? 1 : -1; // false primero
-      }
-
-      return parseFecha(b.fecha).getTime() - parseFecha(a.fecha).getTime();
-    });
-    return pedidosLimpios;
   },
 
   async finalizarPedido(idEstudio: string, idPatient: string): Promise<string> {
-    try {
-      const token = await getGuardiaToken(username, password);
-      const url = `https://hsi.mendoza.gov.ar/api/institutions/108/patient/${idPatient}/service-requests/${idEstudio}/complete`;
-      const body = { observations: "Realizado" };
+    return ejecutarPeticionInterna(
+      `Finalizando pedido de Guardia ${idEstudio}, Paciente ${idPatient}`,
+      async (forzar) => {
+        await loginGuardiaAuth(forzar);
+      },
+      async () => {
+        try {
+          const url = `https://hsi.mendoza.gov.ar/api/institutions/108/patient/${idPatient}/service-requests/${idEstudio}/complete`;
+          const body = { observations: "Realizado" };
 
-      const config = {
-        headers: {
-          Origin: "https://hsi.mendoza.gov.ar",
-          Referer: `https://hsi.mendoza.gov.ar/institucion/108/paciente/${idPatient}/estudios`,
-          Cookie: `token=${token}`,
-        },
-      };
+          const config = {
+            headers: {
+              Origin: "https://hsi.mendoza.gov.ar",
+              Referer: `https://hsi.mendoza.gov.ar/institucion/108/paciente/${idPatient}/estudios`,
+            },
+          };
 
-      const response = await guardiaApi.put(url, body, config);
+          const response = await guardiaApi.put(url, body, config);
 
-      return response.data;
-    } catch (error) {
-      if (isAxiosError(error) && error.response) {
-        const data = error.response.data;
+          return response.data;
+        } catch (error) {
+          if (isAxiosError(error) && error.response) {
+            const data = error.response.data;
 
-        const hsiMessage =
-          Array.isArray(data.errors) && data.errors.length > 0
-            ? data.errors[0]
-            : "No se puede completar el estudio en este momento.";
+            const hsiMessage =
+              Array.isArray(data.errors) && data.errors.length > 0
+                ? data.errors[0]
+                : "No se puede completar el estudio en este momento.";
 
-        throw new AppError("Error al finalizar el estudio", 400, hsiMessage);
-      }
+            throw new AppError(
+              "Error al finalizar el estudio",
+              400,
+              hsiMessage,
+            );
+          }
 
-      throw error;
-    }
+          throw error;
+        }
+      },
+    );
   },
 
   async buscarDatosPacienteGuardia(dni: string) {
-    const token = await getGuardiaToken(username, password);
-    const filter = {
-      identificationNumber: dni,
-      identificationTypeId: 1,
-    };
-
-    const response = await guardiaApi.get("/api/patient/optionalfilter", {
-      params: {
-        searchFilterStr: JSON.stringify(filter), // Axios lo codificará automáticamente
-        pageSize: 5,
-        pageNumber: 0,
+    return ejecutarPeticionInterna(
+      `Buscando datos en Guardia para Paciente DNI: ${dni}`,
+      async (forzar) => {
+        await loginGuardiaAuth(forzar);
       },
-      headers: {
-        Referer: "https://hsi.mendoza.gov.ar/institucion/108/ambulatoria",
-        Cookie: `token=${token}`,
-      },
-    });
+      async () => {
+        const filter = {
+          identificationNumber: dni,
+          identificationTypeId: 1,
+        };
 
-    const rawPatient = response.data.content[0];
-    return cleanPacienteGuardia(rawPatient);
+        const response = await guardiaApi.get("/api/patient/optionalfilter", {
+          params: {
+            searchFilterStr: JSON.stringify(filter), // Axios lo codificará automáticamente
+            pageSize: 5,
+            pageNumber: 0,
+          },
+          headers: {
+            Referer: "https://hsi.mendoza.gov.ar/institucion/108/ambulatoria",
+          },
+        });
+
+        const rawPatient = response.data.content[0];
+        return cleanPacienteGuardia(rawPatient);
+      },
+    );
   },
 };
 

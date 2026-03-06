@@ -1,25 +1,24 @@
 import { NextFunction, Request, Response } from "express";
-import { getGuardiaToken } from "./guardia.auth.service";
-import { IloginRequest, ILoginResponse } from "../../types/login.types";
 import { IPedidoGuardia } from "./guardia.types";
 import { AppError } from "../../errors/AppError";
 import { guardiaService } from "./utils/guardia.factory";
+import { loginGuardiaAuth } from "./guardia.auth.service";
 
 export const guardiaControler = {
-  async loginGuardia(
-    req: Request<IloginRequest>,
-    res: Response<ILoginResponse>,
-    next: NextFunction,
-  ) {
+  async loginGuardia(req: Request, res: Response, next: NextFunction) {
     try {
-      //const { username, password } = req.body;
-      const username = process.env.GUARDIA_USER!;
-      const password = process.env.GUARDIA_PASS!;
-      const token = await getGuardiaToken(username, password, false);
+      const login = await loginGuardiaAuth(false);
+
+      if (!login) {
+        throw new AppError(
+          "Error al iniciar sesión en Guardia",
+          500,
+          "No se pudo iniciar sesión en el sistema de Guardia",
+        );
+      }
       return res.json({
-        token: token,
         success: true,
-        message: "Token obtenido con éxito",
+        message: "Sesion iniciada correctamente en",
       });
     } catch (error) {
       next(error);

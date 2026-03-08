@@ -14,8 +14,8 @@ export const getEstiloEstudio = (tipo: string = ""): EstiloEstudio => {
 
   if (t.includes("tomo") || t.includes("tc")) {
     return {
-      bg: "bg-blue-50",
-      border: "border-blue-200",
+      bg: "bg-blue-200",
+      border: "border-blue-400",
       text: "text-blue-800",
       badge: "bg-blue-600 text-white",
       icon: <Layers className="w-5 h-5" />,
@@ -24,8 +24,8 @@ export const getEstiloEstudio = (tipo: string = ""): EstiloEstudio => {
 
   if (t.includes("eco") || t.includes("doppler")) {
     return {
-      bg: "bg-purple-50",
-      border: "border-purple-200",
+      bg: "bg-purple-200",
+      border: "border-purple-400",
       text: "text-purple-800",
       badge: "bg-purple-600 text-white",
       icon: <Activity className="w-5 h-5" />,
@@ -34,8 +34,8 @@ export const getEstiloEstudio = (tipo: string = ""): EstiloEstudio => {
 
   // Default (Radiografía / Otros)
   return {
-    bg: "bg-red-50",
-    border: "border-red-200",
+    bg: "bg-red-200",
+    border: "border-red-400",
     text: "text-red-800",
     badge: "bg-red-600 text-white",
     icon: <Image className="w-5 h-5" />,

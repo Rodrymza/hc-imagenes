@@ -49,17 +49,14 @@ export const InternacionPedidoRow = ({
       {/* 2. PACIENTE */}
       <td className="px-6 py-4 text-center align-middle">
         <div className="flex flex-col items-center">
-          <span className="font-black text-slate-800 text-lg group-hover:text-emerald-800 transition-colors">
-            {" "}
+          <span className="font-black text-slate-800 pb-2 md:tracking-tight text-lg group-hover:text-emerald-800 transition-colors">
             {item.apellidos}, {capitalize(item.nombres)}
           </span>
           <div className="flex items-center gap-2 mt-1 text-sm text-slate-500 font-medium">
             {" "}
-            <span className="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+            <span className="tracking-wider bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
               DNI: {item.dniString}
             </span>
-            <span className="text-slate-300">|</span>
-            <span>{item.fechaNacimiento}</span>
           </div>
         </div>
       </td>

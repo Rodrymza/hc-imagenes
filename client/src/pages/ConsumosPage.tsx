@@ -341,19 +341,10 @@ export default function ConsumosPage() {
                 <div className="py-10 flex flex-col items-center justify-center text-slate-400 opacity-60">
                   <ClipboardList className="w-12 h-12 mb-2 stroke-1" />
                   <p className="text-sm font-medium">
-                    El paciente no registra pedidos de guardia para el día de
-                    hoy.
+                    El paciente no registra pedidos de guardia.
                   </p>
                 </div>
               )}
-            </div>
-
-            {/* Footer preventivo */}
-            <div className="px-6 py-2 bg-amber-100/50 border-t border-amber-200">
-              <p className="text-[10px] text-amber-800 font-medium italic">
-                * Al cargar un pedido de guardia, el sistema marcará
-                automáticamente la orden como "Procesada" en el nodo médico.
-              </p>
             </div>
           </div>
         </div>

@@ -166,14 +166,16 @@ export default function PedidosGuardiaPage() {
           </div>
 
           {/* TABLA */}
-          <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-red-100">
+          <div className="bg-white rounded-xl shadow-2xl overflow-x-auto border border-red-100">
             <table className="w-full text-left border-collapse">
               <thead className="bg-red-900 text-white uppercase text-xs tracking-wider">
                 <tr>
                   <th className="px-6 py-4 font-bold text-center">Fecha</th>
                   <th className="px-6 py-4 font-bold text-center">Paciente</th>
                   <th className="px-6 py-4 font-bold text-center">Estudio</th>
-                  <th className="px-6 py-4 font-bold text-center">Ubicación</th>
+                  <th className="px-6 py-4 font-bold text-center hidden md:table-cell">
+                    Ubicación
+                  </th>
                   <th className="px-6 py-4 font-bold text-center">Acciones</th>
                 </tr>
               </thead>

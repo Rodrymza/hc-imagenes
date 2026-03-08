@@ -8,7 +8,7 @@ import InternacionPage from "./pages/InternacionPage"; // 2. La página nueva
 import { ProtectedRoute } from "./components/protectedRoute";
 import { MainLayout } from "./components/layouts/MainLayout";
 import PedidosGuardiaPage from "./pages/PedidosGuardiaPage";
-import ConsuomsPage from "./pages/ConsumosPage";
+import ConsumosPage from "./pages/ConsumosPage";
 import BuscarPaciente from "./pages/BuscarPaciente";
 
 // Dashboard temporal (puedes borrarlo si ya vas a usar Internacion como home)
@@ -22,7 +22,14 @@ const Dashboard = () => (
 function App() {
   return (
     <AuthProvider>
-      <Toaster position="top-center" richColors />
+      <Toaster
+        position="top-center"
+        richColors
+        closeButton
+        style={{
+          top: "80px", // Empuja todos los toasts hacia abajo 80px
+        }}
+      />
 
       <BrowserRouter>
         <Routes>
@@ -37,8 +44,17 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/internacion" element={<InternacionPage />} />
               <Route path="/guardia" element={<PedidosGuardiaPage />} />
-              <Route path="/consumos" element={<ConsuomsPage />} />
+              <Route path="/consumos" element={<ConsumosPage />} />
               <Route path="/buscar-paciente" element={<BuscarPaciente />} />
+              <Route
+                path="/pacientes-internacion"
+                element={
+                  <div style={{ padding: "20px", textAlign: "center" }}>
+                    <h1 style={{ color: "#666" }}>Pagina en Desarrollo</h1>
+                    <p>Próximamente: Gestión de pacientes internados.</p>
+                  </div>
+                }
+              />
               {/* Aquí agregarás guardia, configuración, etc. */}
             </Route>
           </Route>

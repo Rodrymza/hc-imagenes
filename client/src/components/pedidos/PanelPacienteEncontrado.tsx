@@ -13,41 +13,44 @@ export const PanelPacienteEncontrado = ({
   onChangeCobertura,
 }: PanelPacienteEncontradoProps) => {
   return (
-    <div className="bg-emerald-50 border-t-4 border-emerald-500 p-1 shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        {/* LADO IZQUIERDO: Datos del Paciente */}
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-emerald-100 rounded-full text-emerald-700 shrink-0">
+    <div className="bg-emerald-50/50 border border-emerald-100 p-5 rounded-2xl animate-in fade-in slide-in-from-bottom-2 duration-300">
+      <div className="flex flex-col gap-5">
+        {/* LADO SUPERIOR: Datos del Paciente */}
+        <div className="flex items-center gap-4">
+          <div className="p-3 bg-emerald-100 rounded-xl text-emerald-600 shrink-0 shadow-sm border border-emerald-200/50">
             <UserCheck className="w-6 h-6" />
           </div>
-          <div className="flex items-center gap-4">
-            <h4 className="text-sm font-black text-emerald-900 uppercase tracking-wide">
-              Paciente Vinculado:
+          <div>
+            <h4 className="text-[10px] font-black text-emerald-600/80 uppercase tracking-widest mb-0.5">
+              Paciente Vinculado
             </h4>
-            <div className="flex items-center gap-4 text-xs text-emerald-800 font-medium">
-              <span className="font-bold text-emerald-950 text-sm">
+            <div className="flex flex-col">
+              <span className="font-black text-emerald-950 text-base leading-tight">
                 {paciente.apellidos}, {paciente.nombres}
               </span>
-              <span className="opacity-80">DNI: {paciente.idPaciente}</span>
+              <span className="text-xs font-bold text-emerald-700/70 mt-0.5">
+                DNI: {paciente.idPaciente}
+              </span>
             </div>
           </div>
         </div>
 
-        {/* LADO DERECHO: Selector de Obra Social */}
-        <div className="w-full sm:w-auto flex items-center gap-3">
-          <label className="text-sm font-bold text-emerald-700 uppercase flex items-center gap-1">
-            <CreditCard className="w-3 h-3" />
-            Cobertura:
+        <div className="w-full h-px bg-emerald-100"></div>
+
+        {/* LADO INFERIOR: Selector de Obra Social */}
+        <div className="flex flex-col gap-2">
+          <label className="text-[11px] font-black text-emerald-700 uppercase flex items-center gap-1.5 tracking-widest">
+            <CreditCard className="w-4 h-4" />
+            Cobertura a Imputar
           </label>
 
-          <div className="relative">
-            <Building2 className="absolute left-2.5 top-2 w-4 h-4 text-emerald-600 pointer-events-none" />
+          <div className="relative w-full">
+            <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-emerald-500 pointer-events-none" />
             <select
               value={idCoberturaSeleccionada}
               onChange={(e) => onChangeCobertura(e.target.value)}
-              className="w-full sm:w-64 pl-9 pr-8 py-1.5 text-sm bg-white border border-emerald-300 text-emerald-900 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none shadow-sm cursor-pointer font-medium appearance-none"
+              className="w-full pl-10 pr-10 py-3 text-sm bg-white border-2 border-emerald-100 text-emerald-900 rounded-xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 outline-none shadow-sm cursor-pointer font-bold appearance-none transition-all hover:border-emerald-200"
             >
-              {/* Opción por defecto o mapeo de coberturas */}
               {paciente.coberturas && paciente.coberturas.length > 0 ? (
                 paciente.coberturas.map((cob) => (
                   <option key={cob.idCobertura} value={cob.idCobertura}>
@@ -55,12 +58,11 @@ export const PanelPacienteEncontrado = ({
                   </option>
                 ))
               ) : (
-                <option value="09999"> PACIENTES PARTICULAR</option>
+                <option value="09999">PACIENTE PARTICULAR</option>
               )}
             </select>
 
-            {/* Flechita custom para el select */}
-            <div className="absolute right-2 top-2 pointer-events-none">
+            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none bg-emerald-50 p-1 rounded-md">
               <svg
                 className="w-4 h-4 text-emerald-600"
                 fill="none"
@@ -70,7 +72,7 @@ export const PanelPacienteEncontrado = ({
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth="2"
+                  strokeWidth="2.5"
                   d="M19 9l-7 7-7-7"
                 ></path>
               </svg>

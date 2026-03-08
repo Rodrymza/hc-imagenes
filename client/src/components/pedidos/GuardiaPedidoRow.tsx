@@ -84,12 +84,9 @@ export const GuardiaPedidoRow = ({
             {item.apellido}, {capitalize(item.nombre)}
           </span>
           <div className="flex items-center gap-2 mt-1 text-sm text-slate-500 font-medium">
-            <span className="bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+            <span className="tracking-wider bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
               DNI: {item.dni}
             </span>
-            <span className="text-slate-300">|</span>
-            {/* Usamos fechaNacimientoString o calculamos algo con 'edad' si prefieres */}
-            <span>{item.edad} Años</span>
           </div>
         </div>
       </td>
@@ -112,7 +109,7 @@ export const GuardiaPedidoRow = ({
       </td>
 
       {/* 4. UBICACIÓN (Guardia usa 'ubicacion' en vez de sala/cama) */}
-      <td className="px-6 py-4 align-middle text-center">
+      <td className="px-6 py-4 align-middle text-center hidden md:table-cell">
         <div className="flex flex-col items-center">
           <div
             /* Añadimos max-w y whitespace-normal */

@@ -1,7 +1,10 @@
 // internacion.controller.ts
 import { Request, Response, NextFunction } from "express";
 import { internacionService } from "./utils/internacion.factory";
-import { procesarEstudiosBackend } from "./internacion.processor";
+import {
+  enviarMensajesPendientes,
+  procesarEstudiosBackend,
+} from "./internacion.processor";
 
 export const internacionController = {
   async obtenerPedidosInternacion(
@@ -17,8 +20,7 @@ export const internacionController = {
       );
       const pedidosProcesados = await procesarEstudiosBackend(pedidos);
 
-      console.log("Mensajes para enviar:", pedidosProcesados?.mensajesAEnviar);
-      res.json(pedidosProcesados?.estudios);
+      res.json(pedidosProcesados);
     } catch (error) {
       next(error);
     }

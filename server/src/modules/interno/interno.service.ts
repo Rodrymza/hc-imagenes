@@ -19,5 +19,5 @@ export interface InternoService {
   buscarPacienteInterno(
     numeroId: string,
     esHc: boolean,
-  ): Promise<IPacienteInterno>;
+  ): Promise<IPacienteInterno | null>;
 }

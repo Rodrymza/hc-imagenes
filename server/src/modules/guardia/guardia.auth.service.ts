@@ -1,77 +1,46 @@
-// guardia.auth.ts
+import { Cookie } from "tough-cookie";
 import { AppError } from "../../errors/AppError";
-import { guardiaApi } from "./guardia.api";
+import { cookieJarGuardia, guardiaApi } from "./guardia.api";
+const BASE_URL = "https://hsi.mendoza.gov.ar";
+const username = process.env.GUARDIA_USER;
+const password = process.env.GUARDIA_PASS;
 
-interface ITokenCache {
-  token: string;
-  timestamp: number;
-}
+export const tieneSesionActiva = async (): Promise<boolean> => {
+  const cookies = await cookieJarGuardia.getCookies(BASE_URL);
+  return cookies.length > 0;
+};
 
-// Map indexado por username
-const tokenCache = new Map<string, ITokenCache>();
-const TOKEN_TTL = 1000 * 60 * 60; // 60 min
+export const loginGuardiaAuth = async (forzarRelogueo: boolean = false) => {
+  try {
+    if (!forzarRelogueo && (await tieneSesionActiva())) return true;
 
-export async function getGuardiaToken(
-  username: string,
-  password: string,
-  forceRefresh: boolean = false
-): Promise<string> {
-  const userCache = tokenCache.get(username);
+    if (forzarRelogueo) await cookieJarGuardia.removeAllCookies();
 
-  if (
-    !forceRefresh &&
-    userCache &&
-    Date.now() - userCache.timestamp < TOKEN_TTL
-  ) {
-    return userCache.token;
-  }
+    const response = await guardiaApi.post("api/auth", { username, password });
 
-  // 2. Petición a HSI (Usando Generic para evitar errores de TS en .data)
-  interface IHsiResponse {
-    token?: string;
-    access_token?: string;
-    authToken?: string;
-  }
+    const token = response.data.token || response.data.access_token;
 
-  const response = await guardiaApi.post<IHsiResponse>(
-    "api/auth",
-    { username, password },
-    {
-      headers: {
-        Origin: "https://hsi.mendoza.gov.ar",
-        Referer: "https://hsi.mendoza.gov.ar/auth/login",
-        "Content-Type": "application/json",
-      },
+    if (token) {
+      // Crear la cookie y la guardarla en el Jar manualmente
+      const cookie = new Cookie({
+        key: "token",
+        value: token,
+        domain: "hsi.mendoza.gov.ar",
+        httpOnly: true,
+        secure: true,
+      });
+
+      await cookieJarGuardia.setCookie(cookie, "https://hsi.mendoza.gov.ar");
+      console.log("✅ Cookie 'token' inyectada en el Jar");
     }
-  );
 
-  // 3. Manejo de errores
-  if (response.status !== 200 && response.status !== 201) {
+    return true;
+  } catch (error: any) {
+    if (error instanceof AppError) throw error;
     throw new AppError(
-      "Error en API Guardia",
-      response.status,
-      response.statusText
-    );
-  }
-
-  const token =
-    response.data.token ||
-    response.data.access_token ||
-    response.data.authToken;
-
-  if (!token) {
-    throw new AppError(
-      "Error al obtener el token",
+      "No se pudo iniciar sesion en Guardia",
       500,
-      "La respuesta de HSI no contiene un token válido"
+      error.message || "Error de login en Guardia",
     );
   }
-
-  // 4. Guardar en caché bajo el nombre de este usuario
-  tokenCache.set(username, {
-    token,
-    timestamp: Date.now(),
-  });
-
-  return token;
-}
+};

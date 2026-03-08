@@ -2,9 +2,15 @@ import type { IPacienteGuardia } from "@/types/pacientes";
 import type { IDetallePedidoGuardia, IPedidoGuardia } from "@/types/pedidos";
 import axios from "axios";
 
+axios.defaults.baseURL = import.meta.env.PROD
+  ? `http://${window.location.hostname}:3000`
+  : "";
+
+axios.defaults.withCredentials = true;
+
 export const GuardiaService = {
   loginGuardia: async () => {
-    const res = await axios.post("api/guardia/login");
+    const res = await axios.post("/api/guardia/login");
     return res.data;
   },
 

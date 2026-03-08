@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Sistema de gestión e integración para el área de **Diagnóstico por Imágenes** del Hospital Central.",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc",

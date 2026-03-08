@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { authService } from "./auth.service";
-import { protegerRuta } from "./auth.middleware";
 
 export const authController = {
   async login(req: Request, res: Response, next: NextFunction) {

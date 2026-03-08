@@ -7,7 +7,12 @@ import cookieParser from "cookie-parser";
 const app = express();
 
 // Middlewares básicos
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true, // Esto es OBLIGATORIO porque usamos cookies/sesiones
+  }),
+);
 app.use(express.json());
 app.use(cookieParser()); // <--- Habilita req.cookies
 

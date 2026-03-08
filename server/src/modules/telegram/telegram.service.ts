@@ -1,8 +1,6 @@
 const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-console.log("variables telegram:", TELEGRAM_TOKEN, CHAT_ID);
-
 export const enviarNotificacionTelegram = async (mensaje: string) => {
   const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 

@@ -11,7 +11,6 @@ import type {
   IPedidoInternacion,
 } from "@/types/pedidos";
 import { getErrorMessage } from "@/utils/getErrorMessage";
-import type { IPacienteGuardia } from "@/types/pacientes";
 
 const REGLAS_DETECCION = [
   { regex: /t[oó]rax|pecho/i, match: "TORAX" },
@@ -49,8 +48,8 @@ export const useConsumos = (
   const [pacienteInterno, setPacienteInterno] =
     useState<IPacienteInterno | null>(null);
 
-  const [autoDeteccionRealizada, setAutoDeteccionRealizada] = useState(false);
-
+  const [firmaPedidosProcesados, setFirmaPedidosProcesados] =
+    useState<string>("");
   // 1. Cargar Catálogo
   useEffect(() => {
     const cargarPrestaciones = async () => {
@@ -67,21 +66,17 @@ export const useConsumos = (
     cargarPrestaciones();
   }, []);
 
-  //Reset cuando cambian los pedidos
-  useEffect(() => {
-    setExposiciones([]);
-    setAutoDeteccionRealizada(false);
-  }, [pedidos]);
-
   // 2. Lógica de Auto-Detección Corregida
   useEffect(() => {
     // Si no hay datos, no hacemos nada
-    if (
-      !pedidos ||
-      pedidos.length === 0 ||
-      prestaciones.length === 0 ||
-      autoDeteccionRealizada
-    ) {
+    if (!pedidos || pedidos.length === 0 || prestaciones.length === 0) {
+      return;
+    }
+
+    const firmaActual = pedidos.map((p) => p.idEstudio).join("-");
+
+    // Si ya procesamos exactamente esta misma lista de pedidos, no hacemos nada
+    if (firmaPedidosProcesados === firmaActual) {
       return;
     }
 
@@ -110,15 +105,12 @@ export const useConsumos = (
         textoSolicitud = pedido.pedido + " " + pedido.observaciones;
         if (pedido.realizado) return;
       }
+      textoSolicitud.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
       REGLAS_DETECCION.forEach((regla) => {
         if (regla.regex.test(textoSolicitud)) {
           const encontrado = prestaciones.find((item) => {
             const textoComparar = item.tag || item.descripcion;
-            // IMPORTANTE: El 'return' es obligatorio si usas { }
-            //console.log(
-            //  `Comparacion ${textoComparar.toUpperCase()} - ${regla.match} Resultado: ${textoComparar.toUpperCase().includes(regla.match)}`,
-            //);
             return textoComparar.toUpperCase().includes(regla.match);
           });
 
@@ -129,11 +121,8 @@ export const useConsumos = (
       });
     });
 
-    // Actualizamos el estado UNA SOLA VEZ al final del proceso
-    if (nuevasDetectadas.length > 0) {
-      setExposiciones(nuevasDetectadas);
-    }
-    setAutoDeteccionRealizada(true);
+    setExposiciones(nuevasDetectadas);
+    setFirmaPedidosProcesados(firmaActual);
   }, [pedidos, prestaciones]);
 
   // ... (Tus funciones de agregar/quitar/confirmar siguen igual)

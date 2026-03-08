@@ -1,7 +1,7 @@
 import { GuardiaService } from "./guardia.service";
-import pedidos from "../../mocks/pedidosGuardia.api.json" with { type: "json" };
-import paciente from "../../mocks/pacienteGuardia.json" with { type: "json" };
-import detallePedidos from "../../mocks/pedidosPacienteGuardia.json" with { type: "json" };
+import pedidos from "../../mocks/pedidosGuardia.api.json";
+import paciente from "../../mocks/pacienteGuardia.json";
+import detallePedidos from "../../mocks/pedidosPacienteGuardia.json";
 import {
   IDatosPacienteGuardia,
   IDetallePedidoGuardia,

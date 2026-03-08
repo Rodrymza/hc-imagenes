@@ -3,11 +3,11 @@ import {
   Search,
   User,
   ShieldCheck,
-  History,
   ExternalLink,
-  Printer,
   Fingerprint,
   Calendar,
+  Mars,
+  Venus,
 } from "lucide-react";
 import { useConsumos } from "@/hooks/useConsumos";
 import { Link } from "react-router-dom"; // O tu router
@@ -15,33 +15,57 @@ import { Link } from "react-router-dom"; // O tu router
 export default function BuscarPaciente() {
   const [dni, setDni] = useState("");
   const { pacienteInterno, buscarPacienteInterno, loadingPaciente } =
-    useConsumos([], dni);
+    useConsumos(null);
+
+  const handleBuscar = () => {
+    if (dni.trim()) {
+      buscarPacienteInterno(dni);
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 lg:p-8">
+    <div className="min-h-screen bg-slate-100 p-4 lg:p-8 transition-colors duration-500">
+      {" "}
       {/* 1. BARRA DE BÚSQUEDA SUPERIOR */}
       <div className="max-w-6xl mx-auto mb-8 text-center">
         <h1 className="text-3xl font-black text-slate-800 uppercase mb-6">
           Consulta Maestro de Pacientes
         </h1>
-        <div className="relative max-w-xl mx-auto">
-          <input
-            type="number"
-            placeholder="Ingrese DNI del paciente..."
-            className="w-full pl-12 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl shadow-sm text-xl font-bold focus:border-indigo-500 outline-none transition-all"
-            value={dni}
-            onChange={(e) => setDni(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && buscarPacienteInterno()}
-          />
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-6 h-6" />
+        <div className="relative max-w-2xl mx-auto flex gap-2">
+          <div className="relative flex-1">
+            <input
+              type="number"
+              placeholder="Ingrese DNI del paciente..."
+              className="w-full pl-12 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl shadow-sm text-xl font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all"
+              value={dni}
+              onChange={(e) => setDni(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleBuscar()}
+            />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-6 h-6" />
+          </div>
+
+          {/* BOTÓN DE BÚSQUEDA AGREGADO */}
+          <button
+            onClick={handleBuscar}
+            disabled={loadingPaciente || !dni}
+            className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white px-8 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-indigo-200 active:scale-95 flex items-center gap-2"
+          >
+            {loadingPaciente ? (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            ) : (
+              <>
+                <Search className="w-5 h-5" />
+                <span>Buscar</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
-
       {pacienteInterno ? (
         <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             {/* COLUMNA 1: FICHA PERSONAL */}
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-indigo-100 rounded-2xl border border-slate-200 shadow-sm overflow-hidden pb-3">
               <div className="p-1 bg-indigo-600"></div>
               <div className="p-6 text-center border-b border-slate-100">
                 <div className="w-24 h-24 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-300">
@@ -62,10 +86,23 @@ export default function BuscarPaciente() {
                 />
                 <InfoRow
                   label="Fecha Nacimiento"
-                  value={pacienteInterno.fechaNacimiento}
+                  value={pacienteInterno.fechaNacimientoString}
                   icon={<Calendar className="w-4 h-4" />}
                 />
-                <InfoRow label="Sexo" value={pacienteInterno.sexo} />
+                <InfoRow
+                  label="Sexo"
+                  value={pacienteInterno.sexo}
+                  icon={pacienteInterno.sexo == "M" ? <Mars /> : <Venus />}
+                />
+              </div>
+
+              <div className="lg:col-span-2 space-y-6 flex flex-col items-center">
+                <Link
+                  to={`/consumos?dni=${pacienteInterno.dni}`}
+                  className="flex items-center justify-center gap-3 p-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-md active:scale-95"
+                >
+                  <ExternalLink className="w-5 h-5" /> CARGAR NUEVO CONSUMO
+                </Link>
               </div>
             </div>
 
@@ -77,31 +114,21 @@ export default function BuscarPaciente() {
                   <ShieldCheck className="w-5 h-5 text-emerald-500" />{" "}
                   Coberturas Registradas
                 </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-3">
                   {pacienteInterno.coberturas.map((cob) => (
                     <div
                       key={cob.idCobertura}
-                      className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:border-emerald-200 transition-colors"
+                      className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:border-emerald-200 hover:bg-emerald-50 transition-colors"
                     >
-                      <p className="text-xs font-bold text-slate-400 uppercase">
-                        {cob.nombre}
-                      </p>
                       <p className="text-base font-bold text-slate-800">
-                        {cob.sigla || "Plan No Especificado"}
+                        {cob.sigla || "Sin Sigla"}
+                      </p>
+                      <p className="text-xs font-bold text-slate-400 uppercase">
+                        {cob.nombre || "Sin Descripcion"}
                       </p>
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* Bloque Accesos Rápidos */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <Link
-                  to={`/consumos?dni=${pacienteInterno.dni}`}
-                  className="flex items-center justify-center gap-3 p-4 bg-indigo-600 text-white rounded-2xl font-bold hover:bg-indigo-700 transition-all shadow-md active:scale-95"
-                >
-                  <ExternalLink className="w-5 h-5" /> CARGAR NUEVO CONSUMO
-                </Link>
               </div>
             </div>
           </div>
@@ -131,10 +158,10 @@ function InfoRow({
   icon?: any;
 }) {
   return (
-    <div className="flex items-center justify-between border-b border-slate-50 pb-2 last:border-0">
+    <div className="flex items-center justify-around border-b border-slate-50 pb-2 last:border-0">
       <div className="flex items-center gap-2 text-slate-500">
         {icon}
-        <span className="text-xs font-bold uppercase tracking-tight">
+        <span className="text-sm font-bold uppercase tracking-tight">
           {label}
         </span>
       </div>

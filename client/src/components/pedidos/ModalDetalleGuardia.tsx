@@ -4,7 +4,7 @@ import {
   MapPin,
   Calendar,
   Stethoscope,
-  Activity, // Para Eco
+  Activity,
   FileText,
   CheckCircle2,
   AlertTriangle,
@@ -12,7 +12,7 @@ import {
   Baby,
   Loader2,
   UserX,
-  RefreshCw, // Icono nacimiento
+  RefreshCw,
 } from "lucide-react";
 import type { IPedidoGuardia, IDetallePedidoGuardia } from "@/types/pedidos";
 import { capitalize, getEstiloEstudio } from "./utils";
@@ -49,6 +49,7 @@ export const ModalDetalleGuardia = ({
   const [coberturaSeleccionada, setCoberturaSeleccionada] = useState("");
   const [modalReady, setModalReady] = useState(false);
   const [dniBuscado, setDniBuscado] = useState("");
+
   const {
     exposiciones,
     agregarExposicion,
@@ -69,7 +70,7 @@ export const ModalDetalleGuardia = ({
     }
 
     const hclinica = pacienteInterno.idPaciente;
-    const coberturaPaciente = pacienteInterno.coberturas[0].idCobertura;
+    const coberturaPaciente = pacienteInterno.coberturas[0]?.idCobertura;
     const coberturaFinal =
       coberturaSeleccionada || coberturaPaciente || ID_COBERTURA_PARTICULAR;
 
@@ -88,7 +89,6 @@ export const ModalDetalleGuardia = ({
 
   useEffect(() => {
     if (!isOpen) return;
-
     if (paciente?.dni) {
       setDniPaciente(paciente.dni.toString());
     }
@@ -99,14 +99,12 @@ export const ModalDetalleGuardia = ({
       setModalReady(false);
       return;
     }
-
     // dejamos que el modal se pinte primero
     requestAnimationFrame(() => setModalReady(true));
   }, [isOpen]);
 
   useEffect(() => {
     if (!modalReady) return;
-
     if (dniPaciente.length >= 7 && dniPaciente !== dniBuscado) {
       setDniBuscado(dniPaciente);
       buscarPacienteInterno(dniPaciente);
@@ -114,27 +112,25 @@ export const ModalDetalleGuardia = ({
   }, [modalReady, dniPaciente, dniBuscado, buscarPacienteInterno]);
 
   if (!isOpen || !paciente) return null;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-4 sm:p-6 overflow-y-auto">
       <div
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
-
-      {/* CAMBIO: Aumentado ancho maximo a max-w-3xl */}
-      <div className="relative w-full h-full sm:h-screen max-w-7xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-        {/* --- 1. ENCABEZADO --- */}
-        <div className="bg-slate-50 border-b border-slate-200 p-6 flex-shrink-0 relative">
+      {/* Contenedor Principal del Modal */}
+      <div className="relative w-full max-w-7xl bg-white rounded-2xl shadow-2xl flex flex-col h-auto lg:h-[90vh] lg:overflow-hidden animate-in fade-in zoom-in-95 duration-200 mt-2 sm:mt-0">
+        {/* --- 1. ENCABEZADO SUPERIOR --- */}
+        <div className="flex flex-col items-center justify-around bg-slate-50 border-b border-slate-200 p-6 shadow-sm ">
           <button
             onClick={onClose}
             className="absolute top-5 right-5 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-full transition-colors"
           >
             <X className="w-8 h-8" />
           </button>
-
-          <div className="flex flex-col gap-2 pr-10">
+          <div className="flex flex-col gap-2 pr-10 ">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              {/* CAMBIO: Fuente más grande (text-3xl) */}
               <h2 className="text-3xl font-black text-slate-800 tracking-tight leading-none">
                 {paciente.apellido}, {capitalize(paciente.nombres)}
               </h2>
@@ -147,13 +143,12 @@ export const ModalDetalleGuardia = ({
               </div>
             </div>
 
-            {/* CAMBIO: Fuentes más grandes y agregado Fecha Nacimiento */}
-            <div className="flex flex-wrap items-center gap-6 text-lg text-slate-600 font-medium">
+            <div className="flex flex-wrap items-center gap-6 text-lg p-2 text-slate-600 font-medium mt-1 border-t border-slate-200">
               <div className="flex items-center gap-2">
                 <User className="w-5 h-5 text-slate-400" />
                 <span>
                   DNI:{" "}
-                  <span className="text-slate-900 font-bold">
+                  <span className="text-slate-900 font-bold tracking-wider">
                     {paciente.dniString}
                   </span>
                 </span>
@@ -168,7 +163,6 @@ export const ModalDetalleGuardia = ({
                   </span>
                 </span>
               </div>
-              {/* CAMBIO: Agregado Fecha Nacimiento String */}
               <div className="w-px h-5 bg-slate-300 hidden sm:block"></div>
               <div className="flex items-center gap-2 text-slate-500">
                 <Baby className="w-5 h-5 text-slate-400" />
@@ -182,222 +176,226 @@ export const ModalDetalleGuardia = ({
             </div>
           </div>
         </div>
+        {/* --- 2. CUERPO DIVIDIDO EN DOS COLUMNAS --- */}
+        <div className="flex-grow flex flex-col lg:flex-row overflow-hidden bg-slate-100/50">
+          {/* COLUMNA IZQUIERDA: Listado de Pedidos */}
+          <div className="w-full lg:w-[55%] xl:w-[60%] overflow-y-auto p-6 border-r border-slate-200">
+            <div className="mb-6 flex items-center gap-2 text-slate-400 uppercase tracking-widest font-black text-sm">
+              <FileText className="w-5 h-5 text-indigo-400" />
+              Estudios Solicitados
+            </div>
 
-        {/* --- 2. CUERPO --- */}
-        <div className="overflow-y-auto p-6 bg-slate-100/50 flex-grow">
-          {loadingPedidosPaciente ? (
-            <div className="flex flex-col items-center justify-center gap-4 py-10">
-              <div className="flex items-center gap-2 text-slate-500">
-                <Clock className="w-10 h-10 animate-spin" />
-                <span className="text-base font-medium">
+            {loadingPedidosPaciente ? (
+              <div className="flex flex-col items-center justify-center py-20 gap-4">
+                <Clock className="w-12 h-12 text-indigo-400 animate-spin" />
+                <span className="text-lg font-medium text-slate-500">
                   Cargando pedidos del paciente...
                 </span>
               </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
-                {[1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="h-48 bg-white rounded-xl border border-slate-200 animate-pulse"
-                  />
-                ))}
+            ) : pedidos.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-slate-400 opacity-60">
+                <FileText className="w-24 h-24 mb-4 stroke-1" />
+                <p className="text-xl font-medium">No hay pedidos pendientes</p>
               </div>
-            </div>
-          ) : pedidos.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-slate-400 opacity-60">
-              <FileText className="w-20 h-20 mb-4 stroke-1" />
-              <p className="text-xl font-medium">No hay pedidos pendientes</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-              {" "}
-              {/* Espaciado vertical mayor entre tarjetas */}
-              {pedidos.map((pedido) => {
-                const estaProcesando = procesando.has(
-                  pedido.idEstudio.toString(),
-                );
-                const estilo = getEstiloEstudio(pedido.tipoEstudio);
+            ) : (
+              <div className="grid grid-cols-1 gap-6">
+                {pedidos.map((pedido) => {
+                  const estaProcesando = procesando.has(
+                    pedido.idEstudio.toString(),
+                  );
+                  const estilo = getEstiloEstudio(pedido.tipoEstudio);
 
-                return (
-                  <div
-                    key={pedido.idEstudio}
-                    className={`bg-white rounded-xl border-2 shadow-sm overflow-hidden hover:shadow-md transition-shadow ${estilo.border}`}
-                  >
-                    {/* Header de Tarjeta (Con color según tipo) */}
+                  return (
                     <div
-                      className={`p-5 border-b ${estilo.border} ${estilo.bg} flex justify-between items-start gap-2`}
+                      key={pedido.idEstudio}
+                      className={`bg-white rounded-2xl border-2 shadow-sm overflow-hidden hover:shadow-md transition-all ${estilo.border}`}
                     >
-                      <div className="flex flex-col gap-2">
-                        {/* Badge Tipo Estudio Grande y Colorido */}
-                        <div
-                          className={`flex items-center gap-2 px-3 py-1 rounded-md w-fit text-xs font-black uppercase tracking-widest shadow-sm ${estilo.badge}`}
-                        >
-                          {estilo.icon}
-                          {pedido.tipoEstudio}
-                        </div>
-                        {/* CAMBIO: Título más grande (text-xl a text-2xl) */}
-                        <h3 className="text-2xl font-bold text-slate-800 leading-snug">
-                          {pedido.pedido}
-                        </h3>
-                      </div>
-
-                      <div className="text-right flex-shrink-0 flex flex-col items-end gap-2">
-                        <div className="flex items-center gap-1.5 text-sm text-slate-500 font-mono">
-                          <Clock className="w-4 h-4" />
-                          <span>{pedido.fecha}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-sm font-bold text-slate-700 bg-white/60 px-3 py-1.5 rounded border border-slate-200/50">
-                          <Stethoscope className="w-4 h-4 text-slate-500" />
-                          <span className="truncate max-w-[150px]">
-                            {pedido.doctor}
-                          </span>
+                      {/* Header Tarjeta */}
+                      <div
+                        className={`p-4 border-b ${estilo.border} ${estilo.bg}`}
+                      >
+                        <div className="flex justify-between items-center">
+                          <div
+                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest shadow-sm ${estilo.badge}`}
+                          >
+                            {estilo.icon}
+                            {pedido.tipoEstudio}
+                          </div>
+                          <div className="flex items-center gap-1.5 text-sm text-slate-600 font-bold bg-white/50 px-3 py-1 rounded-md">
+                            <Clock className="w-4 h-4" />
+                            <span>{pedido.fecha}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Cuerpo Clínico */}
-                    <div className="p-2 bg-amber-50/30 space-y-4">
-                      <div className="flex gap-4">
-                        <Activity className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
-                        <div className="w-full">
-                          <span className="text-xs font-bold text-amber-800 uppercase block mb-1 tracking-wider">
-                            Diagnóstico
+                      {/* Cuerpo Tarjeta */}
+                      <div className="p-3 space-y-3 bg-slate-50/50">
+                        <div>
+                          <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+                            Práctica Solicitada
                           </span>
-                          {/* CAMBIO: Texto diagnóstico más grande y legible */}
-                          <p className="text-lg text-slate-800 font-medium leading-relaxed border-l-4 border-amber-200 pl-3">
+                          <h3 className="text-xl text-center py-4 font-black text-slate-800 leading-snug">
+                            {pedido.pedido}
+                          </h3>
+                        </div>
+
+                        {pedido.observaciones && (
+                          <div className="flex items-center gap-3 bg-amber-50/50 p-1 rounded-xl border border-amber-100">
+                            {" "}
+                            <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                            <span className="w-32 text-xs text-center tracking-wide font-black text-amber-700/70 uppercase block">
+                              Observaciones:
+                            </span>
+                            <p className="text-sm font-medium text-slate-700">
+                              {pedido.observaciones}
+                            </p>
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-3 bg-amber-50/50 p-1 rounded-xl border border-amber-100">
+                          <Activity className="w-5 h-5 text-indigo-400 flex-shrink-0" />
+                          <span className="w-32 text-xs text-center font-black text-slate-400 uppercase tracking-wide">
+                            Diagnóstico:
+                          </span>
+                          <p className="text-base text-slate-800">
                             {pedido.diagnostico ||
                               "Sin diagnóstico especificado"}
                           </p>
                         </div>
                       </div>
 
-                      {pedido.observaciones &&
-                        pedido.observaciones !== "Sin observaciones" && (
-                          <div className="flex gap-4 pt-4 border-t border-amber-100/50">
-                            <AlertTriangle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-0.5" />
-                            <div>
-                              <span className="text-xs font-bold text-amber-800 uppercase block mb-1 tracking-wider">
-                                Observaciones
-                              </span>
-                              <p className="text-base text-slate-700 italic">
-                                {pedido.observaciones}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                    </div>
-
-                    {/* Footer con Acción */}
-                    <div className="p-2 bg-slate-50 border-t border-slate-100 flex justify-end">
-                      <button
-                        disabled={pedido.realizado || estaProcesando}
-                        onClick={async () => {
-                          setProcesando((prev) =>
-                            new Set(prev).add(pedido.idEstudio),
-                          );
-
-                          try {
-                            await onFinalizarEstudio(
-                              pedido.idEstudio,
-                              paciente.dni.toString(),
-                            );
-                          } catch (e) {
-                            // si falla, liberás el botón
-                            setProcesando((prev) => {
-                              const nuevo = new Set(prev);
-                              nuevo.delete(pedido.idEstudio);
-                              return nuevo;
-                            });
-                          }
-                        }}
-                        className={`
-    flex items-center gap-3
-    text-base font-bold uppercase tracking-wider
-    px-8 py-2 rounded-lg
-    transition-all
-    ${
-      pedido.realizado || estaProcesando
-        ? `bg-slate-300 text-slate-700 cursor-not-allowed border border-slate-300`
-        : "bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white shadow-md hover:shadow-lg active:scale-95"
-    }
-  `}
+                      {/* Footer Tarjeta / Acción */}
+                      <div
+                        className={`px-3 py-1 ${estilo.border} ${estilo.bg} flex flex-col sm:flex-row justify-between items-center gap-4`}
                       >
-                        <CheckCircle2 className="w-5 h-5" />
-                        {pedido.realizado
-                          ? "Ya Finalizado"
-                          : estaProcesando
-                            ? "Procesando..."
-                            : "Finalizar Estudio"}
-                      </button>
+                        <div className="flex items-center gap-3 font-bold text-slate-700 bg-white/80 p-1  rounded-xl shadow-sm border border-slate-200/50 w-full sm:w-auto">
+                          <Stethoscope className="w-5 h-5 text-indigo-500" />
+                          <span className="uppercase text-center w-32 tracking-tight text-sm text-slate-400">
+                            Solicitante:
+                          </span>
+                          <span className="truncate max-w-[200px] pr-3">
+                            {pedido.doctor}
+                          </span>
+                        </div>
+                        <button
+                          disabled={pedido.realizado || estaProcesando}
+                          onClick={async () => {
+                            setProcesando((prev) =>
+                              new Set(prev).add(pedido.idEstudio),
+                            );
+                            try {
+                              await onFinalizarEstudio(
+                                pedido.idEstudio,
+                                paciente.dni.toString(),
+                              );
+                            } catch (e) {
+                              setProcesando((prev) => {
+                                const nuevo = new Set(prev);
+                                nuevo.delete(pedido.idEstudio);
+                                return nuevo;
+                              });
+                            }
+                          }}
+                          className={`
+                            flex items-center justify-center gap-2 text-sm font-black uppercase tracking-wider px-6 py-3 rounded-xl transition-all w-full sm:w-auto
+                            ${
+                              pedido.realizado || estaProcesando
+                                ? `bg-slate-200 text-slate-400 cursor-not-allowed border-none`
+                                : "bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white shadow-md active:scale-95"
+                            }
+                          `}
+                        >
+                          <CheckCircle2 className="w-5 h-5" />
+                          {pedido.realizado
+                            ? "Finalizado"
+                            : estaProcesando
+                              ? "Procesando..."
+                              : "Marcar Realizado"}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {pedidos.length > 0 && (
-          <div className="z-20 relative">
-            {/* CASO A: CARGANDO VERIFICACIÓN */}
-            {loadingPaciente && (
-              <div className="bg-slate-50 border-t border-slate-200 p-4 flex justify-center items-center gap-2 text-slate-500 text-sm">
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Verificando paciente en sistema administrativo...
+                  );
+                })}
               </div>
             )}
+          </div>
 
-            {/* CASO B: PACIENTE NO ENCONTRADO (Bloqueo Amarillo) */}
-            {errorPaciente && (
-              <div className="bg-amber-50 border-t-4 border-amber-400 p-4 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-amber-100 rounded-full text-amber-700">
-                    <UserX className="w-6 h-6" />{" "}
-                    {/* Importar UserX de lucide-react */}
-                  </div>
+          {/* COLUMNA DERECHA: Imputación de Consumos */}
+          <div className="w-full lg:w-[45%] xl:w-[40%] flex flex-col bg-slate-50 shadow-[-10px_0_20px_rgba(0,0,0,0.03)] z-10">
+            <div className="p-6 border-b border-slate-200 bg-white">
+              <div className="flex items-center gap-2 text-slate-400 uppercase tracking-widest font-black text-sm">
+                <Activity className="w-5 h-5 text-indigo-400" />
+                Carga de Materiales
+              </div>
+              <p className="text-xs text-slate-500 mt-1 font-medium">
+                Imputación directa a Worklist
+              </p>
+            </div>
+
+            <div className="flex-grow overflow-y-auto p-6 flex flex-col gap-6">
+              {/* ESTADO: Cargando */}
+              {loadingPaciente && (
+                <div className="bg-white border border-slate-200 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 text-center shadow-sm">
+                  <Loader2 className="w-10 h-10 animate-spin text-indigo-500" />
                   <div>
-                    <h4 className="text-sm font-black text-amber-900 uppercase">
-                      Paciente no vinculado
+                    <h4 className="font-black text-slate-700">
+                      Conectando con Servidor
                     </h4>
-                    <p className="text-xs text-amber-800 font-medium">
-                      No figura en el sistema administrativo. Contacte a
-                      admisión.
+                    <p className="text-sm text-slate-500 font-medium">
+                      Buscando coberturas del paciente...
                     </p>
                   </div>
                 </div>
-                <button
-                  onClick={reintentarBusqueda}
-                  className="px-4 py-2 bg-white border border-amber-300 text-amber-800 text-xs font-bold uppercase rounded hover:bg-amber-100 transition-colors shadow-sm flex items-center gap-2"
-                >
-                  <RefreshCw className="w-3 h-3" /> {/* Importar RefreshCw */}
-                  Reintentar
-                </button>
-              </div>
-            )}
+              )}
 
-            {/* CASO C: TODO OK (Mostrar Panel de Consumos) */}
-            {!loadingPaciente && !errorPaciente && pacienteInterno && (
-              <>
-                {/* El Panel Verde con el Selector */}
-                <PanelPacienteEncontrado
-                  paciente={pacienteInterno}
-                  idCoberturaSeleccionada={coberturaSeleccionada}
-                  onChangeCobertura={setCoberturaSeleccionada}
-                />
-                <PanelConsumos
-                  exposiciones={exposiciones}
-                  prestaciones={prestaciones}
-                  onAdd={agregarExposicion}
-                  onRemove={quitarExposicionPorDescripcion}
-                  onConfirm={handleImputar}
-                  isSaving={guardandoConsumos}
-                  // Opcional: Mostrar nombre del paciente interno para confirmar visualmente
-                  // subtitle={`Vinculado a: ${pacienteInterno.nombre}`}
-                />
-              </>
-            )}
+              {/* ESTADO: Error / No Encontrado */}
+              {errorPaciente && (
+                <div className="bg-rose-50 border-2 border-rose-200 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-4 shadow-sm">
+                  <div className="w-16 h-16 bg-rose-100 rounded-full flex items-center justify-center text-rose-500">
+                    <UserX className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-black text-rose-900 uppercase">
+                      Paciente No Vinculado
+                    </h4>
+                    <p className="text-sm text-rose-700 font-medium mt-1">
+                      Este DNI no registra ingreso en el sistema administrativo
+                      central.
+                    </p>
+                  </div>
+                  <button
+                    onClick={reintentarBusqueda}
+                    className="mt-2 px-6 py-2.5 bg-white border-2 border-rose-200 text-rose-700 text-sm font-black uppercase rounded-xl hover:bg-rose-100 hover:border-rose-300 transition-all shadow-sm flex items-center gap-2 active:scale-95"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Reintentar Búsqueda
+                  </button>
+                </div>
+              )}
+
+              {/* ESTADO: Listo para Cargar */}
+              {!loadingPaciente && !errorPaciente && pacienteInterno && (
+                <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                  <PanelPacienteEncontrado
+                    paciente={pacienteInterno}
+                    idCoberturaSeleccionada={coberturaSeleccionada}
+                    onChangeCobertura={setCoberturaSeleccionada}
+                  />
+                  <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <PanelConsumos
+                      exposiciones={exposiciones}
+                      prestaciones={prestaciones}
+                      onAdd={agregarExposicion}
+                      onRemove={quitarExposicionPorDescripcion}
+                      onConfirm={handleImputar}
+                      isSaving={guardandoConsumos}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

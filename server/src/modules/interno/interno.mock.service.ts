@@ -22,7 +22,7 @@ export const mockInternoService: InternoService = {
         prestacion: item.descripcion,
       });
     }
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     return { consumoId: idConsumo, resultados: resultadoLote };
   },
 
@@ -31,7 +31,7 @@ export const mockInternoService: InternoService = {
   },
 
   async buscarPacienteInterno(numeroId, esHc) {
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     return datosPaciente as unknown as IPacienteInterno;
   },
 };

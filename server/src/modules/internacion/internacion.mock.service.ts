@@ -6,7 +6,12 @@ export const mockInternacionService: InternacionService = {
   async obtenerPedidos(fecha?: string) {
     return estudios.map(mapearPedidoInternacion);
   },
-  guardarComentario(idEstudio, idMovimiento, comentario, nota): any {
+  async guardarComentario(
+    idEstudio,
+    idMovimiento,
+    comentario,
+    nota,
+  ): Promise<any> {
     return {
       success: true,
       message: "Comentario guardado correctamente (modo mock): ",

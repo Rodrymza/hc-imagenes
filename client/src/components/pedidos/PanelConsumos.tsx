@@ -12,7 +12,7 @@ import type { IConsumoItem } from "@/types/interno";
 
 interface PanelConsumosProps {
   exposiciones: IConsumoItem[];
-  prestaciones: IConsumoItem[]; // El catálogo completo para buscar
+  prestaciones: IConsumoItem[];
   onAdd: (item: IConsumoItem) => void;
   onRemove: (id: string) => void;
   onConfirm: () => void;
@@ -29,13 +29,11 @@ export const PanelConsumos = ({
   isSaving,
   disabled = false,
 }: PanelConsumosProps) => {
-  // Estado local para el buscador manual
   const [busqueda, setBusqueda] = useState("");
   const [mostrarResultados, setMostrarResultados] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Cerrar buscador si clic fuera
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -54,7 +52,7 @@ export const PanelConsumos = ({
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .toUpperCase();
-  // Filtrar catálogo (Top 5 resultados para no saturar)
+
   const resultados =
     busqueda.length > 1
       ? prestaciones
@@ -68,7 +66,7 @@ export const PanelConsumos = ({
     if (!mostrarResultados || resultados.length === 0) return;
 
     if (e.key === "ArrowDown") {
-      e.preventDefault(); // Evita que el cursor se mueva en el input
+      e.preventDefault();
       setSelectedIndex((prev) =>
         prev < resultados.length - 1 ? prev + 1 : prev,
       );
@@ -78,7 +76,6 @@ export const PanelConsumos = ({
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (selectedIndex >= 0 && resultados[selectedIndex]) {
-        // Si hay uno resaltado, lo agregamos
         onAdd(resultados[selectedIndex]);
         setBusqueda("");
         setMostrarResultados(false);
@@ -91,23 +88,23 @@ export const PanelConsumos = ({
   };
 
   return (
-    <div className="bg-indigo-50/50 border-t-4 border-indigo-500 p-4 shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] z-20 relative">
-      <div className="flex flex-col gap-4">
-        {/* TITULO Y BUSCADOR */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          <h4 className="text-sm font-black text-indigo-900 uppercase tracking-widest flex items-center gap-2">
-            <Zap className="w-4 h-4 text-yellow-500 fill-yellow-500" />
+    // Quitamos los bordes superiores y sombras duras para que sea un bloque interno limpio
+    <div className="bg-white p-5 w-full">
+      <div className="flex flex-col gap-5">
+        {/* BUSCADOR MANUAL (Ahora es full-width y apilado) */}
+        <div className="flex flex-col gap-3">
+          <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+            <Zap className="w-4 h-4 text-indigo-400 fill-indigo-400" />
             Consumos a Imputar
           </h4>
 
-          {/* Buscador Manual */}
-          <div className="relative w-full sm:w-64" ref={wrapperRef}>
+          <div className="relative w-full" ref={wrapperRef}>
             <div className="relative">
               <input
                 type="text"
                 autoComplete="off"
-                placeholder="Agregar prestación manual..."
-                className="w-full pl-8 pr-3 py-1.5 text-base border border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-white"
+                placeholder="Buscar prestación manual..."
+                className="w-full pl-10 pr-4 py-3 text-sm border-2 border-slate-100 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 bg-slate-50 font-medium transition-all"
                 value={busqueda}
                 onChange={(e) => {
                   setBusqueda(e.target.value);
@@ -118,14 +115,14 @@ export const PanelConsumos = ({
                 onFocus={() => setMostrarResultados(true)}
                 disabled={disabled}
               />
-              <Search className="w-4 h-4 text-indigo-400 absolute left-2.5 top-2" />
+              <Search className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             </div>
 
             {/* Dropdown de Resultados */}
-            {mostrarResultados && busqueda.length > 2 && (
-              <div className="absolute bottom-full mb-1 left-0 w-full bg-white border border-slate-200 rounded-lg shadow-xl max-h-60 overflow-y-auto z-50">
+            {mostrarResultados && busqueda.length > 1 && (
+              <div className="absolute top-full mt-2 left-0 w-full bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50">
                 {resultados.length === 0 ? (
-                  <div className="p-3 text-base text-slate-400 text-center">
+                  <div className="p-4 text-sm text-slate-400 text-center font-medium">
                     No se encontraron resultados
                   </div>
                 ) : (
@@ -138,11 +135,11 @@ export const PanelConsumos = ({
                         setMostrarResultados(false);
                         setSelectedIndex(-1);
                       }}
-                      className={`w-full text-left px-3 py-2 text-sm transition-colors border-b border-slate-50 last:border-0
+                      className={`w-full text-left px-4 py-3 text-sm transition-colors border-b border-slate-50 last:border-0 font-bold
                         ${
                           index === selectedIndex
-                            ? "bg-indigo-600 text-white" // Resaltado
-                            : "hover:bg-indigo-50 text-slate-700" // Normal
+                            ? "bg-indigo-600 text-white"
+                            : "hover:bg-indigo-50 text-slate-700"
                         }`}
                     >
                       {res.descripcion}
@@ -154,67 +151,77 @@ export const PanelConsumos = ({
           </div>
         </div>
 
-        {/* LISTA DE CHIPS */}
-        <div className="flex flex-wrap gap-2 min-h-[40px] items-center bg-white p-3 rounded-xl border border-indigo-100 shadow-sm">
-          {exposiciones.length === 0 ? (
-            <div className="flex items-center gap-2 text-slate-600 text-base italic w-full justify-center py-1">
-              <AlertCircle className="w-7 h-7" />
-              Esperando carga manual...
-            </div>
-          ) : (
-            exposiciones.map((exp, index) => (
-              <div
-                key={`${exp.id}-${index}`}
-                className={`
-                  flex items-center gap-2 pl-3 pr-1 py-1 rounded-lg border shadow-sm animate-in zoom-in-95 duration-200 
-                  ${
-                    (exp as any).origen === "AUTO"
-                      ? "bg-rose-50 border-rose-200 text-rose-800"
-                      : "bg-violet-50 border-violet-500 text-violet-800"
-                  }
-                `}
-              >
-                {(exp as any).origen === "AUTO" ? (
-                  <Zap className="w-7 h-7 text-yellow-500 fill-yellow-500" />
-                ) : (
-                  <Radiation className="w-7 h-7 text-slate-800 fill-yellow-300" />
-                )}
-
-                <span className="text-sm font-bold">{exp.descripcion}</span>
-                <button
-                  onClick={() => onRemove(exp.descripcion)}
-                  disabled={disabled || isSaving}
-                  className="p-1 hover:bg-red-100 hover:text-red-600 rounded-md transition-colors text-slate-400"
-                >
-                  <X className="w-3 h-3" />
-                </button>
+        {/* LISTA DE CHIPS (Área de drop/selección más limpia) */}
+        <div className="flex flex-col gap-2">
+          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+            Exposiciones Seleccionadas
+          </span>
+          <div className="flex flex-col gap-2 min-h-[80px] bg-slate-50 p-3 rounded-xl border-2 border-dashed border-slate-200">
+            {exposiciones.length === 0 ? (
+              <div className="flex flex-col items-center justify-center gap-2 text-slate-400 h-full py-4 opacity-60">
+                <AlertCircle className="w-8 h-8 stroke-1" />
+                <span className="text-xs font-bold uppercase tracking-wider">
+                  Sin consumos
+                </span>
               </div>
-            ))
-          )}
+            ) : (
+              exposiciones.map((exp, index) => (
+                <div
+                  key={`${exp.id}-${index}`}
+                  className={`
+                    flex items-center justify-between pl-3 pr-2 py-2 rounded-lg border shadow-sm animate-in zoom-in-95 duration-200 
+                    ${
+                      (exp as any).origen === "AUTO"
+                        ? "bg-rose-50 border-rose-200 text-rose-800"
+                        : "bg-indigo-50 border-indigo-200 text-indigo-900"
+                    }
+                  `}
+                >
+                  <div className="flex items-center gap-3 truncate pr-2">
+                    {(exp as any).origen === "AUTO" ? (
+                      <Zap className="w-5 h-5 text-rose-500 fill-rose-500 shrink-0" />
+                    ) : (
+                      <Radiation className="w-5 h-5 text-indigo-500 shrink-0" />
+                    )}
+                    <span className="text-sm font-bold truncate">
+                      {exp.descripcion}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => onRemove(exp.descripcion)}
+                    disabled={disabled || isSaving}
+                    className="p-1.5 hover:bg-white/60 rounded-md transition-colors text-slate-500 shrink-0"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
         </div>
 
-        {/* BOTON DE ACCION */}
-        <div className="flex justify-end">
+        {/* BOTON DE ACCION (Full width para diseño de columna) */}
+        <div className="pt-2">
           <button
             onClick={onConfirm}
             disabled={exposiciones.length === 0 || isSaving || disabled}
             className={`
-              flex items-center gap-2 px-6 py-2 rounded-lg font-bold text-sm uppercase tracking-wider transition-all w-full sm:w-auto justify-center
+              flex items-center justify-center gap-3 w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all
               ${
                 exposiciones.length === 0
                   ? "bg-slate-200 text-slate-400 cursor-not-allowed"
-                  : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md active:scale-95 hover:shadow-lg ring-offset-2 focus:ring-2 ring-indigo-500"
+                  : "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white shadow-lg shadow-indigo-200 active:scale-95"
               }
             `}
           >
             {isSaving ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Guardando...
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Enviando consumos al sistema...
               </>
             ) : (
               <>
-                <Save className="w-4 h-4" />
+                <Save className="w-5 h-5" />
                 Enviar a Worklist ({exposiciones.length})
               </>
             )}

@@ -74,14 +74,14 @@ export default function BuscarPaciente() {
                 <h2 className="text-xl font-black text-slate-800 uppercase leading-tight">
                   {pacienteInterno.apellidos}, {pacienteInterno.nombres}
                 </h2>
-                <span className="text-sm font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full mt-2 inline-block">
+                <span className="text-sm font-bold tracking-tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full mt-2 inline-block">
                   HC: {pacienteInterno.idPaciente}
                 </span>
               </div>
-              <div className="p-6 space-y-4">
+              <div className="p-6 space-y-4 tracking-widest">
                 <InfoRow
                   label="DNI / Documento"
-                  value={pacienteInterno.dni}
+                  value={parseInt(pacienteInterno.dni).toLocaleString("ES-AR")}
                   icon={<Fingerprint className="w-4 h-4" />}
                 />
                 <InfoRow

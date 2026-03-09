@@ -14,9 +14,9 @@ export const PanelPacienteEncontrado = ({
 }: PanelPacienteEncontradoProps) => {
   return (
     <div className="bg-emerald-50/50 border border-emerald-100 p-5 rounded-2xl animate-in fade-in slide-in-from-bottom-2 duration-300">
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-3">
         {/* LADO SUPERIOR: Datos del Paciente */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <div className="p-3 bg-emerald-100 rounded-xl text-emerald-600 shrink-0 shadow-sm border border-emerald-200/50">
             <UserCheck className="w-6 h-6" />
           </div>
@@ -29,7 +29,7 @@ export const PanelPacienteEncontrado = ({
                 {paciente.apellidos}, {paciente.nombres}
               </span>
               <span className="text-xs font-bold text-emerald-700/70 mt-0.5">
-                DNI: {paciente.idPaciente}
+                DNI: {parseInt(paciente.dni).toLocaleString("ES-AR")}
               </span>
             </div>
           </div>
@@ -39,9 +39,9 @@ export const PanelPacienteEncontrado = ({
 
         {/* LADO INFERIOR: Selector de Obra Social */}
         <div className="flex flex-col gap-2">
-          <label className="text-[11px] font-black text-emerald-700 uppercase flex items-center gap-1.5 tracking-widest">
+          <label className="text-[11px] font-black text-emerald-700 uppercase flex items-center gap-1 tracking-widest">
             <CreditCard className="w-4 h-4" />
-            Cobertura a Imputar
+            Cobertura
           </label>
 
           <div className="relative w-full">

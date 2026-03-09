@@ -234,7 +234,7 @@ export const ModalDetalleGuardia = ({
                           <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-1">
                             Práctica Solicitada
                           </span>
-                          <h3 className="text-xl text-center py-4 font-black text-slate-800 leading-snug">
+                          <h3 className="text-xl text-center py-4 font-bold text-slate-800 leading-snug whitespace-pre-line">
                             {pedido.pedido}
                           </h3>
                         </div>
@@ -278,7 +278,11 @@ export const ModalDetalleGuardia = ({
                           </span>
                         </div>
                         <button
-                          disabled={pedido.realizado || estaProcesando}
+                          disabled={
+                            pedido.realizado ||
+                            estaProcesando ||
+                            pedido.tipoEstudio !== "Radiografia" //Solo se permite finalizar Radiografias
+                          }
                           onClick={async () => {
                             setProcesando((prev) =>
                               new Set(prev).add(pedido.idEstudio),
@@ -299,7 +303,9 @@ export const ModalDetalleGuardia = ({
                           className={`
                             flex items-center justify-center gap-2 text-sm font-black uppercase tracking-wider px-6 py-3 rounded-xl transition-all w-full sm:w-auto
                             ${
-                              pedido.realizado || estaProcesando
+                              pedido.realizado ||
+                              estaProcesando ||
+                              pedido.tipoEstudio !== "Radiografia"
                                 ? `bg-slate-200 text-slate-400 cursor-not-allowed border-none`
                                 : "bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white shadow-md active:scale-95"
                             }

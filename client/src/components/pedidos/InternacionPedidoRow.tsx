@@ -74,7 +74,7 @@ export const InternacionPedidoRow = ({
           </span>
 
           {/* Estudio */}
-          <div className="font-bold text-center text-lg text-slate-800 leading-snug whitespace-pre-line">
+          <div className="font-semibold text-center text-lg text-slate-800 leading-snug whitespace-pre-line">
             {solicitudLimpia}
           </div>
 

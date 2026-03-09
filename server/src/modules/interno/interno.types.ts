@@ -87,3 +87,11 @@ export interface IResultadoLote {
   exito: boolean;
   error?: string;
 }
+
+export interface IPacienteInternado {
+  historia_clinica: string;
+  nombre_apellido: string;
+  servicio: string;
+  sala: string;
+  informe_id: string;
+}

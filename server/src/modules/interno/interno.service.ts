@@ -22,5 +22,5 @@ export interface InternoService {
     esHc: boolean,
   ): Promise<IPacienteInterno | null>;
 
-  getPacientesInternados(): Promise<IPacienteInternado[]>;
+  getPacientesInternados(): Promise<IPacienteInternado[] | null>;
 }

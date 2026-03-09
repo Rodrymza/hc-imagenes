@@ -2,7 +2,10 @@ import {
   IPacienteInterno,
   IPacienteInternoRaw,
   ICoberturaRaw,
+  IPacienteInternado,
 } from "./interno.types";
+
+import * as cheerio from "cheerio";
 
 /**
  * Convierte fecha formato "DD-MM-YYYY" a objeto Date JS
@@ -88,4 +91,49 @@ export const cleanPacienteInterno = (
     },
     coberturas: coberturasClean,
   };
+};
+
+export const formatearPacientesInternados = (
+  htmlPacientes: string,
+): IPacienteInternado[] => {
+  const pacientesJSON: IPacienteInternado[] = [];
+
+  // 1. Cargamos el HTML crudo en el motor de Cheerio
+  const $ = cheerio.load(htmlPacientes);
+
+  // 2. Iteramos sobre cada fila de la tabla
+  $('tr[id^="egresos-fila"]').each((_, tr) => {
+    const $tr = $(tr); // Convertimos la fila actual en un objeto Cheerio
+
+    // Extraemos el texto del paciente directamente
+    const textoPaciente = $tr.find('span[id$="-paciente"]').text().trim();
+
+    // Si la fila está vacía o no tiene paciente, pasamos a la siguiente
+    if (!textoPaciente) return;
+
+    // Separamos la HC del nombre (usando tu misma lógica elegante)
+    const [historiaClinica, ...restoNombre] = textoPaciente
+      .split("-")
+      .map((t) => t.trim());
+    const nombreCompleto = restoNombre.join("-").trim();
+
+    // Extraemos el resto de los campos (Si el span no existe, .text() devuelve "")
+    const sala =
+      $tr.find('span[id$="-sala"]').text().split(" ")[0]?.trim() || "";
+    const cama =
+      $tr.find('span[id$="-cama"]').text().split(" ")[0]?.trim() || "";
+    const servicio = $tr.find('span[id$="-servicio"]').text().trim();
+    const informeId = $tr.find('span[id$="-informeid"]').text().trim();
+
+    // Armamos el objeto final
+    pacientesJSON.push({
+      historia_clinica: historiaClinica,
+      nombre_apellido: nombreCompleto,
+      servicio: servicio,
+      sala: sala && cama ? `${sala}-${cama}` : sala || cama,
+      informe_id: informeId,
+    });
+  });
+
+  return pacientesJSON;
 };

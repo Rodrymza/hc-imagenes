@@ -68,7 +68,7 @@ export const useServicioGuardia = () => {
       const pedidos = await GuardiaService.getPedidosPaciente(dni);
       setPedidosPaciente(pedidos);
     } catch (e) {
-      toast.error(`Error al cargar pedidos: ${getErrorMessage(e)}`);
+      console.error(`Error al cargar pedidos: ${getErrorMessage(e)}`);
     } finally {
       setLoadingPedidosPaciente(false);
     }

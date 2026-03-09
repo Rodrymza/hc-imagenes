@@ -23,7 +23,11 @@ export default function ConsumosPage() {
   const [coberturaId, setCoberturaId] = useState("");
   const [searchParams] = useSearchParams();
   const dniDesdeUrl = searchParams.get("dni"); // Captura el ?dni=12345678
-  const [dniBusqueda, setDniBusqueda] = useState(dniDesdeUrl || "");
+  const hcDesdeUrl = searchParams.get("hc");
+  const [dniBusqueda, setDniBusqueda] = useState(
+    dniDesdeUrl || hcDesdeUrl || "",
+  );
+  const [tipoBusqueda, setTipoBusqueda] = useState(hcDesdeUrl ? "hc" : "dni");
 
   // No buscar hasta que se haga click en el boton
 
@@ -39,7 +43,6 @@ export default function ConsumosPage() {
     pacienteInterno,
     buscarPacienteInterno,
     loadingPaciente,
-    errorPaciente,
     exposiciones,
     prestaciones,
     agregarExposicion,
@@ -50,23 +53,31 @@ export default function ConsumosPage() {
 
   useEffect(() => {
     if (dniDesdeUrl) {
-      console.log("DNI desde URL:", dniDesdeUrl);
       setDniBusqueda(dniDesdeUrl);
-      buscarPacienteInterno(dniDesdeUrl);
+      setTipoBusqueda("dni");
+      setSistema("ambulatorio");
+      buscarPacienteInterno(dniDesdeUrl, null);
+      buscarPacienteGuardia(dniDesdeUrl);
+    } else if (hcDesdeUrl) {
+      setDniBusqueda(hcDesdeUrl);
+      setTipoBusqueda("hc");
+      setSistema("internacion");
+      buscarPacienteInterno(null, hcDesdeUrl);
     }
-  }, [dniDesdeUrl, buscarPacienteInterno]);
+  }, [dniDesdeUrl, hcDesdeUrl, buscarPacienteInterno, buscarPacienteGuardia]);
 
   useEffect(() => {
-    if (dniBusqueda.length < 7) return;
+    const dniParaGuardia = pacienteInterno?.dni || dniBusqueda;
 
-    buscarPedidosPaciente(dniBusqueda);
-    setSistema("guardia");
-  }, [dniBusqueda, buscarPedidosPaciente]);
+    if (dniParaGuardia && dniParaGuardia.length > 5) {
+      buscarPedidosPaciente(dniParaGuardia);
+    }
+  }, [pacienteInterno, dniBusqueda, buscarPedidosPaciente]);
 
   const handleBuscar = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (dniBusqueda.length > 7) {
-      buscarPacienteInterno(dniBusqueda);
+      buscarPacienteInterno(dniBusqueda, null);
       buscarPacienteGuardia(dniBusqueda);
     }
   };
@@ -103,13 +114,26 @@ export default function ConsumosPage() {
               <Search className="w-4 h-4" /> Identificar Paciente
             </h3>
             <form onSubmit={handleBuscar} className="flex gap-2">
+              {/* SELECTOR DE TIPO */}
+              <select
+                value={tipoBusqueda}
+                onChange={(e) => setTipoBusqueda(e.target.value)}
+                className="bg-slate-100 border-none rounded-lg px-2 text-[10px] font-black uppercase text-slate-600 outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+              >
+                <option value="dni">DNI</option>
+                <option value="hc">H.C.</option>
+              </select>
+
               <input
                 type="number"
-                placeholder="Ingrese DNI..."
+                placeholder={
+                  tipoBusqueda === "dni" ? "Ingrese DNI..." : "Ingrese HC..."
+                }
                 className="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-4 py-2 text-lg font-bold focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                 value={dniBusqueda}
                 onChange={(e) => setDniBusqueda(e.target.value)}
               />
+
               <button
                 type="submit"
                 disabled={loadingPaciente}
@@ -122,15 +146,6 @@ export default function ConsumosPage() {
                 )}
               </button>
             </form>
-
-            {errorPaciente && (
-              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex gap-3 items-center text-amber-800">
-                <AlertCircle className="w-5 h-5 shrink-0" />
-                <p className="text-xs font-medium">
-                  El DNI no está vinculado al sistema administrativo.
-                </p>
-              </div>
-            )}
           </section>
 
           {/* 2. FICHA PACIENTE + CONTEXTO */}

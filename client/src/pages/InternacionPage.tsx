@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Search, Activity, CalendarClock, RefreshCw } from "lucide-react";
+import { Search, Activity, CalendarClock, RefreshCw, X } from "lucide-react";
 import { InternacionPedidoRow } from "@/components/pedidos/InternacionPedidoRow";
 import { usePedidosInternacion } from "@/hooks/usePedidosInternacion";
 import spinnerGif from "@/assets/spinner.gif";
@@ -33,6 +33,14 @@ export default function InternacionPage() {
   const handleVerDetalle = (pedido: IPedidoInternacion) => {
     setPedidoSeleccionado(pedido); // Guardamos el objeto completo que ya tiene todo
     setModalOpen(true); // Abrimos el modal
+  };
+
+  const limpiarFiltros = () => {
+    setBusqueda("");
+    setFiltroLugar("todos");
+    setFiltroModalidad("todos");
+    setFiltroEstado("todos");
+    setFiltroFecha(hoy); // Resetea a la fecha actual
   };
 
   // --- FILTRADO (Se ejecuta en cada renderizado) ---
@@ -78,7 +86,7 @@ export default function InternacionPage() {
       >
         <div className="w-full 8xl mx-auto space-y-6">
           {/* HEADER & TOOLBAR */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
               <div className="bg-white p-2 rounded-lg text-emerald-700 shadow-sm">
                 <Activity className="w-6 h-6" />
@@ -96,7 +104,7 @@ export default function InternacionPage() {
               </button>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md p-5 rounded-xl border border-white/20 shadow-xl">
+            <div className="bg-white/10 backdrop-blur-md p-5 rounded-xl border border-white/20 shadow-xl flex-grow">
               <div className="flex flex-col xl:flex-row gap-4">
                 <div className="relative flex-grow min-w-[300px]">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-700" />
@@ -109,7 +117,7 @@ export default function InternacionPage() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
                   <div className="relative">
                     <CalendarClock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-700 z-10" />
                     <input
@@ -157,6 +165,14 @@ export default function InternacionPage() {
                     <option value="pendiente">❌ Pendientes</option>
                     <option value="realizado">✅ Realizados</option>
                   </select>
+                  <button
+                    onClick={limpiarFiltros}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white hover:bg-red-500 hover:text-white text-emerald-900 rounded-lg text-sm font-bold transition-all border border-white/30 backdrop-blur-sm"
+                    title="Limpiar todos los filtros"
+                  >
+                    <X className="h-4 w-4" />
+                    Limpiar
+                  </button>
                 </div>
               </div>
             </div>

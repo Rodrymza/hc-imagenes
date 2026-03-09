@@ -3,7 +3,7 @@ import { GuardiaPedidoRow } from "@/components/pedidos/GuardiaPedidoRow"; // <--
 import { ModalDetalleGuardia } from "@/components/pedidos/ModalDetalleGuardia";
 import { useServicioGuardia } from "@/hooks/usePedidosGuardia";
 import type { IPedidoGuardia } from "@/types/pedidos";
-import { CalendarClock, RefreshCw, Search, Siren } from "lucide-react"; // Agregué Siren para el ícono
+import { CalendarClock, RefreshCw, Search, Siren, X } from "lucide-react"; // Agregué Siren para el ícono
 import { useCallback, useEffect, useState } from "react";
 
 export default function PedidosGuardiaPage() {
@@ -37,6 +37,13 @@ export default function PedidosGuardiaPage() {
     },
     [traerPedidosGuardia],
   );
+
+  const limpiarFiltros = () => {
+    setBusqueda("");
+    setFiltroLugar("todos");
+    setFiltroModalidad("todos");
+    setFiltroFecha(hoy); // Resetea a la fecha actual
+  };
 
   const handleVerDetalle = async (item: IPedidoGuardia) => {
     setPedidoSeleccionado(item);
@@ -94,7 +101,7 @@ export default function PedidosGuardiaPage() {
       >
         <div className="w-full 8xl mx-auto space-y-6">
           {/* HEADER & TOOLBAR */}
-          <div className="flex flex-col flex-between gap-4">
+          <div className="flex flex-col lg:flex-row flex-between gap-4">
             <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
               <div className="bg-white p-2 rounded-lg text-red-700 shadow-sm">
                 <Siren className="w-6 h-6 animate-pulse" />
@@ -112,7 +119,7 @@ export default function PedidosGuardiaPage() {
               </button>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md p-5 rounded-xl border border-white/20 shadow-xl">
+            <div className="bg-white/10 backdrop-blur-md p-5 rounded-xl border border-white/20 shadow-xl flex-grow">
               <div className="flex flex-col xl:flex-row gap-4">
                 {/* BUSCADOR */}
                 <div className="relative flex-grow min-w-[300px]">
@@ -127,7 +134,7 @@ export default function PedidosGuardiaPage() {
                 </div>
 
                 {/* FILTROS */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
                   <div className="relative">
                     <CalendarClock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-red-700 z-10" />
                     <input
@@ -160,6 +167,14 @@ export default function PedidosGuardiaPage() {
                     <option value="Tomografia">Tomografía</option>
                     <option value="Ecografia">Ecografía</option>
                   </select>
+                  <button
+                    onClick={limpiarFiltros}
+                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white hover:bg-red-500 hover:text-white text-emerald-900 rounded-lg text-sm font-bold transition-all border border-white/30 backdrop-blur-sm"
+                    title="Limpiar todos los filtros"
+                  >
+                    <X className="h-4 w-4" />
+                    Limpiar
+                  </button>
                 </div>
               </div>
             </div>

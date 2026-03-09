@@ -90,7 +90,7 @@ export const PanelConsumos = ({
   return (
     // Quitamos los bordes superiores y sombras duras para que sea un bloque interno limpio
     <div className="bg-white p-5 w-full">
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-3">
         {/* BUSCADOR MANUAL (Ahora es full-width y apilado) */}
         <div className="flex flex-col gap-3">
           <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">

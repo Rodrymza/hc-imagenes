@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { InternoService } from "@/services/interno.service";
 import type {
   IConsumoItem,
+  IPacienteInternado,
   IPacienteInterno,
   IResultadoLoteConsumo,
 } from "@/types/interno";
@@ -42,11 +43,15 @@ export const useConsumos = (
   const [prestaciones, setPrestaciones] = useState<IConsumoItem[]>([]);
   const [exposiciones, setExposiciones] = useState<IConsumoItem[]>([]);
   const [loadingCatalogo, setLoadingCatalogo] = useState(true);
+  const [loadingInternados, setIsLoadingInternados] = useState(false);
   const [guardandoConsumos, setGuardandoConsumos] = useState(false);
   const [loadingPaciente, setLoadingPaciente] = useState(false);
   const [errorPaciente, setErrorPaciente] = useState(false);
   const [pacienteInterno, setPacienteInterno] =
     useState<IPacienteInterno | null>(null);
+  const [pacientesInternados, setPacientesInternados] = useState<
+    IPacienteInternado[]
+  >([]);
 
   const [firmaPedidosProcesados, setFirmaPedidosProcesados] =
     useState<string>("");
@@ -190,29 +195,50 @@ export const useConsumos = (
     }
   };
 
-  const buscarPacienteInterno = useCallback(async (dni: string | null) => {
-    if (!dni || dni.length < 7) return;
+  const buscarPacienteInterno = useCallback(
+    async (dni: string | null, hc: string | null) => {
+      if (!dni && !hc) return;
+      if (dni && dni.length < 6) return;
 
-    setLoadingPaciente(true);
-    setErrorPaciente(false);
-    setPacienteInterno(null);
+      setLoadingPaciente(true);
+      setErrorPaciente(false);
+      setPacienteInterno(null);
 
-    try {
-      // Asumimos que buscas por DNI, el segundo param es HC (null por ahora)
-      const paciente = await InternoService.buscarPacienteInterno(dni, null);
+      try {
+        let paciente;
+        if (hc) {
+          paciente = await InternoService.buscarPacienteInterno(null, hc);
+        } else {
+          paciente = await InternoService.buscarPacienteInterno(dni, null);
+        }
 
-      if (paciente) {
-        setPacienteInterno(paciente);
-      } else {
-        // Si el servicio devuelve null/undefined pero no lanza error
+        if (paciente) {
+          setPacienteInterno(paciente);
+        } else {
+          // Si el servicio devuelve null/undefined pero no lanza error
+          setErrorPaciente(true);
+        }
+      } catch (error) {
+        console.error("Paciente no encontrado en sistema interno");
         setErrorPaciente(true);
+        toast.error("Paciente no vinculado al sistema administrativo");
+      } finally {
+        setLoadingPaciente(false);
       }
+    },
+    [],
+  );
+
+  const getPacientesInternados = useCallback(async () => {
+    setIsLoadingInternados(true);
+    try {
+      const pacientesInternados = await InternoService.getPacientesInternados();
+      setPacientesInternados(pacientesInternados);
     } catch (error) {
-      console.error("Paciente no encontrado en sistema interno");
-      setErrorPaciente(true);
-      toast.error("Paciente no vinculado al sistema administrativo");
+      console.log("Error al cargar los Pacientes Internados", error);
+      toast.error("No se pudieron cargar los Pacientes Internados");
     } finally {
-      setLoadingPaciente(false);
+      setIsLoadingInternados(false);
     }
   }, []);
 
@@ -229,5 +255,8 @@ export const useConsumos = (
     pacienteInterno,
     loadingPaciente,
     errorPaciente,
+    getPacientesInternados,
+    pacientesInternados,
+    loadingInternados,
   };
 };

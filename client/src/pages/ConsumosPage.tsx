@@ -6,7 +6,6 @@ import {
   ArrowRight,
   ShieldCheck,
   ClipboardList,
-  AlertCircle,
   Loader2,
   Clock,
   Zap,

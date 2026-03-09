@@ -19,6 +19,19 @@ export const internoController = {
     }
   },
 
+  async getPacientesInternados(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const pacientesInternados = await internoService.getPacientesInternados();
+      return res.json(pacientesInternados);
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async comprobarLoginInterno(req: Request, res: Response, next: NextFunction) {
     try {
       const estaLogueado = await loginInterno();

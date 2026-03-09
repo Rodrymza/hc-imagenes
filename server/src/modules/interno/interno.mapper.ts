@@ -77,6 +77,7 @@ export const cleanPacienteInterno = (
   return {
     idPaciente: raw.pacienteid,
     dni: raw.numerodocumento,
+    dniString: parseInt(raw.numerodocumento).toLocaleString("ES-AR"),
     apellidos: apellido,
     nombres: nombre,
     nombreCompleto: `${apellido}, ${nombre}`,

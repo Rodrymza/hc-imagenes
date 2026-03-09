@@ -16,6 +16,7 @@ export interface ICobertura {
 export interface IPacienteInterno {
   idPaciente: string;
   dni: string;
+  dniString: string;
   nombreCompleto: string;
   nombres: string;
   apellidos: string;

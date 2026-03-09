@@ -35,6 +35,7 @@ export interface ICoberturaClean {
 export interface IPacienteInterno {
   idPaciente: string;
   dni: string;
+  dniString: string;
   nombreCompleto: string;
   nombres: string;
   apellidos: string;

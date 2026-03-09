@@ -42,3 +42,11 @@ export interface IResultadoLoteConsumo {
   message: string;
   data: { consumoId: string; resultados: IResultadoLote[] };
 }
+
+export interface IPacienteInternado {
+  historia_clinica: string;
+  nombre_apellido: string;
+  servicio: string;
+  sala: string;
+  informe_id: string;
+}

@@ -196,7 +196,7 @@ export const useConsumos = (
   };
 
   const buscarPacienteInterno = useCallback(
-    async (dni: string | null, hc: string | null) => {
+    async (dni: string | null, hc: string | null = null) => {
       if (!dni && !hc) return;
       if (dni && dni.length < 6) return;
 

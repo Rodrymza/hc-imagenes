@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Search,
   Database,
@@ -32,10 +32,10 @@ export default function ConsumosPage() {
 
   const {
     pedidosPaciente,
-    loadingGuardia,
     buscarPedidosPaciente,
     buscarPacienteGuardia,
     pacienteGuardia,
+    loadingPedidosPaciente,
   } = useServicioGuardia();
 
   const {
@@ -65,13 +65,32 @@ export default function ConsumosPage() {
     }
   }, [dniDesdeUrl, hcDesdeUrl, buscarPacienteInterno, buscarPacienteGuardia]);
 
-  useEffect(() => {
-    const dniParaGuardia = pacienteInterno?.dni || dniBusqueda;
+  // Creamos una "memoria" para no repetir la búsqueda si el DNI es el mismo
+  const ultimoDniBuscado = useRef("");
 
-    if (dniParaGuardia && dniParaGuardia.length > 5) {
-      buscarPedidosPaciente(dniParaGuardia);
+  useEffect(() => {
+    // 1. Elegimos UN solo DNI válido por orden de prioridad (el primero que exista)
+    const dniDeteccion =
+      pacienteInterno?.dni || pacienteGuardia?.dni || dniDesdeUrl;
+
+    // 2. Si tenemos un DNI válido Y es diferente al que acabamos de buscar...
+    if (
+      dniDeteccion &&
+      dniDeteccion.length > 5 &&
+      dniDeteccion !== ultimoDniBuscado.current
+    ) {
+      // 3. Lo guardamos en la memoria
+      ultimoDniBuscado.current = dniDeteccion;
+
+      // 4. Disparamos la búsqueda UNA sola vez
+      buscarPedidosPaciente(dniDeteccion);
     }
-  }, [pacienteInterno, dniBusqueda, buscarPedidosPaciente]);
+  }, [
+    pacienteInterno?.dni,
+    pacienteGuardia?.dni,
+    dniDesdeUrl,
+    buscarPedidosPaciente,
+  ]);
 
   const handleBuscar = (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -180,8 +199,8 @@ export default function ConsumosPage() {
                     <span className="text-sm font-bold text-slate-400 uppercase">
                       Documento
                     </span>
-                    <span className="font-bold text-slate-700">
-                      {pacienteInterno?.dni || pacienteGuardia?.dni}
+                    <span className="font-bold text-slate-700 tracking-widest">
+                      {pacienteInterno?.dniString || pacienteGuardia?.dniString}
                     </span>
                   </div>
                   <div className="flex flex-col">
@@ -299,14 +318,24 @@ export default function ConsumosPage() {
                 </div>
               </div>
 
-              {loadingGuardia && (
+              {/* El loader pequeñito en el header (opcional si ya ponemos el grande) */}
+              {loadingPedidosPaciente && (
                 <Loader2 className="w-5 h-5 text-white animate-spin" />
               )}
             </div>
 
-            <div className="p-4 bg-amber-50/30">
-              {pedidosPaciente.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="p-4 bg-amber-50/30 min-h-[150px] flex flex-col justify-center">
+              {/* 1. ESTADO: CARGANDO */}
+              {loadingPedidosPaciente ? (
+                <div className="py-8 flex flex-col items-center justify-center text-amber-600/80 animate-pulse">
+                  <Loader2 className="w-10 h-10 mb-3 animate-spin" />
+                  <p className="text-sm font-black uppercase tracking-widest">
+                    Buscando órdenes médicas...
+                  </p>
+                </div>
+              ) : /* 2. ESTADO: CON DATOS */
+              pedidosPaciente.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 h-full">
                   {pedidosPaciente.map((pedido) => (
                     <div
                       key={pedido.idEstudio}
@@ -352,6 +381,7 @@ export default function ConsumosPage() {
                   ))}
                 </div>
               ) : (
+                /* 3. ESTADO: SIN DATOS (VACÍO) */
                 <div className="py-10 flex flex-col items-center justify-center text-slate-400 opacity-60">
                   <ClipboardList className="w-12 h-12 mb-2 stroke-1" />
                   <p className="text-sm font-medium">

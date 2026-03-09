@@ -16,8 +16,6 @@ export const usePedidosInternacion = () => {
         setIsLoading(true);
       }
 
-      //await new Promise((resolve) => setTimeout(resolve, 3000));
-      // 1. Definimos la función de carga
       const fetchData = async () => {
         const pedidosApi = await InternacionService.getPedidos(fecha);
         setPedidosInternacion(pedidosApi);

@@ -83,6 +83,7 @@ export default function ConsumosPage() {
       ultimoDniBuscado.current = dniDeteccion;
 
       // 4. Disparamos la búsqueda UNA sola vez
+      toast.info("Buscando pedidos del paciente " + dniDeteccion);
       buscarPedidosPaciente(dniDeteccion);
     }
   }, [
@@ -94,9 +95,22 @@ export default function ConsumosPage() {
 
   const handleBuscar = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (dniBusqueda.length > 7) {
-      buscarPacienteInterno(dniBusqueda, null);
-      buscarPacienteGuardia(dniBusqueda);
+    const valor = dniBusqueda.trim();
+
+    if (valor.length < 3) return toast.error("Ingrese un valor válido");
+
+    if (tipoBusqueda === "dni") {
+      buscarPacienteInterno(valor, null);
+      buscarPacienteGuardia(valor);
+
+      buscarPedidosPaciente(valor);
+
+      ultimoDniBuscado.current = valor;
+
+      setSistema("ambulatorio");
+    } else {
+      buscarPacienteInterno(null, valor);
+      setSistema("internacion");
     }
   };
 
@@ -330,7 +344,7 @@ export default function ConsumosPage() {
                 <div className="py-8 flex flex-col items-center justify-center text-amber-600/80 animate-pulse">
                   <Loader2 className="w-10 h-10 mb-3 animate-spin" />
                   <p className="text-sm font-black uppercase tracking-widest">
-                    Buscando órdenes médicas...
+                    Buscando órdenes de Guardia...
                   </p>
                 </div>
               ) : /* 2. ESTADO: CON DATOS */

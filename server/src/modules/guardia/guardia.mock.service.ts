@@ -27,6 +27,8 @@ export const mockGuardiaService: GuardiaService = {
     });
   },
   async obtenerPedidosPaciente(idPaciente) {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
     detallePedidos.sort((a, b) => {
       if (a.realizado !== b.realizado) {
         return a.realizado ? 1 : -1; // false primero

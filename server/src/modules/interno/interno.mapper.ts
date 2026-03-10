@@ -70,7 +70,7 @@ export const cleanPacienteInterno = (
     nombre: c.nombre?.trim() || "Obra Social",
     sigla: c.sigla?.trim() || "",
     idCobertura: c.coberturaid || "idCobertura no encontrado",
-    numeroCarnet: c.carnetnumero?.trim() || "S/N",
+    numeroCarnet: String(c.carnetnumero || "").trim() || "S/N",
     tipo: c.tipobeneficiarionombre?.trim() || "Afiliado",
   }));
 

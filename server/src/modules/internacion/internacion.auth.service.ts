@@ -21,8 +21,8 @@ export const loginInternacion = async (
     }
 
     const payload = new URLSearchParams({
-      usuario: process.env.INTERNACION_USER || "rodrigo.ramirez",
-      password: process.env.INTERNACION_PASS || "123456",
+      usuario: process.env.INTERNACION_USER!,
+      password: process.env.INTERNACION_PASS!,
     });
 
     const loginRes: any = await internacionApi.post("/sesiones/login", payload);

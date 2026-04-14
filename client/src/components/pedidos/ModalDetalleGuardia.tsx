@@ -30,7 +30,7 @@ interface ModalDetalleGuardiaProps {
   pedidoGeneral: IPedidoGuardia;
   pedidos: IDetallePedidoGuardia[];
   loadingPedidosPaciente: boolean;
-  onFinalizarEstudio: (idEstudio: string, dni: string) => void;
+  onFinalizarEstudio: (idEstudio: string) => void;
 }
 
 export const ModalDetalleGuardia = ({
@@ -288,10 +288,7 @@ export const ModalDetalleGuardia = ({
                               new Set(prev).add(pedido.idEstudio),
                             );
                             try {
-                              await onFinalizarEstudio(
-                                pedido.idEstudio,
-                                paciente.dni.toString(),
-                              );
+                              onFinalizarEstudio(pedido.idEstudio);
                             } catch (e) {
                               setProcesando((prev) => {
                                 const nuevo = new Set(prev);
@@ -313,10 +310,10 @@ export const ModalDetalleGuardia = ({
                         >
                           <CheckCircle2 className="w-5 h-5" />
                           {pedido.realizado
-                            ? "Finalizado"
+                            ? "Transferido"
                             : estaProcesando
                               ? "Procesando..."
-                              : "Marcar Realizado"}
+                              : "Transferir pedido"}
                         </button>
                       </div>
                     </div>

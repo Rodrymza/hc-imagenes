@@ -12,5 +12,5 @@ export const guardiaApi = wrapper(
     },
     withCredentials: true,
     jar: cookieJarGuardia,
-  }),
+  } as any),
 );

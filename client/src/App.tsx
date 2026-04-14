@@ -24,7 +24,7 @@ function App() {
   return (
     <AuthProvider>
       <Toaster
-        position="top-center"
+        position="top-left"
         richColors
         closeButton
         style={{

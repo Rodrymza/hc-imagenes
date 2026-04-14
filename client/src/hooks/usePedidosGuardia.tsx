@@ -104,6 +104,24 @@ export const useServicioGuardia = () => {
     [marcarFinalizado, traerPedidosGuardia],
   );
 
+  const transferirPedido = useCallback(
+    async (idEstudio: string) => {
+      const promise = GuardiaService.transferirPedido(idEstudio);
+
+      toast.promise(promise, {
+        id: "transferir-guardia",
+        loading: "Transfiriendo pedido...",
+        success: "Pedido transferido",
+        error: (e) => `Error: ${getErrorMessage(e)}`,
+      });
+
+      await promise;
+      marcarFinalizado(idEstudio);
+      traerPedidosGuardia(true);
+    },
+    [marcarFinalizado, traerPedidosGuardia],
+  );
+
   return {
     pedidosGuardia,
     pedidosPaciente,
@@ -117,5 +135,6 @@ export const useServicioGuardia = () => {
     buscarPacienteGuardia,
     buscarPedidosPaciente,
     finalizarEstudio,
+    transferirPedido,
   };
 };

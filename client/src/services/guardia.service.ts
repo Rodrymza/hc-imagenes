@@ -76,4 +76,16 @@ export const GuardiaService = {
     const res = await axios.get(`/api/guardia/paciente/${dniPaciente}`);
     return res.data;
   },
+
+  transferirPedido: async (idPedido: string) => {
+    try {
+      const res = await axios.post(
+        `api/guardia/estudio/${idPedido}/transferir`,
+      );
+      return res.data;
+    } catch (error) {
+      console.log("Error al transferir el pedido", error);
+      throw error;
+    }
+  },
 };

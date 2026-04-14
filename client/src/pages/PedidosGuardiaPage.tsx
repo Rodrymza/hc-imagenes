@@ -14,7 +14,7 @@ export default function PedidosGuardiaPage() {
     pedidosPaciente,
     traerPedidosGuardia,
     buscarPedidosPaciente,
-    finalizarEstudio,
+    transferirPedido,
     pacienteGuardia,
     buscarPacienteGuardia,
     loadingPedidosPaciente,
@@ -53,11 +53,8 @@ export default function PedidosGuardiaPage() {
     await buscarPedidosPaciente(item.dni.toString());
   };
 
-  const handleFinalizarPedido = async (
-    idEstudio: string,
-    dniPaciente: string,
-  ) => {
-    await finalizarEstudio(idEstudio, dniPaciente);
+  const handleFinalizarPedido = async (idEstudio: string) => {
+    await transferirPedido(idEstudio);
   };
 
   const pedidosFiltrados = pedidosGuardia.filter((p: IPedidoGuardia) => {

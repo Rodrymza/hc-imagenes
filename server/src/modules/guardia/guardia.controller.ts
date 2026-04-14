@@ -82,6 +82,20 @@ export const guardiaControler = {
     }
   },
 
+  async transferirPedido(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { idEstudio } = req.params;
+
+      await guardiaService.transferirPedido(idEstudio as string);
+      return res.json({
+        succes: true,
+        message: `Estudio ${idEstudio} transferido correctamente`,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   async findPacienteGuardia(req: Request, res: Response, next: NextFunction) {
     try {
       const { dniPaciente } = req.params;

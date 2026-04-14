@@ -8,5 +8,6 @@ export interface GuardiaService {
   obtenerPedidosGuardia(fecha?: string): Promise<IPedidoGuardia[]>;
   obtenerPedidosPaciente(idPaciente: string): Promise<IDetallePedidoGuardia[]>;
   finalizarPedido(idEstudio: string, idPatient: string): Promise<string>;
+  transferirPedido(idEstudio: string): Promise<string>;
   buscarDatosPacienteGuardia(dni: string): Promise<IDatosPacienteGuardia>;
 }

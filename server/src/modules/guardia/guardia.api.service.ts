@@ -54,7 +54,7 @@ export const apiGuardiaService: GuardiaService = {
     idPaciente: string,
   ): Promise<IDetallePedidoGuardia[]> {
     return ejecutarPeticionInterna(
-      `Obtener Pedidos de Guaardia de paciente ${idPaciente}`,
+      `Obtener Pedidos de Guardia de paciente ${idPaciente}`,
       async (forzar) => {
         await loginGuardiaAuth(forzar);
       },
@@ -108,6 +108,48 @@ export const apiGuardiaService: GuardiaService = {
               Array.isArray(data.errors) && data.errors.length > 0
                 ? data.errors[0]
                 : "No se puede completar el estudio en este momento.";
+
+            throw new AppError(
+              "Error al finalizar el estudio",
+              400,
+              hsiMessage,
+            );
+          }
+
+          throw error;
+        }
+      },
+    );
+  },
+
+  async transferirPedido(idEstudio: string): Promise<string> {
+    return ejecutarPeticionInterna(
+      `Transfiriendo pedido de Guardia ${idEstudio}}`,
+      async (forzar) => {
+        await loginGuardiaAuth(forzar);
+      },
+      async () => {
+        try {
+          const url = `https://hsi.mendoza.gov.ar/api/institutions/108/image-service-request-work-list/${idEstudio}/change-state?diagnosticReportId=${idEstudio}&requestOrderStateId=2`;
+
+          const config = {
+            headers: {
+              Origin: "https://hsi.mendoza.gov.ar",
+              Referer: `https://hsi.mendoza.gov.ar/institucion/108/imagenes/lista-trabajos`,
+            },
+          };
+
+          const response = await guardiaApi.put(url, config);
+
+          return response.data;
+        } catch (error) {
+          if (isAxiosError(error) && error.response) {
+            const data = error.response.data;
+
+            const hsiMessage =
+              Array.isArray(data.errors) && data.errors.length > 0
+                ? data.errors[0]
+                : "No se puede transferir el estudio en este momento.";
 
             throw new AppError(
               "Error al finalizar el estudio",
@@ -202,8 +244,9 @@ function crearUrlPedidosGuardia(fecha?: string): string {
     sourceTypeIds: [],
     studyTypeIds: [],
     temporaryPatient: false,
-    wlStatusIds: [1],
+    wlStatusIds: [],
     studyConcept: null,
+    lastname: "oros",
   };
   return baseUrl + encodeURIComponent(JSON.stringify(filter));
 }

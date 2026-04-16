@@ -13,6 +13,7 @@ export default function InternacionPage() {
     pedidosInternacion,
     traerPedidosInternacion,
     alternarEstadoPedido,
+    lugares,
   } = usePedidosInternacion();
 
   // Estados de los filtros
@@ -133,10 +134,12 @@ export default function InternacionPage() {
                     onChange={(e) => setFiltroLugar(e.target.value)}
                     className="px-4 py-2.5 bg-white border-none rounded-lg text-sm font-bold text-emerald-900"
                   >
-                    <option value="todos">📍 Lugares</option>
-                    <option value="En Cama">En Cama</option>
-                    <option value="Tomografo">Tomógrafo</option>
-                    <option value="Rayos">Rayos</option>
+                    <option value="todos">Lugar</option>
+                    {lugares.map((lugar) => (
+                      <option key={lugar} value={lugar}>
+                        {lugar}
+                      </option>
+                    ))}
                   </select>
 
                   <select

@@ -9,6 +9,7 @@ export const usePedidosInternacion = () => {
     IPedidoInternacion[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [lugares, setLugares] = useState<string[]>([]);
 
   const traerPedidosInternacion = useCallback(
     async (silenRefresh: boolean = false, fecha?: string) => {
@@ -19,6 +20,9 @@ export const usePedidosInternacion = () => {
       const fetchData = async () => {
         const pedidosApi = await InternacionService.getPedidos(fecha);
         setPedidosInternacion(pedidosApi);
+        setLugares([
+          ...new Set(pedidosApi.map((p) => p.lugar.trim()).filter(Boolean)),
+        ]);
         return pedidosApi;
       };
 
@@ -88,6 +92,7 @@ export const usePedidosInternacion = () => {
   return {
     pedidosInternacion,
     isLoading,
+    lugares,
     traerPedidosInternacion,
     alternarEstadoPedido,
   };

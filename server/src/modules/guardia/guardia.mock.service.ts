@@ -38,6 +38,12 @@ export const mockGuardiaService: GuardiaService = {
     });
     return detallePedidos as unknown as IDetallePedidoGuardia[];
   },
+
+  async transferirPedido(idPedido): Promise<string> {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    return "Pedido transferido";
+  },
 };
 
 const parseFecha = (fecha: string) => {

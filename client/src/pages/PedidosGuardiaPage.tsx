@@ -12,6 +12,7 @@ export default function PedidosGuardiaPage() {
     loadingGuardia,
     pedidosGuardia,
     pedidosPaciente,
+    lugaresGuardia,
     traerPedidosGuardia,
     buscarPedidosPaciente,
     transferirPedido,
@@ -149,9 +150,11 @@ export default function PedidosGuardiaPage() {
                     className="px-4 py-2.5 bg-white border-none rounded-lg text-sm font-bold text-red-900"
                   >
                     <option value="todos">📍 Ubicación</option>
-                    <option value="Box">Box / Shock Room</option>
-                    <option value="Espera">Sala de Espera</option>
-                    <option value="Triage">Triage</option>
+                    {lugaresGuardia.map((lugar) => (
+                      <option key={lugar} value={lugar}>
+                        {lugar}
+                      </option>
+                    ))}
                   </select>
 
                   <select

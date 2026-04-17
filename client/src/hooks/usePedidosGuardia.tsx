@@ -16,6 +16,7 @@ export const useServicioGuardia = () => {
   const [loadingGuardia, setLoadingGuardia] = useState(false);
   const [loadingPaciente, setLoadingPaciente] = useState(false);
   const [loadingPedidosPaciente, setLoadingPedidosPaciente] = useState(false);
+  const [lugaresGuardia, setLugaresGuardia] = useState<string[]>([]);
 
   /* ================== PEDIDOS GUARDIA ================== */
   const traerPedidosGuardia = useCallback(
@@ -33,6 +34,14 @@ export const useServicioGuardia = () => {
       try {
         const data = await promise;
         setPedidosGuardia(data);
+        setLugaresGuardia([
+          ...new Set(
+            pedidosGuardia.map(
+              (p) => p.ubicacion.split("-")[0] || p.ubicacion.trim(),
+            ),
+          ),
+        ]);
+        console.log(lugaresGuardia);
       } finally {
         setLoadingGuardia(false);
       }
@@ -126,6 +135,7 @@ export const useServicioGuardia = () => {
     pedidosGuardia,
     pedidosPaciente,
     pacienteGuardia,
+    lugaresGuardia,
 
     loadingGuardia,
     loadingPaciente,

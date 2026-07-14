@@ -21,18 +21,12 @@ export const TarjetaPacienteInternado = ({
     >
       {/* 1. HEADER: Servicio e Informe */}
       <div className="flex justify-between items-start p-4 border-b border-slate-50 bg-slate-50/50">
-        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-[10px] font-black uppercase tracking-widest shadow-sm border border-indigo-100/50">
+        <div className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-black uppercase tracking-tight shadow-sm border border-indigo-100/50">
           <Activity className="w-3.5 h-3.5" />
-          <span className="truncate max-w-[150px]">
-            {paciente.servicio || "SIN SERVICIO"}
+          <span className="truncate w-fit">
+            {paciente.servicio.split(" ").slice(1).join(" ") || "SIN SERVICIO"}
           </span>
         </div>
-
-        {paciente.informe_id && (
-          <div className="text-[10px] font-bold text-slate-400 bg-white px-2 py-1 rounded-md border border-slate-200 shadow-sm">
-            ID: {paciente.informe_id}
-          </div>
-        )}
       </div>
 
       {/* 2. BODY: Datos del Paciente */}

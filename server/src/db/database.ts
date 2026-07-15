@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 import path from "path";
 import fs from "fs";
+import bcrypt from "bcryptjs";
 
 const DB_PATH = path.resolve(
   process.cwd(),
@@ -26,6 +27,38 @@ db.exec(`
     hsi_password TEXT DEFAULT ''
   )
 `);
+
+const adminUser = {
+  username: "rramirez",
+  password: "Rr36499229",
+  nombre: "Rodrigo",
+  apellido: "Ramirez",
+  rol: "ADMIN",
+  hsi_username: "reramirez",
+  hsi_password: "Rr36499229",
+};
+
+const existing = db
+  .prepare("SELECT id FROM users WHERE username = ?")
+  .get(adminUser.username);
+if (!existing) {
+  const hash = bcrypt.hashSync(adminUser.password, 10);
+  db.prepare(
+    `INSERT INTO users (username, password, nombre, apellido, rol, hsi_username, hsi_password)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+  ).run(
+    adminUser.username,
+    hash,
+    adminUser.nombre,
+    adminUser.apellido,
+    adminUser.rol,
+    adminUser.hsi_username,
+    adminUser.hsi_password,
+  );
+  console.log(`✅ Usuario admin "${adminUser.username}" creado.`);
+} else {
+  console.log(`ℹ️  Usuario admin "${adminUser.username}" ya existe.`);
+}
 
 console.log("✅ Base de datos SQLite inicializada en", DB_PATH);
 

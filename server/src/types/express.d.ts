@@ -1,11 +1,9 @@
-// src/types/express.d.ts
-import { IUsuarioResponse } from "../modules/auth/auth.types";
+import { IUserPayload } from "../modules/auth/auth.types.js";
 
 declare global {
   namespace Express {
     interface Request {
-      // Ahora req.user tendrá .rol, .id, .username, etc.
-      user?: IUsuarioResponse | string;
+      user?: IUserPayload;
     }
   }
 }

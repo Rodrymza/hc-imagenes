@@ -11,6 +11,7 @@ import PedidosGuardiaPage from "./pages/PedidosGuardiaPage";
 import ConsumosPage from "./pages/ConsumosPage";
 import BuscarPaciente from "./pages/BuscarPaciente";
 import PacientesInternadosPage from "./pages/PacientesInternadosPage";
+import AdminUsuariosPage from "./pages/AdminUsuariosPage";
 
 // Dashboard temporal (puedes borrarlo si ya vas a usar Internacion como home)
 const Dashboard = () => (
@@ -51,6 +52,7 @@ function App() {
                 path="/pacientes-internacion"
                 element={<PacientesInternadosPage />}
               />
+              <Route path="/admin/usuarios" element={<AdminUsuariosPage />} />
               {/* Aquí agregarás guardia, configuración, etc. */}
             </Route>
           </Route>

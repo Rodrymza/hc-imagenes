@@ -6,7 +6,7 @@ import { loginCon2FA } from "../guardia/guardia.auth.service.js";
 import { db } from "../../db/database.js";
 
 const SECRET = process.env.JWT_SECRET;
-const EXPIRES_IN = "4h";
+const EXPIRES_IN = "6h";
 
 export const authService = {
   generarToken(user: IUsuarioDB | IUsuarioResponse): string {

@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { guardiaControler } from "./guardia.controller";
+import { guardiaControler } from "./guardia.controller.js";
 
 const guardiaRoutes = Router();
 
 guardiaRoutes.post("/login", guardiaControler.loginGuardia);
+guardiaRoutes.post("/logout", guardiaControler.logoutGuardia);
 guardiaRoutes.get("/pedidos", guardiaControler.getPedidosGuardia);
 guardiaRoutes.get(
   "/paciente/:idPatient/pedidos",

@@ -88,4 +88,14 @@ export const GuardiaService = {
       throw error;
     }
   },
+
+  logoutGuardia: async () => {
+    try {
+      const res = await axios.post("/api/guardia/logout");
+      return res.data;
+    } catch (error) {
+      console.log("Error al cerrar sesión en Guardia", error);
+      throw error;
+    }
+  },
 };

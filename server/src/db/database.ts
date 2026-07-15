@@ -1,7 +1,13 @@
 import Database from "better-sqlite3";
 import path from "path";
+import fs from "fs";
 
-const DB_PATH = path.join(process.cwd(), "src/data/hc-imagenes.db");
+const DB_PATH = path.resolve(
+  process.cwd(),
+  process.env.DB_PATH || "./data/hc-imagenes.db",
+);
+
+fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
 
 const db = new Database(DB_PATH);
 

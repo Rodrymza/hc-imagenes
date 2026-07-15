@@ -1,40 +1,88 @@
-import { isAxiosError } from "axios";
-import { AppError } from "../../errors/AppError";
-import { guardiaApi } from "./guardia.api";
+import { isAxiosError, type AxiosInstance } from "axios";
+import { AppError } from "../../errors/AppError.js";
 import {
   cleanDetallePedidoGuardia,
   cleanPacienteGuardia,
   cleanPedidoListaHsi,
-} from "./guardia.mapper";
+} from "./guardia.mapper.js";
 import {
   IDetallePedidoGuardia,
   IHsiPagedResponse,
   IHsiRawPedido,
   IPedidoGuardia,
   IRawDetallePedido,
-} from "./guardia.types";
-import { GuardiaService } from "./guardia.service";
-import { ejecutarPeticionInterna } from "../commonUtils";
-import { loginGuardiaAuth } from "./guardia.auth.service";
+} from "./guardia.types.js";
+import { GuardiaService } from "./guardia.service.js";
+import { obtenerSesionHsi } from "./guardia.auth.service.js";
+
+async function ejecutarConSesion<T>(
+  userId: string,
+  descripcion: string,
+  operacion: (api: AxiosInstance) => Promise<T>,
+): Promise<T> {
+  const session = await obtenerSesionHsi(userId);
+  if (!session) {
+    throw new AppError(
+      "Sesión HSI no iniciada",
+      401,
+      "Debe iniciar sesión en HSI con código 2FA primero",
+    );
+  }
+
+  try {
+    return await operacion(session.axios);
+  } catch (error: any) {
+    const status = error.response?.status;
+
+    if (status === 400) {
+      console.error(`❌ El hospital rechazó los datos en "${descripcion}".`);
+      throw error;
+    }
+
+    if (status === 401 || status === 403) {
+      console.warn(
+        `🔄 Sesión expirada en ${descripcion} (${status}). Forzando refresh...`,
+      );
+
+      try {
+        const refreshed = await obtenerSesionHsi(userId);
+        if (!refreshed) {
+          throw new AppError(
+            "Sesión HSI expirada",
+            401,
+            "Debe iniciar sesión en HSI nuevamente",
+          );
+        }
+        return await operacion(refreshed.axios);
+      } catch (refreshError: any) {
+        console.error(`💥 Falló el refresh para ${descripcion}.`);
+        throw refreshError;
+      }
+    }
+
+    console.error(
+      `⚠️ Error en "${descripcion}" (Status: ${status || "Desconocido"})`,
+    );
+    throw error;
+  }
+}
 
 export const apiGuardiaService: GuardiaService = {
-  async obtenerPedidosGuardia(fecha?: string): Promise<IPedidoGuardia[]> {
-    return ejecutarPeticionInterna(
+  async obtenerPedidosGuardia(
+    userId: string,
+    fecha?: string,
+  ): Promise<IPedidoGuardia[]> {
+    return ejecutarConSesion(
+      userId,
       "Obtener Pedidos de Guardia",
-      async (forzar) => {
-        await loginGuardiaAuth(forzar);
-      },
-      async () => {
+      async (api) => {
         const url = crearUrlPedidosGuardia(fecha);
 
-        const response = await guardiaApi.get<IHsiPagedResponse<IHsiRawPedido>>(
-          url,
-          {
-            headers: {
-              Referer: `https://hsi.mendoza.gov.ar/institucion/108/imagenes/lista-trabajos/`,
-            },
+        const response = await api.get<IHsiPagedResponse<IHsiRawPedido>>(url, {
+          headers: {
+            Referer: `https://hsi.mendoza.gov.ar/institucion/108/imagenes/lista-trabajos/`,
           },
-        );
+        });
 
         const pedidos = response.data.content;
         const pedidosLimpios: IPedidoGuardia[] = pedidos.map((pedido) =>
@@ -43,7 +91,8 @@ export const apiGuardiaService: GuardiaService = {
 
         return [
           ...pedidosLimpios.sort(
-            (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
+            (a, b) =>
+              new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
           ),
         ];
       },
@@ -51,17 +100,16 @@ export const apiGuardiaService: GuardiaService = {
   },
 
   async obtenerPedidosPaciente(
+    userId: string,
     idPaciente: string,
   ): Promise<IDetallePedidoGuardia[]> {
-    return ejecutarPeticionInterna(
+    return ejecutarConSesion(
+      userId,
       `Obtener Pedidos de Guardia de paciente ${idPaciente}`,
-      async (forzar) => {
-        await loginGuardiaAuth(forzar);
-      },
-      async () => {
+      async (api) => {
         const url = `/api/institutions/108/patient/${idPaciente}/service-requests/studyOrder`;
 
-        const response = await guardiaApi.get<IRawDetallePedido[]>(url);
+        const response = await api.get<IRawDetallePedido[]>(url);
 
         const pedidosLimpios = response.data.map((pedido) =>
           cleanDetallePedidoGuardia(pedido),
@@ -69,23 +117,27 @@ export const apiGuardiaService: GuardiaService = {
 
         pedidosLimpios.sort((a, b) => {
           if (a.realizado !== b.realizado) {
-            return a.realizado ? 1 : -1; // false primero
+            return a.realizado ? 1 : -1;
           }
 
-          return parseFecha(b.fecha).getTime() - parseFecha(a.fecha).getTime();
+          return (
+            parseFecha(b.fecha).getTime() - parseFecha(a.fecha).getTime()
+          );
         });
         return pedidosLimpios;
       },
     );
   },
 
-  async finalizarPedido(idEstudio: string, idPatient: string): Promise<string> {
-    return ejecutarPeticionInterna(
+  async finalizarPedido(
+    userId: string,
+    idEstudio: string,
+    idPatient: string,
+  ): Promise<string> {
+    return ejecutarConSesion(
+      userId,
       `Finalizando pedido de Guardia ${idEstudio}, Paciente ${idPatient}`,
-      async (forzar) => {
-        await loginGuardiaAuth(forzar);
-      },
-      async () => {
+      async (api) => {
         try {
           const url = `https://hsi.mendoza.gov.ar/api/institutions/108/patient/${idPatient}/service-requests/${idEstudio}/complete`;
           const body = { observations: "Realizado" };
@@ -97,7 +149,7 @@ export const apiGuardiaService: GuardiaService = {
             },
           };
 
-          const response = await guardiaApi.put(url, body, config);
+          const response = await api.put(url, body, config);
 
           return response.data;
         } catch (error) {
@@ -122,13 +174,11 @@ export const apiGuardiaService: GuardiaService = {
     );
   },
 
-  async transferirPedido(idEstudio: string): Promise<string> {
-    return ejecutarPeticionInterna(
-      `Transfiriendo pedido de Guardia ${idEstudio}}`,
-      async (forzar) => {
-        await loginGuardiaAuth(forzar);
-      },
-      async () => {
+  async transferirPedido(userId: string, idEstudio: string): Promise<string> {
+    return ejecutarConSesion(
+      userId,
+      `Transfiriendo pedido de Guardia ${idEstudio}`,
+      async (api) => {
         try {
           const url = `https://hsi.mendoza.gov.ar/api/institutions/108/image-service-request-work-list/${idEstudio}/change-state?diagnosticReportId=${idEstudio}&requestOrderStateId=2`;
 
@@ -139,7 +189,7 @@ export const apiGuardiaService: GuardiaService = {
             },
           };
 
-          const response = await guardiaApi.put(url, config);
+          const response = await api.put(url, config);
 
           return response.data;
         } catch (error) {
@@ -164,21 +214,19 @@ export const apiGuardiaService: GuardiaService = {
     );
   },
 
-  async buscarDatosPacienteGuardia(dni: string) {
-    return ejecutarPeticionInterna(
+  async buscarDatosPacienteGuardia(userId: string, dni: string) {
+    return ejecutarConSesion(
+      userId,
       `Buscando datos en Guardia para Paciente DNI: ${dni}`,
-      async (forzar) => {
-        await loginGuardiaAuth(forzar);
-      },
-      async () => {
+      async (api) => {
         const filter = {
           identificationNumber: dni,
           identificationTypeId: 1,
         };
 
-        const response = await guardiaApi.get("/api/patient/optionalfilter", {
+        const response = await api.get("/api/patient/optionalfilter", {
           params: {
-            searchFilterStr: JSON.stringify(filter), // Axios lo codificará automáticamente
+            searchFilterStr: JSON.stringify(filter),
             pageSize: 5,
             pageNumber: 0,
           },

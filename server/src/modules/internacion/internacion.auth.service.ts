@@ -1,5 +1,5 @@
-import { AppError } from "../../errors/AppError";
-import { internacionApi } from "./internacion.api";
+import { AppError } from "../../errors/AppError.js";
+import { internacionApi } from "./internacion.api.js";
 
 export const tieneSesionActiva = async (): Promise<boolean> => {
   const cookieHeader = internacionApi.defaults.headers.common["Cookie"];

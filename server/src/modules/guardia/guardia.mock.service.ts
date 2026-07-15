@@ -1,4 +1,4 @@
-import { GuardiaService } from "./guardia.service";
+import { GuardiaService } from "./guardia.service.js";
 import pedidos from "../../mocks/pedidosGuardia.api.json";
 import paciente from "../../mocks/pacienteGuardia.json";
 import detallePedidos from "../../mocks/pedidosPacienteGuardia.json";
@@ -6,32 +6,31 @@ import {
   IDatosPacienteGuardia,
   IDetallePedidoGuardia,
   IPedidoGuardia,
-} from "./guardia.types";
+} from "./guardia.types.js";
 
 export const mockGuardiaService: GuardiaService = {
-  async obtenerPedidosGuardia(fecha) {
-    // Si el JSON ya tiene el formato IPedidoGuardia, lo devolvemos directo
+  async obtenerPedidosGuardia(_userId, fecha) {
     const ordenados = pedidos.sort(
       (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
     );
     return ordenados as unknown as IPedidoGuardia[];
   },
-  async buscarDatosPacienteGuardia(dni: string) {
+  async buscarDatosPacienteGuardia(_userId, dni: string) {
     return paciente as unknown as IDatosPacienteGuardia;
   },
 
-  async finalizarPedido(idEstudio, idPatient) {
+  async finalizarPedido(_userId, idEstudio, idPatient) {
     return JSON.stringify({
       success: true,
       message: "Pedido finalizado correctamente",
     });
   },
-  async obtenerPedidosPaciente(idPaciente) {
+  async obtenerPedidosPaciente(_userId, idPaciente) {
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     detallePedidos.sort((a, b) => {
       if (a.realizado !== b.realizado) {
-        return a.realizado ? 1 : -1; // false primero
+        return a.realizado ? 1 : -1;
       }
 
       return parseFecha(b.fecha).getTime() - parseFecha(a.fecha).getTime();
@@ -39,7 +38,7 @@ export const mockGuardiaService: GuardiaService = {
     return detallePedidos as unknown as IDetallePedidoGuardia[];
   },
 
-  async transferirPedido(idPedido): Promise<string> {
+  async transferirPedido(_userId, idPedido): Promise<string> {
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     return "Pedido transferido";

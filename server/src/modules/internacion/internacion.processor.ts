@@ -1,6 +1,6 @@
-import { IPedidoInternacion } from "./internacion.types";
-import { enviarNotificacionTelegram } from "../telegram/telegram.service";
-import { internacionService } from "./utils/internacion.factory";
+import { IPedidoInternacion } from "./internacion.types.js";
+import { enviarNotificacionTelegram } from "../telegram/telegram.service.js";
+import { internacionService } from "./utils/internacion.factory.js";
 
 const CONFIG = {
   ENVIOS_DESACTIVADOS: true,

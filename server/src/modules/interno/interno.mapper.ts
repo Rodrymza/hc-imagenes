@@ -3,7 +3,7 @@ import {
   IPacienteInternoRaw,
   ICoberturaRaw,
   IPacienteInternado,
-} from "./interno.types";
+} from "./interno.types.js";
 
 import * as cheerio from "cheerio";
 

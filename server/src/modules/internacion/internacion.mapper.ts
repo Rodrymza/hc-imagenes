@@ -1,12 +1,12 @@
-import { formatearFecha } from "../../utils/date.utils";
-import { capitalize } from "../../utils/string.utils";
-import { IPedidoInternacion } from "./internacion.types";
-import { obtenerTipoEstudio } from "./utils/estudio.utils";
+import { formatearFecha } from "../../utils/date.utils.js";
+import { capitalize } from "../../utils/string.utils.js";
+import { IPedidoInternacion } from "./internacion.types.js";
+import { obtenerTipoEstudio } from "./utils/estudio.utils.js";
 import {
   obtenerFechaHoraIngreso,
   obtenerSala,
-} from "./utils/internacion.utils";
-import { obtenerDatosPacienteInternacion } from "./utils/paciente.utils";
+} from "./utils/internacion.utils.js";
+import { obtenerDatosPacienteInternacion } from "./utils/paciente.utils.js";
 
 export function mapearPedidoInternacion(apiEstudio: any): IPedidoInternacion {
   // === IDs ===

@@ -1,5 +1,5 @@
-import { internoApi, cookieJar } from "./interno.api";
-import { AppError } from "../../errors/AppError";
+import { internoApi, cookieJar } from "./interno.api.js";
+import { AppError } from "../../errors/AppError.js";
 
 const BASE_URL = process.env.HOSPITAL_INTERNAL_URL || "http://10.101.0.4";
 
@@ -35,7 +35,7 @@ export const loginInterno = async (
     // 2. POST de Credenciales
     const loginRes = await internoApi.post("/Hospital/Login", payload, {
       maxRedirects: 0, // Importante para manejar la redirección manual
-      validateStatus: (status) => status >= 200 && status < 303,
+      validateStatus: (status: number) => status >= 200 && status < 303,
     });
 
     // 3. Manejo de Redirección (Donde se suele setear la cookie real)

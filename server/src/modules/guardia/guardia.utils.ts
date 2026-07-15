@@ -1,4 +1,4 @@
-import { IHsiDate, IHsiTime } from "./guardia.types";
+import { IHsiDate, IHsiTime } from "./guardia.types.js";
 
 export function crearFecha(
   date?: IHsiDate,

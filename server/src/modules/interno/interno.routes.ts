@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { internoController } from "./interno.controller";
+import { internoController } from "./interno.controller.js";
 
 const internoRoutes = Router();
 

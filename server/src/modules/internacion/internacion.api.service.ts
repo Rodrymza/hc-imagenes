@@ -1,9 +1,9 @@
-import { internacionApi } from "./internacion.api";
-import { mapearPedidoInternacion } from "./internacion.mapper";
-import { InternacionService } from "./internacion.service";
-import { IServiceResponse } from "../../types/common.types";
-import { loginInternacion } from "./internacion.auth.service";
-import { ejecutarPeticionInterna } from "../commonUtils";
+import { internacionApi } from "./internacion.api.js";
+import { mapearPedidoInternacion } from "./internacion.mapper.js";
+import { InternacionService } from "./internacion.service.js";
+import { IServiceResponse } from "../../types/common.types.js";
+import { loginInternacion } from "./internacion.auth.service.js";
+import { ejecutarPeticionInterna } from "../commonUtils.js";
 
 export const apiInternacionService: InternacionService = {
   async obtenerPedidos(fecha?: string) {

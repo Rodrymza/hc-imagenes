@@ -1,10 +1,10 @@
 // internacion.controller.ts
 import { Request, Response, NextFunction } from "express";
-import { internacionService } from "./utils/internacion.factory";
+import { internacionService } from "./utils/internacion.factory.js";
 import {
   enviarMensajesPendientes,
   procesarEstudiosBackend,
-} from "./internacion.processor";
+} from "./internacion.processor.js";
 
 export const internacionController = {
   async obtenerPedidosInternacion(

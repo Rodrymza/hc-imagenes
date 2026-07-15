@@ -5,7 +5,7 @@ import {
   IPacienteInternado,
   IPacienteInterno,
   IResultadoLote,
-} from "./interno.types";
+} from "./interno.types.js";
 
 export interface InternoService {
   obtenerPrestaciones(): Promise<IEstudioConfig[]>;

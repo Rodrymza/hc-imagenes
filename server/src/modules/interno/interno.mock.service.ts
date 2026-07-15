@@ -1,12 +1,12 @@
-import { InternoService } from "./interno.service";
+import { InternoService } from "./interno.service.js";
 import estudiosData from "../../data/prestaciones.json";
 import {
   IEstudioConfig,
   IPacienteInternado,
   IPacienteInterno,
   IResultadoLote,
-} from "./interno.types";
-import { AppError } from "../../errors/AppError";
+} from "./interno.types.js";
+import { AppError } from "../../errors/AppError.js";
 import datosPaciente from "../../mocks/pacienteInterno.json";
 import pacientesInternados from "../../mocks/datos_pacientes_internados.json";
 

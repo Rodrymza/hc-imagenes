@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
-import { Stethoscope, Loader2 } from "lucide-react"; // Usamos iconos directos
+import { Stethoscope, Loader2 } from "lucide-react";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -10,6 +10,7 @@ export default function LoginPage() {
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [totpCode, setTotpCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -17,9 +18,19 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      await login({ username, password });
-      toast.success("¡Bienvenido al sistema!");
-      navigate("/internacion"); // Redirige a la página principal
+      const res = await login({
+        username,
+        password,
+        totpCode: totpCode || undefined,
+      });
+      if (res.hsiLogin) {
+        toast.success("¡Bienvenido! Sesión HSI activa.");
+      } else if (totpCode) {
+        toast.warning("Login exitoso, pero falló la conexión a HSI.");
+      } else {
+        toast.success("¡Bienvenido al sistema!");
+      }
+      navigate("/internacion");
     } catch (error: any) {
       toast.error(error.message || "Error al iniciar sesión");
     } finally {
@@ -28,16 +39,12 @@ export default function LoginPage() {
   };
 
   return (
-    // CONTENEDOR PRINCIPAL CON EL GRADIENTE SOLICITADO
     <div
       className="min-h-screen flex items-center justify-center px-4"
       style={{ background: "linear-gradient(135deg, #198754, #0d6efd)" }}
     >
-      {/* TARJETA BLANCA (Login Box) */}
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden">
-        {/* Encabezado del Login */}
         <div className="pt-8 pb-6 px-8 flex flex-col items-center">
-          {/* Logo / Icono */}
           <div className="bg-emerald-50 p-3 rounded-full mb-4 shadow-sm">
             <Stethoscope className="w-8 h-8 text-emerald-600" />
           </div>
@@ -49,9 +56,7 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Formulario */}
         <form onSubmit={handleLogin} className="px-8 pb-8 space-y-5">
-          {/* Input Usuario */}
           <div className="space-y-1">
             <label
               htmlFor="username"
@@ -72,7 +77,6 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Input Contraseña */}
           <div className="space-y-1">
             <div className="flex justify-between items-center">
               <label
@@ -94,7 +98,33 @@ export default function LoginPage() {
             />
           </div>
 
-          {/* Botón de Acción */}
+          <div className="space-y-1">
+            <label
+              htmlFor="totpCode"
+              className="block text-sm font-bold text-slate-700"
+            >
+              Código Authenticator HSI
+              <span className="text-slate-400 font-normal">(opcional)</span>
+            </label>
+            <input
+              id="totpCode"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              placeholder="123456"
+              className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all tracking-[0.5em] text-center font-mono text-lg"
+              value={totpCode}
+              onChange={(e) =>
+                setTotpCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+              }
+              disabled={isSubmitting}
+            />
+            <p className="text-xs text-slate-400">
+              Ingresá el código de 6 dígitos para activar la sesión de HSI
+            </p>
+          </div>
+
           <button
             type="submit"
             disabled={isSubmitting}
@@ -111,7 +141,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Footer pequeño (Copyright) */}
         <div className="bg-slate-50 py-3 text-center border-t border-slate-100">
           <p className="text-xs text-slate-400 font-medium">
             &copy; 2026 Sistema de Gestión Hospitalaria

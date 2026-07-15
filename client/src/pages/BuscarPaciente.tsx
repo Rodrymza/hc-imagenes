@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import {
   Search,
   User,
@@ -154,8 +154,8 @@ function InfoRow({
   icon,
 }: {
   label: string;
-  value: any;
-  icon?: any;
+  value: ReactNode;
+  icon?: ReactNode;
 }) {
   return (
     <div className="flex items-center justify-around border-b border-slate-50 pb-2 last:border-0">

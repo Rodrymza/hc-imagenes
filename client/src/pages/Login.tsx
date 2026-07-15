@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { Stethoscope, Loader2 } from "lucide-react";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -31,8 +32,8 @@ export default function LoginPage() {
         toast.success("¡Bienvenido al sistema!");
       }
       navigate("/internacion");
-    } catch (error: any) {
-      toast.error(error.message || "Error al iniciar sesión");
+    } catch (error: unknown) {
+      toast.error(getErrorMessage(error) || "Error al iniciar sesión");
     } finally {
       setIsSubmitting(false);
     }

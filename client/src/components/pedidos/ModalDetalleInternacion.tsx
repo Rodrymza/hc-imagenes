@@ -76,6 +76,7 @@ export const ModalDetalleInternacion = ({
     if (isOpen && pedido?.dni) {
       buscarPacienteInterno(pedido.dni.toString());
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, pedido?.dni]);
 
   if (!isOpen || !pedido) return null;

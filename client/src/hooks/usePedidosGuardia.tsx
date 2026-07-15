@@ -46,6 +46,7 @@ export const useServicioGuardia = () => {
         setLoadingGuardia(false);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -59,7 +60,7 @@ export const useServicioGuardia = () => {
     try {
       const paciente = await GuardiaService.buscarPacienteGuardia(dni);
       setPacienteGuardia(paciente ?? null);
-    } catch (e) {
+    } catch {
       toast.error("Paciente no encontrado en Guardia");
     } finally {
       setLoadingPaciente(false);

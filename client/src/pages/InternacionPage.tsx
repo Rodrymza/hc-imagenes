@@ -29,6 +29,7 @@ export default function InternacionPage() {
 
   const cargarPedidos = useCallback(async (fecha?: string) => {
     await traerPedidosInternacion(false, fecha);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleVerDetalle = (pedido: IPedidoInternacion) => {

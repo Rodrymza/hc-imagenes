@@ -47,7 +47,7 @@ export const GuardiaService = {
   finalizarPedidoPorDni: async (
     idEstudio: string,
     dni: string | number,
-  ): Promise<any> => {
+  ): Promise<unknown> => {
     try {
       const paciente = await GuardiaService.buscarPacienteGuardia(
         dni.toString(),

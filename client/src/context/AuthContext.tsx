@@ -8,6 +8,7 @@ import {
 import { AuthService, type User } from "../services/auth.service";
 import { GuardiaService } from "../services/guardia.service";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 interface AuthContextType {
   user: User | null;
@@ -23,6 +24,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context)
@@ -45,8 +47,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(res.user);
       setIsAuthenticated(true);
       return { hsiLogin: res.hsiLogin };
-    } catch (error: any) {
-      const msg = error.response?.data?.message || "Error al iniciar sesión";
+    } catch (error: unknown) {
+      const msg = getErrorMessage(error) || "Error al iniciar sesión";
       throw new Error(msg);
     }
   };
@@ -67,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(res.user);
           setIsAuthenticated(true);
         }
-      } catch (error) {
+      } catch {
         console.error("Token no válido o expirado");
         setIsAuthenticated(false);
         setUser(null);

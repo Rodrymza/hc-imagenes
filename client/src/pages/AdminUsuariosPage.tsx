@@ -5,6 +5,7 @@ import {
   type CreateUserDTO,
 } from "@/services/admin.service";
 import { toast } from "sonner";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 import {
   Loader2,
   Plus,
@@ -46,6 +47,7 @@ export default function AdminUsuariosPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadUsers();
   }, []);
 
@@ -97,11 +99,8 @@ export default function AdminUsuariosPage() {
       }
       setShowModal(false);
       loadUsers();
-    } catch (error: any) {
-      const msg =
-        error.response?.data?.message ||
-        error.response?.data?.detail ||
-        "Error al guardar";
+    } catch (error: unknown) {
+      const msg = getErrorMessage(error) || "Error al guardar";
       toast.error(msg);
     } finally {
       setSubmitting(false);

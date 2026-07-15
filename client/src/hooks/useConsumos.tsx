@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { InternoService } from "@/services/interno.service";
 import type {
   IConsumoItem,
@@ -13,6 +13,8 @@ import type {
 } from "@/types/pedidos";
 import { getErrorMessage } from "@/utils/getErrorMessage";
 
+export type Exposicion = IConsumoItem & { origen: "AUTO" | "MANUAL" };
+
 const REGLAS_DETECCION = [
   { regex: /t[oó]rax|pecho/i, match: "TORAX" },
   { regex: /mu[nñ]eca/i, match: "MUÑECA" },
@@ -23,7 +25,7 @@ const REGLAS_DETECCION = [
   { regex: /dorsal/i, match: "DORSAL" },
   { regex: /abdomen/i, match: "ABDOM" },
   { regex: /tobillo/i, match: "TOBILLO" },
-  { regex: /codo/i, match: "CODO" }, // Ojo aquí, tenías rodilla matcheando codo
+  { regex: /codo/i, match: "CODO" },
   { regex: /f[ée]mur/i, match: "FEMUR" },
   { regex: /pelvis/i, match: "PELVIS" },
   { regex: /antebrazo/i, match: "ANTEBRAZO" },
@@ -41,7 +43,7 @@ export const useConsumos = (
   pedidos: IDetallePedidoGuardia[] | IPedidoInternacion[] | null,
 ) => {
   const [prestaciones, setPrestaciones] = useState<IConsumoItem[]>([]);
-  const [exposiciones, setExposiciones] = useState<IConsumoItem[]>([]);
+  const [exposiciones, setExposiciones] = useState<Exposicion[]>([]);
   const [loadingCatalogo, setLoadingCatalogo] = useState(true);
   const [loadingInternados, setIsLoadingInternados] = useState(false);
   const [guardandoConsumos, setGuardandoConsumos] = useState(false);
@@ -55,6 +57,8 @@ export const useConsumos = (
 
   const [firmaPedidosProcesados, setFirmaPedidosProcesados] =
     useState<string>("");
+  const firmaPedidosRef = useRef(firmaPedidosProcesados);
+  useEffect(() => { firmaPedidosRef.current = firmaPedidosProcesados; }, [firmaPedidosProcesados]);
   // 1. Cargar Catálogo
   useEffect(() => {
     const cargarPrestaciones = async () => {
@@ -85,7 +89,7 @@ export const useConsumos = (
       return;
     }
 
-    const nuevasDetectadas: IConsumoItem[] = [];
+    const nuevasDetectadas: Exposicion[] = [];
 
     // Recorremos los pedidos
     pedidos.forEach((pedido) => {
@@ -110,7 +114,7 @@ export const useConsumos = (
         textoSolicitud = pedido.pedido + " " + pedido.observaciones;
         if (pedido.realizado) return;
       }
-      textoSolicitud.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      textoSolicitud = textoSolicitud.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
       REGLAS_DETECCION.forEach((regla) => {
         if (regla.regex.test(textoSolicitud)) {
@@ -120,17 +124,18 @@ export const useConsumos = (
           });
 
           if (encontrado) {
-            nuevasDetectadas.push({ ...encontrado, origen: "AUTO" } as any);
+            nuevasDetectadas.push({ ...encontrado, origen: "AUTO" });
           }
         }
       });
     });
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setExposiciones(nuevasDetectadas);
     setFirmaPedidosProcesados(firmaActual);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pedidos, prestaciones]);
 
-  // ... (Tus funciones de agregar/quitar/confirmar siguen igual)
   const agregarExposicion = (item: IConsumoItem) => {
     setExposiciones((prev) => [...prev, { ...item, origen: "MANUAL" }]);
   };
@@ -153,6 +158,7 @@ export const useConsumos = (
     sistema: string,
   ) => {
     if (exposiciones.length === 0) return;
+    const firmaAlEnviar = firmaPedidosRef.current;
     setGuardandoConsumos(true);
     try {
       const res: IResultadoLoteConsumo = await InternoService.registrarConsumos(
@@ -163,11 +169,8 @@ export const useConsumos = (
       );
       const resultados = res.data.resultados;
 
-      console.log("Resultados", resultados);
       const errores = resultados.filter((r) => !r.exito);
-      console.log("Errores", errores);
       const exitos = resultados.filter((r) => r.exito);
-      console.log("Exitos", exitos);
       if (errores.length > 0) {
         toast.warning(
           <>
@@ -185,7 +188,9 @@ export const useConsumos = (
         toast.success(
           `Todos los consumos de ${pacienteInterno?.apellidos.split(" ")[0]} ${pacienteInterno?.nombres.split(" ")[0]} enviados correctamente (${exitos.length})`,
         );
-        limpiarTodo();
+        if (firmaPedidosRef.current === firmaAlEnviar) {
+          limpiarTodo();
+        }
       }
     } catch (error) {
       console.error(error);
@@ -218,8 +223,7 @@ export const useConsumos = (
           // Si el servicio devuelve null/undefined pero no lanza error
           setErrorPaciente(true);
         }
-      } catch (error) {
-        console.error("Paciente no encontrado en sistema interno");
+      } catch {
         setErrorPaciente(true);
         toast.error("Paciente no vinculado al sistema administrativo");
       } finally {

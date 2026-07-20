@@ -2,7 +2,7 @@ import { GuardiaService } from "@/services/guardia.service";
 import type { IPacienteGuardia } from "@/types/pacientes";
 import type { IDetallePedidoGuardia, IPedidoGuardia } from "@/types/pedidos";
 import { getErrorMessage } from "@/utils/getErrorMessage";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export const useServicioGuardia = () => {
@@ -14,36 +14,53 @@ export const useServicioGuardia = () => {
     useState<IPacienteGuardia | null>(null);
 
   const [loadingGuardia, setLoadingGuardia] = useState(false);
+  const [refreshingGuardia, setRefreshingGuardia] = useState(false);
   const [loadingPaciente, setLoadingPaciente] = useState(false);
   const [loadingPedidosPaciente, setLoadingPedidosPaciente] = useState(false);
   const [lugaresGuardia, setLugaresGuardia] = useState<string[]>([]);
+  const pedidosRef = useRef<IPedidoGuardia[]>([]);
 
   /* ================== PEDIDOS GUARDIA ================== */
   const traerPedidosGuardia = useCallback(
-    async (silent = false, fecha?: string) => {
+    async (silent = false, fecha?: string, showFeedback = false) => {
       if (!silent) setLoadingGuardia(true);
+      else setRefreshingGuardia(true);
 
+      const inicio = Date.now();
       const promise = GuardiaService.getPedidos(fecha);
-
-      toast.promise(promise, {
-        id: "pedidos-guardia",
-        success: (data) => `Se cargaron ${data.length} pedidos de Guardia`,
-        error: (e) => `Error: ${getErrorMessage(e)}`,
-      });
 
       try {
         const data = await promise;
+
+        if (showFeedback) {
+          const idsViejos = new Set(pedidosRef.current.map((p) => p.idEstudio));
+          const nuevos = data.filter((p) => !idsViejos.has(p.idEstudio));
+          if (nuevos.length > 0) {
+            toast.success(`${nuevos.length} pedido${nuevos.length > 1 ? "s" : ""} nuevo${nuevos.length > 1 ? "s" : ""}`);
+          } else {
+            toast.info("No hay nuevos pedidos");
+          }
+        }
+
         setPedidosGuardia(data);
+        pedidosRef.current = data;
         setLugaresGuardia([
           ...new Set(
-            pedidosGuardia.map(
+            data.map(
               (p) => p.ubicacion.split("-")[0] || p.ubicacion.trim(),
             ),
           ),
         ]);
-        console.log(lugaresGuardia);
+      } catch (e) {
+        toast.error(`Error: ${getErrorMessage(e)}`);
       } finally {
         setLoadingGuardia(false);
+        const restante = Math.max(0, 800 - (Date.now() - inicio));
+        if (restante > 0) {
+          setTimeout(() => setRefreshingGuardia(false), restante);
+        } else {
+          setRefreshingGuardia(false);
+        }
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,6 +156,7 @@ export const useServicioGuardia = () => {
     lugaresGuardia,
 
     loadingGuardia,
+    refreshingGuardia,
     loadingPaciente,
     loadingPedidosPaciente,
 

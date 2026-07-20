@@ -4,12 +4,14 @@ import { ModalDetalleGuardia } from "@/components/pedidos/ModalDetalleGuardia";
 import { useServicioGuardia } from "@/hooks/usePedidosGuardia";
 import type { IPedidoGuardia } from "@/types/pedidos";
 import { CalendarClock, RefreshCw, Search, Siren, X } from "lucide-react"; // Agregué Siren para el ícono
-import { useCallback, useEffect, useState } from "react";
+import CountPill from "@/components/CountPill";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function PedidosGuardiaPage() {
   // 1. Destructuramos alternarEstadoPedido si ya lo creaste en el hook (como hicimos en Internación)
   const {
     loadingGuardia,
+    refreshingGuardia,
     pedidosGuardia,
     pedidosPaciente,
     lugaresGuardia,
@@ -77,6 +79,19 @@ export default function PedidosGuardiaPage() {
 
     return cumpleBusqueda && cumpleModalidad && cumpleLugar;
   });
+
+  const conteoPorTipo = useMemo(() => {
+    const counts: Record<string, number> = {
+      Tomografia: 0,
+      Radiografia: 0,
+      Ecografia: 0,
+    };
+    pedidosGuardia.forEach((p) => {
+      if (p.tipoEstudio in counts) counts[p.tipoEstudio]++;
+    });
+    return counts;
+  }, [pedidosGuardia]);
+
   useEffect(() => {
     cargarPedidos(filtroFecha);
   }, [cargarPedidos, filtroFecha]);
@@ -98,86 +113,90 @@ export default function PedidosGuardiaPage() {
         style={{ background: "linear-gradient(135deg, #7c1919, #d44545)" }}
       >
         <div className="w-full 8xl mx-auto space-y-6">
-          {/* HEADER & TOOLBAR */}
-          <div className="flex flex-col lg:flex-row flex-between gap-4">
-            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
-              <div className="bg-white p-2 rounded-lg text-red-700 shadow-sm">
-                <Siren className="w-6 h-6 animate-pulse" />
+          {/* HEADER: TODO EN UNA FILA */}
+          <div className="flex flex-wrap items-center gap-3 bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20">
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="bg-white p-1.5 rounded-lg text-red-700 shadow-sm">
+                <Siren className="w-4 h-4 animate-pulse" />
               </div>
-              <h1 className="text-2xl font-black text-white tracking-tight uppercase">
-                Guardia / Emergencias
+              <h1 className="text-xl font-black text-white tracking-tight uppercase whitespace-nowrap">
+                Guardia
               </h1>
               <button
-                onClick={() => traerPedidosGuardia(true)}
-                className="p-2 text-slate-300 hover:text-red-600 hover:bg-emerald-50 rounded-full transition-all hidden sm:flex flex-row items-center justify-center gap-1"
-                title="Recargar Pedidos página"
+                onClick={() => traerPedidosGuardia(true, undefined, true)}
+                className="p-1.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+                title="Recargar pedidos"
               >
-                <RefreshCw className="h-5 w-5 text-green" />{" "}
-                {"Recargar Pedidos"}
+                <RefreshCw
+                  className={`w-6 h-6 ${refreshingGuardia ? "animate-spin" : ""}`}
+                />
               </button>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md p-5 rounded-xl border border-white/20 shadow-xl flex-grow">
-              <div className="flex flex-col xl:flex-row gap-4">
-                {/* BUSCADOR */}
-                <div className="relative flex-grow min-w-[300px]">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-red-700" />
-                  <input
-                    type="text"
-                    className="block w-full pl-10 pr-3 py-2.5 bg-white border-none rounded-lg text-red-900 placeholder-red-300 focus:ring-2 focus:ring-red-500 font-medium"
-                    placeholder="Buscar por Paciente o DNI..."
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                  />
-                </div>
+            <div className="hidden sm:block w-px h-6 bg-white/20" />
 
-                {/* FILTROS */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
-                  <div className="relative">
-                    <CalendarClock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-red-700 z-10" />
-                    <input
-                      type="date"
-                      value={filtroFecha}
-                      onChange={(e) => setFiltroFecha(e.target.value)}
-                      className="w-full pl-10 pr-3 py-2.5 bg-white border-none rounded-lg text-sm font-bold text-red-900"
-                    />
-                  </div>
-
-                  {/* SELECT DE LUGARES (ADAPTADO A GUARDIA) */}
-                  <select
-                    value={filtroLugar}
-                    onChange={(e) => setFiltroLugar(e.target.value)}
-                    className="px-4 py-2.5 bg-white border-none rounded-lg text-sm font-bold text-red-900"
-                  >
-                    <option value="todos">📍 Ubicación</option>
-                    {lugaresGuardia.map((lugar) => (
-                      <option key={lugar} value={lugar}>
-                        {lugar}
-                      </option>
-                    ))}
-                  </select>
-
-                  <select
-                    value={filtroModalidad}
-                    onChange={(e) => setFiltroModalidad(e.target.value)}
-                    className="px-4 py-2.5 bg-white border-none rounded-lg text-sm font-bold text-red-900"
-                  >
-                    <option value="todos">📋 Modalidades</option>
-                    <option value="Radiografia">Radiografía</option>
-                    <option value="Tomografia">Tomografía</option>
-                    <option value="Ecografia">Ecografía</option>
-                  </select>
-                  <button
-                    onClick={limpiarFiltros}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white hover:bg-red-500 hover:text-white text-emerald-900 rounded-lg text-sm font-bold transition-all border border-white/30 backdrop-blur-sm"
-                    title="Limpiar todos los filtros"
-                  >
-                    <X className="h-4 w-4" />
-                    Limpiar
-                  </button>
-                </div>
-              </div>
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <CountPill tipo="Total" valor={pedidosGuardia.length} />
+              <CountPill tipo="Filtrados" valor={pedidosFiltrados.length} />
+              <CountPill tipo="Radiografia" valor={conteoPorTipo.Radiografia} />
+              <CountPill tipo="Tomografia" valor={conteoPorTipo.Tomografia} />
+              <CountPill tipo="Ecografia" valor={conteoPorTipo.Ecografia} />
             </div>
+
+            <div className="hidden sm:block w-px h-6 bg-white/20" />
+
+            <div className="relative flex-grow min-w-[180px]">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-red-700" />
+              <input
+                type="text"
+                className="block w-full pl-8 pr-3 py-3 bg-white border-none rounded-lg text-red-900 placeholder-red-300 focus:ring-2 focus:ring-red-500 font-medium text-sm"
+                placeholder="Buscar por Paciente o DNI..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+              />
+            </div>
+
+            <div className="relative shrink-0">
+              <CalendarClock className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-red-700 z-10" />
+              <input
+                type="date"
+                value={filtroFecha}
+                onChange={(e) => setFiltroFecha(e.target.value)}
+                className="pl-8 pr-2 py-3 bg-white border-none rounded-lg text-xs font-bold text-red-900"
+              />
+            </div>
+
+            <select
+              value={filtroLugar}
+              onChange={(e) => setFiltroLugar(e.target.value)}
+              className="px-3 py-3 bg-white border-none rounded-lg text-sm font-bold text-red-900 shrink-0"
+            >
+              <option value="todos">Ubicación</option>
+              {lugaresGuardia.map((lugar) => (
+                <option key={lugar} value={lugar}>
+                  {lugar}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filtroModalidad}
+              onChange={(e) => setFiltroModalidad(e.target.value)}
+              className="px-3 py-3 bg-white border-none rounded-lg text-sm font-bold text-red-900 shrink-0"
+            >
+              <option value="todos">Modalidad</option>
+              <option value="Radiografia">Radiografía</option>
+              <option value="Tomografia">Tomografía</option>
+              <option value="Ecografia">Ecografía</option>
+            </select>
+
+            <button
+              onClick={limpiarFiltros}
+              className="p-2.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-all shrink-0"
+              title="Limpiar filtros"
+            >
+              <X className="w-6 h-6" />
+            </button>
           </div>
 
           {/* TABLA */}

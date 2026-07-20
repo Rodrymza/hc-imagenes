@@ -6,6 +6,7 @@ import {
 } from "@/services/admin.service";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import PasswordInput from "@/components/PasswordInput";
 import {
   Loader2,
   Plus,
@@ -13,6 +14,7 @@ import {
   Trash2,
   X,
   ShieldCheck,
+  User,
   UserCog,
 } from "lucide-react";
 
@@ -167,16 +169,16 @@ export default function AdminUsuariosPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">
+                  <th className="text-center px-4 py-3 font-bold text-slate-600">
                     Usuario
                   </th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">
+                  <th className="text-center px-4 py-3 font-bold text-slate-600">
                     Nombre
                   </th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">
+                  <th className="text-center px-4 py-3 font-bold text-slate-600">
                     Rol
                   </th>
-                  <th className="text-left px-4 py-3 font-bold text-slate-600">
+                  <th className="text-center px-4 py-3 font-bold text-slate-600">
                     HSI User
                   </th>
                   <th className="text-right px-4 py-3 font-bold text-slate-600">
@@ -190,29 +192,29 @@ export default function AdminUsuariosPage() {
                     key={u.id}
                     className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
                   >
-                    <td className="px-4 py-3 font-mono font-bold text-slate-800">
+                    <td className="px-4 py-3 font-mono font-bold text-slate-800 text-center">
                       {u.username}
                     </td>
-                    <td className="px-4 py-3 text-slate-700">
+                    <td className="px-4 py-3 text-slate-700 text-center">
                       {u.apellido}, {u.nombre}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-center">
                       <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold ${
                           u.rol === "ADMIN"
                             ? "bg-amber-100 text-amber-800"
-                            : u.rol === "OPERATOR"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-slate-100 text-slate-700"
+                            : "bg-blue-100 text-blue-800"
                         }`}
                       >
-                        {u.rol === "ADMIN" && (
-                          <ShieldCheck className="h-3 w-3" />
+                        {u.rol === "ADMIN" ? (
+                          <ShieldCheck className="h-4 w-4" />
+                        ) : (
+                          <User className="h-4 w-4" />
                         )}
                         {u.rol}
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-mono text-slate-500 text-xs">
+                    <td className="px-4 py-3 font-mono text-slate-500 text-xs text-center">
                       {u.hsi_username || "—"}
                     </td>
                     <td className="px-4 py-3">
@@ -280,10 +282,10 @@ export default function AdminUsuariosPage() {
                 </div>
                 <div className="col-span-2 sm:col-span-1">
                   <label className="block text-xs font-bold text-slate-600 mb-1">
-                    Contraseña{editingId ? " (dejar vacío para no cambiar)" : " *"}
+                    Contraseña
+                    {editingId ? " (dejar vacío para no cambiar)" : " *"}
                   </label>
-                  <input
-                    type="password"
+                  <PasswordInput
                     required={!editingId}
                     className={inputClass}
                     placeholder="••••••••"
@@ -331,9 +333,7 @@ export default function AdminUsuariosPage() {
                 <select
                   className={inputClass}
                   value={form.rol}
-                  onChange={(e) =>
-                    setForm({ ...form, rol: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, rol: e.target.value })}
                 >
                   <option value="USER">USER</option>
                   <option value="OPERATOR">OPERATOR</option>
@@ -362,10 +362,10 @@ export default function AdminUsuariosPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-slate-600 mb-1">
-                      Contraseña HSI{editingId ? " (dejar vacío para no cambiar)" : ""}
+                      Contraseña HSI
+                      {editingId ? " (dejar vacío para no cambiar)" : ""}
                     </label>
-                    <input
-                      type="password"
+                    <PasswordInput
                       className={inputClass}
                       placeholder="••••••••"
                       value={form.hsi_password}

@@ -4,6 +4,7 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { Stethoscope, Loader2 } from "lucide-react";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import PasswordInput from "@/components/PasswordInput";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -87,9 +88,8 @@ export default function LoginPage() {
                 Contraseña
               </label>
             </div>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
               required
               placeholder="••••••••"
               className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"

@@ -1,14 +1,25 @@
 import spinnerGif from "@/assets/spinner.gif";
-import { GuardiaPedidoRow } from "@/components/pedidos/GuardiaPedidoRow"; // <--- CAMBIO IMPORTANTE
+import { GuardiaPedidoRow } from "@/components/pedidos/GuardiaPedidoRow";
 import { ModalDetalleGuardia } from "@/components/pedidos/ModalDetalleGuardia";
 import { useServicioGuardia } from "@/hooks/usePedidosGuardia";
 import type { IPedidoGuardia } from "@/types/pedidos";
-import { CalendarClock, RefreshCw, Search, Siren, X } from "lucide-react"; // Agregué Siren para el ícono
+import {
+  CalendarClock,
+  RefreshCw,
+  Search,
+  Siren,
+  X,
+  Loader2,
+  ShieldCheck,
+} from "lucide-react";
 import CountPill from "@/components/CountPill";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { GuardiaService } from "@/services/guardia.service";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/utils/getErrorMessage";
+import { useAuth } from "@/context/AuthContext";
 
 export default function PedidosGuardiaPage() {
-  // 1. Destructuramos alternarEstadoPedido si ya lo creaste en el hook (como hicimos en Internación)
   const {
     loadingGuardia,
     refreshingGuardia,
@@ -22,15 +33,61 @@ export default function PedidosGuardiaPage() {
     buscarPacienteGuardia,
     loadingPedidosPaciente,
   } = useServicioGuardia();
-  // Estados de los filtros
+
+  const [hsiSessionActive, setHsiSessionActive] = useState<boolean | null>(
+    null,
+  );
+  const [hsiChecking, setHsiChecking] = useState(true);
+  const [totpInput, setTotpInput] = useState("");
+  const [hsiLoggingIn, setHsiLoggingIn] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function check() {
+      try {
+        const res = await GuardiaService.checkHsiSession();
+        if (!cancelled) {
+          setHsiSessionActive(res.hasSession);
+          setHsiChecking(false);
+        }
+      } catch {
+        if (!cancelled) {
+          setHsiSessionActive(false);
+          setHsiChecking(false);
+        }
+      }
+    }
+    check();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const handleHsiLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (totpInput.length !== 6) return;
+
+    setHsiLoggingIn(true);
+    try {
+      await GuardiaService.loginGuardia(totpInput);
+      setHsiSessionActive(true);
+      setTotpInput("");
+      toast.success("Sesión HSI activa");
+    } catch (error) {
+      toast.error(getErrorMessage(error) || "Error al iniciar sesión en HSI");
+    } finally {
+      setHsiLoggingIn(false);
+    }
+  };
+
   const [busqueda, setBusqueda] = useState("");
   const [filtroLugar, setFiltroLugar] = useState("todos");
   const [filtroModalidad, setFiltroModalidad] = useState("todos");
   const [pedidoSeleccionado, setPedidoSeleccionado] =
     useState<IPedidoGuardia | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const { activeOperator } = useAuth();
 
-  // Inicializamos con la fecha de hoy
   const hoy = new Date().toISOString().split("T")[0];
   const [filtroFecha, setFiltroFecha] = useState(hoy);
 
@@ -40,6 +97,20 @@ export default function PedidosGuardiaPage() {
     },
     [traerPedidosGuardia],
   );
+
+  useEffect(() => {
+    if (hsiSessionActive) {
+      cargarPedidos(filtroFecha);
+    }
+  }, [hsiSessionActive, cargarPedidos, filtroFecha]);
+
+  useEffect(() => {
+    if (!hsiSessionActive) return;
+    const intervalo = setInterval(() => {
+      if (!document.hidden) traerPedidosGuardia(true);
+    }, 30000);
+    return () => clearInterval(intervalo);
+  }, [hsiSessionActive, traerPedidosGuardia]);
 
   const limpiarFiltros = () => {
     setBusqueda("");
@@ -92,18 +163,92 @@ export default function PedidosGuardiaPage() {
     return counts;
   }, [pedidosGuardia]);
 
-  useEffect(() => {
-    cargarPedidos(filtroFecha);
-  }, [cargarPedidos, filtroFecha]);
+  if (hsiChecking) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center font-sans"
+        style={{ background: "linear-gradient(135deg, #7c1919, #d44545)" }}
+      >
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-white" />
+          <span className="text-white font-bold">
+            Verificando sesión HSI...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    const intervalo = setInterval(() => {
-      if (!document.hidden) traerPedidosGuardia(true);
-    }, 30000);
+  if (!hsiSessionActive) {
+    return (
+      <div
+        className="min-h-screen flex items-center justify-center px-4 font-sans"
+        style={{ background: "linear-gradient(135deg, #7c1919, #d44545)" }}
+      >
+        <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden">
+          <div className="pt-8 pb-6 px-8 flex flex-col items-center">
+            <div className="bg-red-50 p-3 rounded-full mb-4 shadow-sm">
+              <ShieldCheck className="w-8 h-8 text-red-600" />
+            </div>
+            <h1 className="text-xl font-black text-slate-800 tracking-tight">
+              Sesión HSI Requerida
+            </h1>
+            <p className="text-sm text-slate-500 mt-1 text-center">
+              Ingresá el código de tu Authenticator para acceder a Guardia
+            </p>
+            <p className="text-sm text-slate-600 mt-1 text-center">
+              Usuario: <strong>{activeOperator?.username}</strong>
+            </p>
+          </div>
 
-    // LIMPIEZA: Muy importante limpiar el intervalo al desmontar
-    return () => clearInterval(intervalo);
-  }, [traerPedidosGuardia]);
+          <form onSubmit={handleHsiLogin} className="px-8 pb-8 space-y-5">
+            <div className="space-y-1">
+              <label
+                htmlFor="totpGuardia"
+                className="block text-sm font-bold text-slate-700"
+              >
+                Código Authenticator HSI
+              </label>
+              <input
+                id="totpGuardia"
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={6}
+                autoFocus
+                required
+                placeholder="123456"
+                className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all tracking-[0.5em] text-center font-mono text-lg"
+                value={totpInput}
+                onChange={(e) =>
+                  setTotpInput(e.target.value.replace(/\D/g, "").slice(0, 6))
+                }
+                disabled={hsiLoggingIn}
+              />
+              <p className="text-xs text-slate-400">
+                Código de 6 dígitos de la app Authenticator
+              </p>
+            </div>
+
+            <button
+              type="submit"
+              disabled={hsiLoggingIn || totpInput.length !== 6}
+              className="w-full flex items-center justify-center py-3 px-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all transform active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {hsiLoggingIn ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Conectando...
+                </>
+              ) : (
+                "Iniciar Sesión en HSI"
+              )}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

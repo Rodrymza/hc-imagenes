@@ -7,6 +7,7 @@ export interface IUsuarioDB {
   apellido: string;
   hsi_username?: string;
   hsi_password?: string;
+  pin?: string;
 }
 
 export type IUsuarioResponse = Omit<IUsuarioDB, "password" | "hsi_password">;

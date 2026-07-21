@@ -6,18 +6,25 @@ import {
   type ReactNode,
 } from "react";
 import { AuthService, type User } from "../services/auth.service";
-import { toast } from "sonner"; // Usamos la librería nueva
+import { GuardiaService } from "../services/guardia.service";
+import { toast } from "sonner";
+import { getErrorMessage } from "@/utils/getErrorMessage";
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (credentials: { username: string; password: string }) => Promise<void>;
+  login: (credentials: {
+    username: string;
+    password: string;
+    totpCode?: string;
+  }) => Promise<{ hsiLogin: boolean }>;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context)
@@ -30,26 +37,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // --- Función de Login ---
-  const login = async (credentials: { username: string; password: string }) => {
+  const login = async (credentials: {
+    username: string;
+    password: string;
+    totpCode?: string;
+  }) => {
     try {
       const res = await AuthService.login(credentials);
-      setUser(res.user); // Asumiendo que el backend devuelve el objeto usuario completo
+      setUser(res.user);
       setIsAuthenticated(true);
-      return res; // Retornamos para que el componente Login sepa que tuvo éxito
-    } catch (error: any) {
-      // Manejo de error local, limpio y directo
-      const msg = error.response?.data?.message || "Error al iniciar sesión";
-      throw new Error(msg); // Lanzamos el error para que lo atrape el formulario
+      return { hsiLogin: res.hsiLogin };
+    } catch (error: unknown) {
+      const msg = getErrorMessage(error) || "Error al iniciar sesión";
+      throw new Error(msg);
     }
   };
 
-  // --- Función de Logout ---
   const logout = () => {
-    // Lo hacemos "fire and forget" (no esperamos al backend para limpiar el front)
     setUser(null);
     setIsAuthenticated(false);
-    AuthService.logout().catch(console.error); // Avisamos al backend en segundo plano
+    AuthService.logout().catch(console.error);
+    GuardiaService.logoutGuardia().catch(console.error);
     toast.info("Sesión cerrada");
   };
 
@@ -61,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(res.user);
           setIsAuthenticated(true);
         }
-      } catch (error) {
+      } catch {
         console.error("Token no válido o expirado");
         setIsAuthenticated(false);
         setUser(null);

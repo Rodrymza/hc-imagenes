@@ -1,6 +1,6 @@
-import { apiInternoService } from "./interno.api.service";
-import { mockInternoService } from "./interno.mock.service";
-import { InternoService } from "./interno.service";
+import { apiInternoService } from "./interno.api.service.js";
+import { mockInternoService } from "./interno.mock.service.js";
+import { InternoService } from "./interno.service.js";
 
 const useMock = process.env.USE_MOCK_API === "true";
 

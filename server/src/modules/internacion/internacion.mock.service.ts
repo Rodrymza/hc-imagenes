@@ -1,6 +1,6 @@
 import estudios from "../../mocks/internacion.api.json";
-import { mapearPedidoInternacion } from "./internacion.mapper";
-import { InternacionService } from "./internacion.service";
+import { mapearPedidoInternacion } from "./internacion.mapper.js";
+import { InternacionService } from "./internacion.service.js";
 
 export const mockInternacionService: InternacionService = {
   async obtenerPedidos(fecha?: string) {

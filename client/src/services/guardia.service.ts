@@ -47,7 +47,7 @@ export const GuardiaService = {
   finalizarPedidoPorDni: async (
     idEstudio: string,
     dni: string | number,
-  ): Promise<any> => {
+  ): Promise<unknown> => {
     try {
       const paciente = await GuardiaService.buscarPacienteGuardia(
         dni.toString(),
@@ -75,5 +75,27 @@ export const GuardiaService = {
   ): Promise<IPacienteGuardia> => {
     const res = await axios.get(`/api/guardia/paciente/${dniPaciente}`);
     return res.data;
+  },
+
+  transferirPedido: async (idPedido: string) => {
+    try {
+      const res = await axios.post(
+        `api/guardia/estudio/${idPedido}/transferir`,
+      );
+      return res.data;
+    } catch (error) {
+      console.log("Error al transferir el pedido", error);
+      throw error;
+    }
+  },
+
+  logoutGuardia: async () => {
+    try {
+      const res = await axios.post("/api/guardia/logout");
+      return res.data;
+    } catch (error) {
+      console.log("Error al cerrar sesión en Guardia", error);
+      throw error;
+    }
   },
 };

@@ -1,19 +1,32 @@
 import { NextFunction, Request, Response } from "express";
-import { AppError } from "../../errors/AppError";
-import { apiInternoService } from "./interno.api.service";
-import { loginInterno } from "./interno.auth.service";
+import { AppError } from "../../errors/AppError.js";
+import { apiInternoService } from "./interno.api.service.js";
+import { loginInterno } from "./interno.auth.service.js";
 import {
   IConfigSistema,
   SistemaConsumoInterno,
   TipoSistemaKey,
-} from "./interno.types";
-import { internoService } from "./interno.factory";
+} from "./interno.types.js";
+import { internoService } from "./interno.factory.js";
 
 export const internoController = {
   async getPrestaciones(req: Request, res: Response, next: NextFunction) {
     try {
       const prestaciones = await internoService.obtenerPrestaciones();
       return res.json(prestaciones);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getPacientesInternados(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    try {
+      const pacientesInternados = await internoService.getPacientesInternados();
+      return res.json(pacientesInternados);
     } catch (error) {
       next(error);
     }

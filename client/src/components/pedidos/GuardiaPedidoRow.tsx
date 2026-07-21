@@ -102,7 +102,7 @@ export const GuardiaPedidoRow = ({
             {item.tipoEstudio}
           </span>
 
-          <div className="font-bold text-lg text-slate-800 leading-snug text-center">
+          <div className="font-semibold text-lg text-slate-800 leading-snug text-center">
             {solicitudLimpia}
           </div>
         </div>

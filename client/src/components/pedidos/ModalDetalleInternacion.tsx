@@ -76,6 +76,7 @@ export const ModalDetalleInternacion = ({
     if (isOpen && pedido?.dni) {
       buscarPacienteInterno(pedido.dni.toString());
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, pedido?.dni]);
 
   if (!isOpen || !pedido) return null;
@@ -224,7 +225,7 @@ export const ModalDetalleInternacion = ({
                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-5">
                     Detalle de la Solicitud
                   </span>
-                  <h3 className="text-3xl sm:text-4xl font-black text-slate-800 leading-snug">
+                  <h3 className="text-3xl sm:text-4xl font-bold text-slate-800 leading-snug whitespace-pre-line">
                     {pedido.solicitud}
                   </h3>
                 </div>

@@ -10,6 +10,8 @@ import { MainLayout } from "./components/layouts/MainLayout";
 import PedidosGuardiaPage from "./pages/PedidosGuardiaPage";
 import ConsumosPage from "./pages/ConsumosPage";
 import BuscarPaciente from "./pages/BuscarPaciente";
+import PacientesInternadosPage from "./pages/PacientesInternadosPage";
+import AdminUsuariosPage from "./pages/AdminUsuariosPage";
 
 // Dashboard temporal (puedes borrarlo si ya vas a usar Internacion como home)
 const Dashboard = () => (
@@ -48,13 +50,9 @@ function App() {
               <Route path="/buscar-paciente" element={<BuscarPaciente />} />
               <Route
                 path="/pacientes-internacion"
-                element={
-                  <div style={{ padding: "20px", textAlign: "center" }}>
-                    <h1 style={{ color: "#666" }}>Pagina en Desarrollo</h1>
-                    <p>Próximamente: Gestión de pacientes internados.</p>
-                  </div>
-                }
+                element={<PacientesInternadosPage />}
               />
+              <Route path="/admin/usuarios" element={<AdminUsuariosPage />} />
               {/* Aquí agregarás guardia, configuración, etc. */}
             </Route>
           </Route>

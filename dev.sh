@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # levantar backend
-cd server && npm run dev &
+cd server && pnpm dev &
 
 # levantar frontend
-cd client && npm run dev
+cd client && pnpm  dev

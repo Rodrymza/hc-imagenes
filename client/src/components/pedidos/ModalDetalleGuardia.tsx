@@ -30,7 +30,7 @@ interface ModalDetalleGuardiaProps {
   pedidoGeneral: IPedidoGuardia;
   pedidos: IDetallePedidoGuardia[];
   loadingPedidosPaciente: boolean;
-  onFinalizarEstudio: (idEstudio: string, dni: string) => void;
+  onFinalizarEstudio: (idEstudio: string) => void;
 }
 
 export const ModalDetalleGuardia = ({
@@ -42,7 +42,7 @@ export const ModalDetalleGuardia = ({
   loadingPedidosPaciente,
   onFinalizarEstudio,
 }: ModalDetalleGuardiaProps) => {
-  const ID_COBERTURA_PARTICULAR = "099999";
+  const ID_COBERTURA_PARTICULAR = "09999";
   const SISTEMA_GUARDIA = "guardia";
   const [dniPaciente, setDniPaciente] = useState("");
   const [procesando, setProcesando] = useState<Set<string>>(new Set());
@@ -74,12 +74,6 @@ export const ModalDetalleGuardia = ({
     const coberturaFinal =
       coberturaSeleccionada || coberturaPaciente || ID_COBERTURA_PARTICULAR;
 
-    console.log(
-      "Datos a enviar: ",
-      hclinica,
-      coberturaSeleccionada,
-      exposiciones,
-    );
     await confirmarConsumo(hclinica, coberturaFinal, SISTEMA_GUARDIA);
   };
 
@@ -90,12 +84,14 @@ export const ModalDetalleGuardia = ({
   useEffect(() => {
     if (!isOpen) return;
     if (paciente?.dni) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDniPaciente(paciente.dni.toString());
     }
   }, [isOpen, paciente]);
 
   useEffect(() => {
     if (!isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setModalReady(false);
       return;
     }
@@ -106,6 +102,7 @@ export const ModalDetalleGuardia = ({
   useEffect(() => {
     if (!modalReady) return;
     if (dniPaciente.length >= 7 && dniPaciente !== dniBuscado) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDniBuscado(dniPaciente);
       buscarPacienteInterno(dniPaciente);
     }
@@ -199,123 +196,142 @@ export const ModalDetalleGuardia = ({
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-6">
-                {pedidos.map((pedido) => {
-                  const estaProcesando = procesando.has(
-                    pedido.idEstudio.toString(),
-                  );
-                  const estilo = getEstiloEstudio(pedido.tipoEstudio);
+                {[...pedidos]
+                  .sort((a, b) => {
+                    if (a.realizado !== b.realizado)
+                      return a.realizado ? 1 : -1;
+                    return 0;
+                  })
+                  .map((pedido) => {
+                    const estaProcesando = procesando.has(pedido.idEstudio);
+                    const estilo = pedido.realizado
+                      ? {
+                          bg: "bg-emerald-100",
+                          border: "border-emerald-200",
+                          text: "text-emerald-700",
+                          badge: "bg-emerald-600 text-white",
+                          icon: <CheckCircle2 className="w-5 h-5 text-white" />,
+                        }
+                      : getEstiloEstudio(pedido.tipoEstudio);
+                    const deshabilitado =
+                      pedido.realizado ||
+                      estaProcesando ||
+                      pedido.tipoEstudio !== "Radiografia";
 
-                  return (
-                    <div
-                      key={pedido.idEstudio}
-                      className={`bg-white rounded-2xl border-2 shadow-sm overflow-hidden hover:shadow-md transition-all ${estilo.border}`}
-                    >
-                      {/* Header Tarjeta */}
+                    return (
                       <div
-                        className={`p-4 border-b ${estilo.border} ${estilo.bg}`}
+                        key={pedido.idEstudio}
+                        className={`bg-white rounded-2xl border-2 shadow-sm overflow-hidden hover:shadow-md transition-all ${estilo.border}`}
                       >
-                        <div className="flex justify-between items-center">
-                          <div
-                            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest shadow-sm ${estilo.badge}`}
-                          >
-                            {estilo.icon}
-                            {pedido.tipoEstudio}
-                          </div>
-                          <div className="flex items-center gap-1.5 text-sm text-slate-600 font-bold bg-white/50 px-3 py-1 rounded-md">
-                            <Clock className="w-4 h-4" />
-                            <span>{pedido.fecha}</span>
+                        {/* Header Tarjeta */}
+                        <div
+                          className={`p-4 border-b ${estilo.border} ${estilo.bg}`}
+                        >
+                          <div className="flex justify-between items-center">
+                            <div
+                              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-black uppercase tracking-widest shadow-sm ${estilo.badge}`}
+                            >
+                              {estilo.icon}
+                              {pedido.tipoEstudio}
+                            </div>
+                            <div className="flex items-center gap-1.5 text-sm text-slate-600 font-bold bg-white/50 px-3 py-1 rounded-md">
+                              <Clock className="w-4 h-4" />
+                              <span>{pedido.fecha}</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Cuerpo Tarjeta */}
-                      <div className="p-3 space-y-3 bg-slate-50/50">
-                        <div>
-                          <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-1">
-                            Práctica Solicitada
-                          </span>
-                          <h3 className="text-xl text-center py-4 font-black text-slate-800 leading-snug">
-                            {pedido.pedido}
-                          </h3>
-                        </div>
-
-                        {pedido.observaciones && (
-                          <div className="flex items-center gap-3 bg-amber-50/50 p-1 rounded-xl border border-amber-100">
-                            {" "}
-                            <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0" />
-                            <span className="w-32 text-xs text-center tracking-wide font-black text-amber-700/70 uppercase block">
-                              Observaciones:
+                        {/* Cuerpo Tarjeta */}
+                        <div className="p-3 space-y-3 bg-slate-50/50">
+                          <div>
+                            <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest block mb-1">
+                              Práctica Solicitada
                             </span>
-                            <p className="text-sm font-medium text-slate-700">
-                              {pedido.observaciones}
+                            <h3
+                              className={`text-xl text-center py-4 font-bold ${pedido.realizado ? "text-green-900" : "text-slate-800"}  leading-snug whitespace-pre-line`}
+                            >
+                              {pedido.pedido}
+                            </h3>
+                          </div>
+
+                          {pedido.observaciones && (
+                            <div className="flex items-center gap-3 bg-amber-50/50 p-1 rounded-xl border border-amber-100">
+                              {" "}
+                              <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0" />
+                              <span className="w-32 text-xs text-center tracking-wide font-black text-amber-700/70 uppercase block">
+                                Observaciones:
+                              </span>
+                              <p className="text-sm font-medium text-slate-700">
+                                {pedido.observaciones}
+                              </p>
+                            </div>
+                          )}
+
+                          <div className="flex items-center gap-3 bg-amber-50/50 p-1 rounded-xl border border-amber-100">
+                            <Activity className="w-5 h-5 text-indigo-400 flex-shrink-0" />
+                            <span className="w-32 text-xs text-center font-black text-slate-400 uppercase tracking-wide">
+                              Diagnóstico:
+                            </span>
+                            <p className="text-base text-slate-800">
+                              {pedido.diagnostico ||
+                                "Sin diagnóstico especificado"}
                             </p>
                           </div>
-                        )}
-
-                        <div className="flex items-center gap-3 bg-amber-50/50 p-1 rounded-xl border border-amber-100">
-                          <Activity className="w-5 h-5 text-indigo-400 flex-shrink-0" />
-                          <span className="w-32 text-xs text-center font-black text-slate-400 uppercase tracking-wide">
-                            Diagnóstico:
-                          </span>
-                          <p className="text-base text-slate-800">
-                            {pedido.diagnostico ||
-                              "Sin diagnóstico especificado"}
-                          </p>
                         </div>
-                      </div>
 
-                      {/* Footer Tarjeta / Acción */}
-                      <div
-                        className={`px-3 py-1 ${estilo.border} ${estilo.bg} flex flex-col sm:flex-row justify-between items-center gap-4`}
-                      >
-                        <div className="flex items-center gap-3 font-bold text-slate-700 bg-white/80 p-1  rounded-xl shadow-sm border border-slate-200/50 w-full sm:w-auto">
-                          <Stethoscope className="w-5 h-5 text-indigo-500" />
-                          <span className="uppercase text-center w-32 tracking-tight text-sm text-slate-400">
-                            Solicitante:
-                          </span>
-                          <span className="truncate max-w-[200px] pr-3">
-                            {pedido.doctor}
-                          </span>
-                        </div>
-                        <button
-                          disabled={pedido.realizado || estaProcesando}
-                          onClick={async () => {
-                            setProcesando((prev) =>
-                              new Set(prev).add(pedido.idEstudio),
-                            );
-                            try {
-                              await onFinalizarEstudio(
-                                pedido.idEstudio,
-                                paciente.dni.toString(),
+                        {/* Footer Tarjeta / Acción */}
+                        <div
+                          className={`px-3 py-1 ${estilo.border} ${estilo.bg} flex flex-col sm:flex-row justify-between items-center gap-4`}
+                        >
+                          <div className="flex items-center gap-3 font-bold text-slate-700 bg-white/80 p-1  rounded-xl shadow-sm border border-slate-200/50 w-full sm:w-auto">
+                            <Stethoscope className="w-5 h-5 text-indigo-500" />
+                            <span className="uppercase text-center w-32 tracking-tight text-sm text-slate-400">
+                              Solicitante:
+                            </span>
+                            <span className="truncate max-w-[200px] pr-3">
+                              {pedido.doctor}
+                            </span>
+                          </div>
+                          <button
+                            disabled={deshabilitado}
+                            onClick={async () => {
+                              setProcesando((prev) =>
+                                new Set(prev).add(pedido.idEstudio),
                               );
-                            } catch (e) {
-                              setProcesando((prev) => {
-                                const nuevo = new Set(prev);
-                                nuevo.delete(pedido.idEstudio);
-                                return nuevo;
-                              });
-                            }
-                          }}
-                          className={`
+                              try {
+                                onFinalizarEstudio(pedido.idEstudio);
+                              } catch {
+                                // error handled by parent
+                              } finally {
+                                setProcesando((prev) => {
+                                  const nuevo = new Set(prev);
+                                  nuevo.delete(pedido.idEstudio);
+                                  return nuevo;
+                                });
+                              }
+                            }}
+                            className={`
                             flex items-center justify-center gap-2 text-sm font-black uppercase tracking-wider px-6 py-3 rounded-xl transition-all w-full sm:w-auto
                             ${
-                              pedido.realizado || estaProcesando
-                                ? `bg-slate-200 text-slate-400 cursor-not-allowed border-none`
+                              deshabilitado
+                                ? pedido.realizado
+                                  ? "bg-emerald-50 text-emerald-400 border border-emerald-100 cursor-not-allowed"
+                                  : "bg-slate-200 text-slate-400 cursor-not-allowed border-none"
                                 : "bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 text-white shadow-md active:scale-95"
                             }
                           `}
-                        >
-                          <CheckCircle2 className="w-5 h-5" />
-                          {pedido.realizado
-                            ? "Finalizado"
-                            : estaProcesando
-                              ? "Procesando..."
-                              : "Marcar Realizado"}
-                        </button>
+                          >
+                            <CheckCircle2 className="w-5 h-5" />
+                            {pedido.realizado
+                              ? "Transferido"
+                              : estaProcesando
+                                ? "Procesando..."
+                                : "Transferir pedido"}
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
               </div>
             )}
           </div>

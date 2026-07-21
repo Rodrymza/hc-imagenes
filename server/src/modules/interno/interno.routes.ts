@@ -1,11 +1,15 @@
 import { Router } from "express";
-import { internoController } from "./interno.controller";
+import { internoController } from "./interno.controller.js";
 
 const internoRoutes = Router();
 
 internoRoutes.get("/login", internoController.comprobarLoginInterno);
 internoRoutes.get("/paciente", internoController.findPacienteInterno);
 internoRoutes.get("/prestaciones", internoController.getPrestaciones);
+internoRoutes.get(
+  "/pacientes-internados",
+  internoController.getPacientesInternados,
+);
 internoRoutes.get(
   "/paciente/:idPaciente/planillaId",
   internoController.getPlanillaDiaria,

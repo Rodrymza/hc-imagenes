@@ -1,18 +1,21 @@
-import { useCallback, useEffect, useState } from "react";
-import { Search, Activity, CalendarClock, RefreshCw } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { Search, Activity, CalendarClock, RefreshCw, X } from "lucide-react";
 import { InternacionPedidoRow } from "@/components/pedidos/InternacionPedidoRow";
 import { usePedidosInternacion } from "@/hooks/usePedidosInternacion";
 import spinnerGif from "@/assets/spinner.gif";
 import type { IPedidoInternacion } from "@/types/pedidos";
 import { ModalDetalleInternacion } from "@/components/pedidos/ModalDetalleInternacion";
+import CountPill from "@/components/CountPill";
 
 export default function InternacionPage() {
   // 1. Iniciamos con un array vacío para esperar los datos reales de la API
   const {
     isLoading,
+    refreshingInternacion,
     pedidosInternacion,
     traerPedidosInternacion,
     alternarEstadoPedido,
+    lugares,
   } = usePedidosInternacion();
 
   // Estados de los filtros
@@ -28,11 +31,20 @@ export default function InternacionPage() {
 
   const cargarPedidos = useCallback(async (fecha?: string) => {
     await traerPedidosInternacion(false, fecha);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleVerDetalle = (pedido: IPedidoInternacion) => {
     setPedidoSeleccionado(pedido); // Guardamos el objeto completo que ya tiene todo
     setModalOpen(true); // Abrimos el modal
+  };
+
+  const limpiarFiltros = () => {
+    setBusqueda("");
+    setFiltroLugar("todos");
+    setFiltroModalidad("todos");
+    setFiltroEstado("todos");
+    setFiltroFecha(hoy); // Resetea a la fecha actual
   };
 
   // --- FILTRADO (Se ejecuta en cada renderizado) ---
@@ -56,6 +68,18 @@ export default function InternacionPage() {
     return cumpleBusqueda && cumpleLugar && cumpleModalidad && cumpleEstado;
   });
 
+  const conteoPorTipo = useMemo(() => {
+    const counts: Record<string, number> = {
+      Tomografia: 0,
+      Radiografia: 0,
+      Ecografia: 0,
+    };
+    pedidosInternacion.forEach((p) => {
+      if (p.tipoEstudio in counts) counts[p.tipoEstudio]++;
+    });
+    return counts;
+  }, [pedidosInternacion]);
+
   useEffect(() => {
     cargarPedidos(filtroFecha);
     console.log(filtroFecha);
@@ -77,89 +101,106 @@ export default function InternacionPage() {
         style={{ background: "linear-gradient(135deg, #0e6d55, #6fd3b6)" }}
       >
         <div className="w-full 8xl mx-auto space-y-6">
-          {/* HEADER & TOOLBAR */}
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3 bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
-              <div className="bg-white p-2 rounded-lg text-emerald-700 shadow-sm">
-                <Activity className="w-6 h-6" />
+          {/* HEADER: TODO EN UNA FILA */}
+          <div className="flex flex-wrap items-center gap-3 bg-white/10 backdrop-blur-sm p-3 rounded-xl border border-white/20">
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="bg-white p-1.5 rounded-lg text-emerald-700 shadow-sm">
+                <Activity className="w-4 h-4" />
               </div>
-              <h1 className="text-2xl font-black text-white tracking-tight uppercase">
+              <h1 className="text-xl font-black text-white tracking-tight uppercase whitespace-nowrap">
                 Internación
               </h1>
               <button
-                onClick={() => traerPedidosInternacion(true, filtroFecha)}
-                className="p-2 text-slate-300 hover:text-emerald-600 hover:bg-emerald-50 rounded-full transition-all hidden sm:flex flex-row items-center justify-center gap-1"
-                title="Recargar Pedidos página"
+                onClick={() => traerPedidosInternacion(true, filtroFecha, true)}
+                className="p-1.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-all"
+                title="Recargar pedidos"
               >
-                <RefreshCw className="h-5 w-5 text-green" />
-                {"Recargar Pedidos"}
+                <RefreshCw
+                  className={`w-6 h-6 ${refreshingInternacion ? "animate-spin" : ""}`}
+                />
               </button>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md p-5 rounded-xl border border-white/20 shadow-xl">
-              <div className="flex flex-col xl:flex-row gap-4">
-                <div className="relative flex-grow min-w-[300px]">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-emerald-700" />
-                  <input
-                    type="text"
-                    className="block w-full pl-10 pr-3 py-2.5 bg-white border-none rounded-lg text-emerald-900 placeholder-emerald-400 focus:ring-2 focus:ring-emerald-500 font-medium"
-                    placeholder="Buscar por Paciente, DNI o Sala..."
-                    value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)}
-                  />
-                </div>
+            <div className="hidden sm:block w-px h-6 bg-white/20" />
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="relative">
-                    <CalendarClock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-700 z-10" />
-                    <input
-                      type="date"
-                      value={filtroFecha}
-                      onChange={(e) => setFiltroFecha(e.target.value)}
-                      className="w-full pl-10 pr-3 py-2.5 bg-white border-none rounded-lg text-sm font-bold text-emerald-900"
-                    />
-                  </div>
-
-                  <select
-                    value={filtroLugar}
-                    onChange={(e) => setFiltroLugar(e.target.value)}
-                    className="px-4 py-2.5 bg-white border-none rounded-lg text-sm font-bold text-emerald-900"
-                  >
-                    <option value="todos">📍 Lugares</option>
-                    <option value="En Cama">En Cama</option>
-                    <option value="Tomografo">Tomógrafo</option>
-                    <option value="Rayos">Rayos</option>
-                  </select>
-
-                  <select
-                    value={filtroModalidad}
-                    onChange={(e) => setFiltroModalidad(e.target.value)}
-                    className="px-4 py-2.5 bg-white border-none rounded-lg text-sm font-bold text-emerald-900"
-                  >
-                    <option value="todos">📋 Modalidades</option>
-                    <option value="Radiografia">Radiografía</option>
-                    <option value="Tomografia">Tomografía</option>
-                    <option value="Ecografia">Ecografía</option>
-                  </select>
-
-                  <select
-                    value={filtroEstado}
-                    onChange={(e) => setFiltroEstado(e.target.value)}
-                    className={`px-4 py-2.5 border-none rounded-lg text-sm font-black transition-all ${
-                      filtroEstado === "realizado"
-                        ? "bg-emerald-600 text-white"
-                        : filtroEstado === "pendiente"
-                          ? "bg-red-600 text-white"
-                          : "bg-white text-emerald-900"
-                    }`}
-                  >
-                    <option value="todos">🔄 Estados</option>
-                    <option value="pendiente">❌ Pendientes</option>
-                    <option value="realizado">✅ Realizados</option>
-                  </select>
-                </div>
-              </div>
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <CountPill tipo="Total" valor={pedidosInternacion.length} />
+              <CountPill tipo="Filtrados" valor={pedidosFiltrados.length} />
+              <CountPill tipo="Radiografia" valor={conteoPorTipo.Radiografia} />
+              <CountPill tipo="Tomografia" valor={conteoPorTipo.Tomografia} />
+              <CountPill tipo="Ecografia" valor={conteoPorTipo.Ecografia} />
             </div>
+
+            <div className="hidden sm:block w-px h-6 bg-white/20" />
+
+            <div className="relative flex-grow min-w-[180px]">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-700" />
+              <input
+                type="text"
+                className="block w-full pl-8 pr-3 py-3 bg-white border-none rounded-lg text-emerald-900 placeholder-emerald-400 focus:ring-2 focus:ring-emerald-500 font-medium text-sm"
+                placeholder="Buscar por Paciente, DNI o Sala..."
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+              />
+            </div>
+
+            <div className="relative shrink-0">
+              <CalendarClock className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-emerald-700 z-10" />
+              <input
+                type="date"
+                value={filtroFecha}
+                onChange={(e) => setFiltroFecha(e.target.value)}
+                className="pl-8 pr-2 py-3 bg-white border-none rounded-lg text-xs font-bold text-emerald-900"
+              />
+            </div>
+
+            <select
+              value={filtroLugar}
+              onChange={(e) => setFiltroLugar(e.target.value)}
+              className="px-3 py-3 bg-white border-none rounded-lg text-sm font-bold text-emerald-900 shrink-0"
+            >
+              <option value="todos">Lugar</option>
+              {lugares.map((lugar) => (
+                <option key={lugar} value={lugar}>
+                  {lugar}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filtroModalidad}
+              onChange={(e) => setFiltroModalidad(e.target.value)}
+              className="px-3 py-3 bg-white border-none rounded-lg text-sm font-bold text-emerald-900 shrink-0"
+            >
+              <option value="todos">Modalidad</option>
+              <option value="Radiografia">Radiografía</option>
+              <option value="Tomografia">Tomografía</option>
+              <option value="Ecografia">Ecografía</option>
+            </select>
+
+            <select
+              value={filtroEstado}
+              onChange={(e) => setFiltroEstado(e.target.value)}
+              className={`px-3 py-3 border-none rounded-lg text-sm font-black transition-all shrink-0 ${
+                filtroEstado === "realizado"
+                  ? "bg-emerald-600 text-white"
+                  : filtroEstado === "pendiente"
+                    ? "bg-red-600 text-white"
+                    : "bg-white text-emerald-900"
+              }`}
+            >
+              <option value="todos">Estados</option>
+              <option value="pendiente">Pendientes</option>
+              <option value="realizado">Realizados</option>
+            </select>
+
+            <button
+              onClick={limpiarFiltros}
+              className="p-2.5 text-white/60 hover:text-white hover:bg-white/10 rounded-lg transition-all shrink-0"
+              title="Limpiar filtros"
+            >
+              <X className="w-6 h-6" />
+            </button>
           </div>
 
           {/* TABLA */}

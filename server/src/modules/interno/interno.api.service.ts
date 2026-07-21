@@ -1,16 +1,20 @@
 import { XMLParser } from "fast-xml-parser";
-import { internoApi } from "./interno.api";
-import { loginInterno } from "./interno.auth.service";
-import { AppError } from "../../errors/AppError";
-import { cleanPacienteInterno } from "./interno.mapper";
+import { internoApi } from "./interno.api.js";
+import { loginInterno } from "./interno.auth.service.js";
+import { AppError } from "../../errors/AppError.js";
+import {
+  cleanPacienteInterno,
+  formatearPacientesInternados,
+} from "./interno.mapper.js";
 import {
   IConfigSistema,
   IConsumoItem,
   IEstudioConfig,
+  IPacienteInternado,
   IPacienteInterno,
   IResultadoLote,
   SistemaConsumoInterno,
-} from "./interno.types";
+} from "./interno.types.js";
 import estudiosData from "../../data/prestaciones.json";
 // 1. Configuración del Parser
 const parser = new XMLParser({
@@ -623,5 +627,18 @@ export const apiInternoService = {
 
       return { consumoId, resultados };
     });
+  },
+
+  async getPacientesInternados(): Promise<IPacienteInternado[] | null> {
+    const urlPacientes =
+      "http://10.101.0.4/Hospital/Dimagenes/DimagenesPacInternados";
+    return ejecutarPeticionInterna(
+      "Obtener Pacientes Internados HTML",
+      async () => {
+        const res = await internoApi.get(urlPacientes);
+
+        return formatearPacientesInternados(res.data);
+      },
+    );
   },
 };

@@ -8,10 +8,19 @@ export interface User {
   rol: string;
 }
 
+export interface LoginResponse {
+  success: boolean;
+  user: User;
+  hsiLogin: boolean;
+}
+
 export const AuthService = {
-  login: async (credentials: { username: string; password: string }) => {
-    // Vite proxy redirige /api -> localhost:3000
-    const res = await axios.post("/api/auth/login", credentials);
+  login: async (credentials: {
+    username: string;
+    password: string;
+    totpCode?: string;
+  }) => {
+    const res = await axios.post<LoginResponse>("/api/auth/login", credentials);
     return res.data;
   },
 
@@ -20,7 +29,6 @@ export const AuthService = {
   },
 
   verifyToken: async () => {
-    // Este endpoint debe devolver el usuario si la cookie/token es válido
     const res = await axios.get("/api/auth/verify");
     return res.data;
   },

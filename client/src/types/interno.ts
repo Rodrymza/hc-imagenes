@@ -16,6 +16,7 @@ export interface ICobertura {
 export interface IPacienteInterno {
   idPaciente: string;
   dni: string;
+  dniString: string;
   nombreCompleto: string;
   nombres: string;
   apellidos: string;
@@ -41,4 +42,12 @@ export interface IResultadoLoteConsumo {
   success: boolean;
   message: string;
   data: { consumoId: string; resultados: IResultadoLote[] };
+}
+
+export interface IPacienteInternado {
+  historia_clinica: string;
+  nombre_apellido: string;
+  servicio: string;
+  sala: string;
+  informe_id: string;
 }

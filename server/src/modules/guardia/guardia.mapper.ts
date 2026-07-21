@@ -1,5 +1,5 @@
-import { formatearFecha } from "../../utils/date.utils";
-import { capitalize } from "../../utils/string.utils";
+import { formatearFecha } from "../../utils/date.utils.js";
+import { capitalize } from "../../utils/string.utils.js";
 import {
   IDatosPacienteGuardia,
   IDetallePedidoGuardia,
@@ -7,8 +7,8 @@ import {
   IHsiSearchResult,
   IPedidoGuardia,
   IRawDetallePedido,
-} from "./guardia.types";
-import { calcularEdad, crearFecha, definirTipoEstudio } from "./guardia.utils";
+} from "./guardia.types.js";
+import { calcularEdad, crearFecha, definirTipoEstudio } from "./guardia.utils.js";
 
 export const cleanPacienteGuardia = (
   apiPaciente: any,

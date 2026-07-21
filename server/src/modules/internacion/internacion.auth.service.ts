@@ -1,5 +1,5 @@
-import { AppError } from "../../errors/AppError";
-import { internacionApi } from "./internacion.api";
+import { AppError } from "../../errors/AppError.js";
+import { internacionApi } from "./internacion.api.js";
 
 export const tieneSesionActiva = async (): Promise<boolean> => {
   const cookieHeader = internacionApi.defaults.headers.common["Cookie"];
@@ -21,8 +21,8 @@ export const loginInternacion = async (
     }
 
     const payload = new URLSearchParams({
-      usuario: process.env.INTERNACION_USER || "rodrigo.ramirez",
-      password: process.env.INTERNACION_PASS || "123456",
+      usuario: process.env.INTERNACION_USER!,
+      password: process.env.INTERNACION_PASS!,
     });
 
     const loginRes: any = await internacionApi.post("/sesiones/login", payload);

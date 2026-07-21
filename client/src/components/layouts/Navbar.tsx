@@ -12,8 +12,9 @@ import {
   Users,
   Scan,
   ChevronDown,
-  Menu, // <-- Nuevo
-  X, // <-- Nuevo
+  Menu,
+  X,
+  UserCog,
 } from "lucide-react";
 
 export function Navbar() {
@@ -155,6 +156,15 @@ export function Navbar() {
                           {user.username}
                         </p>
                       </div>
+                      {user.rol === "ADMIN" && (
+                        <Link
+                          to="/admin/usuarios"
+                          onClick={() => setIsMenuOpen(false)}
+                          className="w-full flex items-center gap-2 px-4 py-3 text-sm font-bold text-emerald-600 hover:bg-emerald-50 transition-colors"
+                        >
+                          <UserCog className="h-4 w-4" /> Administrar Usuarios
+                        </Link>
+                      )}
                       <button
                         onClick={() => {
                           setIsMenuOpen(false);

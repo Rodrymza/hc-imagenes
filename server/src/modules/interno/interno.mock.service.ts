@@ -1,12 +1,14 @@
-import { InternoService } from "./interno.service";
+import { InternoService } from "./interno.service.js";
 import estudiosData from "../../data/prestaciones.json";
 import {
   IEstudioConfig,
+  IPacienteInternado,
   IPacienteInterno,
   IResultadoLote,
-} from "./interno.types";
-import { AppError } from "../../errors/AppError";
+} from "./interno.types.js";
+import { AppError } from "../../errors/AppError.js";
 import datosPaciente from "../../mocks/pacienteInterno.json";
+import pacientesInternados from "../../mocks/datos_pacientes_internados.json";
 
 export const mockInternoService: InternoService = {
   async crearLoteConsumos(idPaciente, idCobertura, items, sistema) {
@@ -33,5 +35,10 @@ export const mockInternoService: InternoService = {
   async buscarPacienteInterno(numeroId, esHc) {
     await new Promise((resolve) => setTimeout(resolve, 500));
     return datosPaciente as unknown as IPacienteInterno;
+  },
+
+  async getPacientesInternados() {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return pacientesInternados as IPacienteInternado[];
   },
 };

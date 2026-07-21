@@ -1,5 +1,6 @@
 import type {
   IConsumoItem,
+  IPacienteInternado,
   IPacienteInterno,
   IResultadoLoteConsumo,
 } from "@/types/interno";
@@ -8,6 +9,11 @@ import axios from "axios";
 export const InternoService = {
   getPrestaciones: async (): Promise<IConsumoItem[]> => {
     const res = await axios.get("/api/interno/prestaciones");
+    return res.data;
+  },
+
+  getPacientesInternados: async (): Promise<IPacienteInternado[]> => {
+    const res = await axios.get("/api/interno/pacientes-internados");
     return res.data;
   },
 

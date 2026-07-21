@@ -1,47 +1,68 @@
 import jwt from "jsonwebtoken";
-import fs from "fs/promises";
-import path from "path";
-import { AppError } from "../../errors/AppError";
-import { IUsuarioDB, IUsuarioResponse, IUserPayload } from "./auth.types";
+import bcrypt from "bcryptjs";
+import { AppError } from "../../errors/AppError.js";
+import { IUsuarioDB, IUsuarioResponse, IUserPayload } from "./auth.types.js";
+import { loginCon2FA } from "../guardia/guardia.auth.service.js";
+import { db } from "../../db/database.js";
 
-const SECRET = process.env.JWT_SECRET || "mi_secreto_super_seguro";
-const EXPIRES_IN = "4h";
-const USERS_FILE_PATH = path.join(process.cwd(), "src/data/users.json");
+const SECRET = process.env.JWT_SECRET;
+const EXPIRES_IN = "6h";
 
 export const authService = {
   generarToken(user: IUsuarioDB | IUsuarioResponse): string {
     const payload: IUserPayload = {
-      id: user._id,
+      id: user.id,
       username: user.username,
       rol: user.rol,
       apellido: user.apellido,
       nombre: user.nombre,
     };
+    if (!SECRET) {
+      throw new AppError(
+        "No se encontro la variable SECRET en el archivo .env",
+      );
+    }
     return jwt.sign(payload, SECRET, { expiresIn: EXPIRES_IN });
   },
 
   async login(
     username: string,
     passwordInput: string,
-  ): Promise<{ user: IUsuarioResponse; token: string }> {
-    // 1. Leemos tipado como Array de IUsuarioDB
-    const data = await fs.readFile(USERS_FILE_PATH, "utf-8");
-    const usuarios: IUsuarioDB[] = JSON.parse(data);
+    totpCode?: string,
+  ): Promise<{ user: IUsuarioResponse; token: string; hsiLogin?: boolean }> {
+    const usuario = db
+      .prepare("SELECT * FROM users WHERE username = ?")
+      .get(username) as IUsuarioDB | undefined;
 
-    const usuario = usuarios.find((u) => u.username === username);
-
-    if (!usuario || usuario.password !== passwordInput) {
+    if (!usuario || !usuario.password) {
       throw new AppError("Credenciales inválidas", 401);
     }
 
-    // 2. Limpieza de datos (Mapping)
-    // Extraemos la password y dejamos el resto en 'userSafe'
-    const { password, ...userSafe } = usuario;
+    const passwordValida = bcrypt.compareSync(passwordInput, usuario.password);
+    if (!passwordValida) {
+      throw new AppError("Credenciales inválidas", 401);
+    }
 
-    // 3. Generamos token
+    const { password, hsi_password, ...userSafe } = usuario;
+
     const token = this.generarToken(usuario);
 
-    // 4. Retornamos el usuario seguro (TypeScript sabe que userSafe es IUsuarioResponse)
-    return { user: userSafe, token };
+    let hsiLogin = false;
+
+    if (totpCode && usuario.hsi_username && hsi_password) {
+      try {
+        await loginCon2FA(
+          usuario.username,
+          usuario.hsi_username,
+          hsi_password,
+          totpCode,
+        );
+        hsiLogin = true;
+      } catch (error: any) {
+        console.error(`HSI login falló para ${username}:`, error.message);
+      }
+    }
+
+    return { user: userSafe, token, hsiLogin };
   },
 };

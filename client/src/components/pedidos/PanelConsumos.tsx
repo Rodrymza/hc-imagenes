@@ -9,12 +9,13 @@ import {
   Radiation,
 } from "lucide-react";
 import type { IConsumoItem } from "@/types/interno";
+import type { Exposicion } from "@/hooks/useConsumos";
 
 interface PanelConsumosProps {
-  exposiciones: IConsumoItem[];
+  exposiciones: Exposicion[];
   prestaciones: IConsumoItem[];
   onAdd: (item: IConsumoItem) => void;
-  onRemove: (id: string) => void;
+  onRemove: (descripcion: string) => void;
   onConfirm: () => void;
   isSaving: boolean;
   disabled?: boolean;
@@ -90,7 +91,7 @@ export const PanelConsumos = ({
   return (
     // Quitamos los bordes superiores y sombras duras para que sea un bloque interno limpio
     <div className="bg-white p-5 w-full">
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-3">
         {/* BUSCADOR MANUAL (Ahora es full-width y apilado) */}
         <div className="flex flex-col gap-3">
           <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
@@ -171,14 +172,14 @@ export const PanelConsumos = ({
                   className={`
                     flex items-center justify-between pl-3 pr-2 py-2 rounded-lg border shadow-sm animate-in zoom-in-95 duration-200 
                     ${
-                      (exp as any).origen === "AUTO"
+                      exp.origen === "AUTO"
                         ? "bg-rose-50 border-rose-200 text-rose-800"
                         : "bg-indigo-50 border-indigo-200 text-indigo-900"
                     }
                   `}
                 >
                   <div className="flex items-center gap-3 truncate pr-2">
-                    {(exp as any).origen === "AUTO" ? (
+                    {exp.origen === "AUTO" ? (
                       <Zap className="w-5 h-5 text-rose-500 fill-rose-500 shrink-0" />
                     ) : (
                       <Radiation className="w-5 h-5 text-indigo-500 shrink-0" />
@@ -208,7 +209,7 @@ export const PanelConsumos = ({
             className={`
               flex items-center justify-center gap-3 w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all
               ${
-                exposiciones.length === 0
+                exposiciones.length === 0 || disabled || isSaving
                   ? "bg-slate-200 text-slate-400 cursor-not-allowed"
                   : "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white shadow-lg shadow-indigo-200 active:scale-95"
               }

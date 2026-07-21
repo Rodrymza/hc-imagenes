@@ -34,3 +34,8 @@ coverage/
 
 # TypeScript
 *.tsbuildinfo
+
+# Database
+*.db
+*.db-shm
+*.db-wal

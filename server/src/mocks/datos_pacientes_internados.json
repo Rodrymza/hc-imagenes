@@ -1,0 +1,1738 @@
+[
+  {
+    "historia_clinica": "672119",
+    "nombre_apellido": "BERMUDEZ RODRIGUEZ, FERNANDO GABRIEL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "518-3",
+    "informe_id": "297710"
+  },
+  {
+    "historia_clinica": "360800",
+    "nombre_apellido": "ORTIZ ROSALES, RAUL ANTONIO",
+    "servicio": "8887 DPTO TRASPLANTE HEPATICO",
+    "sala": "502-3",
+    "informe_id": "297791"
+  },
+  {
+    "historia_clinica": "407794",
+    "nombre_apellido": "VEIZAGA SEGOVIA, HERNAN RODRIGO",
+    "servicio": "0039 SALUD MENTAL (INTERNACION)",
+    "sala": "113-1",
+    "informe_id": "297826"
+  },
+  {
+    "historia_clinica": "159332",
+    "nombre_apellido": "QUISPE DURAN, BERNABE",
+    "servicio": "0013 CARDIOVASCULAR",
+    "sala": "410-1",
+    "informe_id": "296899"
+  },
+  {
+    "historia_clinica": "127970",
+    "nombre_apellido": "GALDAME , MARIA JOSE",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "325-2",
+    "informe_id": "297980"
+  },
+  {
+    "historia_clinica": "987619",
+    "nombre_apellido": "VILLALOBOS , VICTORIA BELEN",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "506-1",
+    "informe_id": "297991"
+  },
+  {
+    "historia_clinica": "797713",
+    "nombre_apellido": "CARRILLO CASTILLO, ROMINA MABEL",
+    "servicio": "0002 AISLAMIENTO",
+    "sala": "205-5",
+    "informe_id": "298137"
+  },
+  {
+    "historia_clinica": "901150",
+    "nombre_apellido": "OYARZUN FLORES, MARIA ESTER",
+    "servicio": "0008 CIRUGIA",
+    "sala": "303-15",
+    "informe_id": "298045"
+  },
+  {
+    "historia_clinica": "263248",
+    "nombre_apellido": "CLAVEL , MARIA BELEN",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "524-1",
+    "informe_id": "297995"
+  },
+  {
+    "historia_clinica": "430530",
+    "nombre_apellido": "GALLARDO CASAS, OSCAR OMAR",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "516-5",
+    "informe_id": "296559"
+  },
+  {
+    "historia_clinica": "876346",
+    "nombre_apellido": "MARTINEZ GOMEZ, ELEUTERIO",
+    "servicio": "0058 HOSPITAL DE 1 DIA",
+    "sala": "119-2",
+    "informe_id": "298063"
+  },
+  {
+    "historia_clinica": "1024176",
+    "nombre_apellido": "DOMINGUEZ JOFRE, LOURDES MICAELA",
+    "servicio": "0039 SALUD MENTAL (INTERNACION)",
+    "sala": "114-2",
+    "informe_id": "298064"
+  },
+  {
+    "historia_clinica": "187914",
+    "nombre_apellido": "CUELLO QUESADA, JACQUELINA VANESA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "308-5",
+    "informe_id": "298083"
+  },
+  {
+    "historia_clinica": "1019921",
+    "nombre_apellido": "MIRANDA , BRIAN AGUSTIN",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "321-1",
+    "informe_id": "298086"
+  },
+  {
+    "historia_clinica": "1040070",
+    "nombre_apellido": "ALLENDE , ALBERTO CARLOS",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "413-6",
+    "informe_id": "298110"
+  },
+  {
+    "historia_clinica": "437083",
+    "nombre_apellido": "SOTOMAYOR MAZA, LIDIA ESTELA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "507-2",
+    "informe_id": "297996"
+  },
+  {
+    "historia_clinica": "599780",
+    "nombre_apellido": "MOYANO ECHEGARAY, NATALIA NOEMI",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "509-1",
+    "informe_id": "297844"
+  },
+  {
+    "historia_clinica": "277295",
+    "nombre_apellido": "VILLEGAS , VICENTA REINA",
+    "servicio": "0089 UNIDAD CORONARIA",
+    "sala": "40-7",
+    "informe_id": "298067"
+  },
+  {
+    "historia_clinica": "1148587",
+    "nombre_apellido": "GALDAME , MARTA NOEMI",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "470-2",
+    "informe_id": "297156"
+  },
+  {
+    "historia_clinica": "747546",
+    "nombre_apellido": "AROMA ., FERNANDO ARIEL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "505-4",
+    "informe_id": "297711"
+  },
+  {
+    "historia_clinica": "1148991",
+    "nombre_apellido": "AGUILERA SALAZAR, BRIAN EZEQUIEL",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "317-5",
+    "informe_id": "297697"
+  },
+  {
+    "historia_clinica": "731903",
+    "nombre_apellido": "PASTRANO LUCERO, SERGIO ERNESTO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "510-3",
+    "informe_id": "297743"
+  },
+  {
+    "historia_clinica": "382940",
+    "nombre_apellido": "YA�EZ CARBAJAL, GUSTAVO GABRIEL",
+    "servicio": "0089 UNIDAD CORONARIA",
+    "sala": "41-3",
+    "informe_id": "298016"
+  },
+  {
+    "historia_clinica": "935546",
+    "nombre_apellido": "PRUEBA DE SISTEMA, GABRIEL",
+    "servicio": "0023 INFORMATICA MEDICA",
+    "sala": "1-1",
+    "informe_id": "1"
+  },
+  {
+    "historia_clinica": "293838",
+    "nombre_apellido": "CAVAION , RICARDO JUAN",
+    "servicio": "0066 UROLOGIA",
+    "sala": "110-4",
+    "informe_id": "298058"
+  },
+  {
+    "historia_clinica": "752987",
+    "nombre_apellido": "FERREIRA NU�EZ, MARCELO DAMIAN",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "470-1",
+    "informe_id": "296922"
+  },
+  {
+    "historia_clinica": "1117167",
+    "nombre_apellido": "LESCANO TABLADA, RAUL GUALBERTO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "521-2",
+    "informe_id": "297624"
+  },
+  {
+    "historia_clinica": "963653",
+    "nombre_apellido": "RUIZ LABRA, MARIELA JOHANA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "303-13",
+    "informe_id": "297957"
+  },
+  {
+    "historia_clinica": "744613",
+    "nombre_apellido": "LIZARRAGA LAMA, RUBEN ROBERTO",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "317-6",
+    "informe_id": "298099"
+  },
+  {
+    "historia_clinica": "630401",
+    "nombre_apellido": "MALNAR CASINI, DIEGO MANUEL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "505-1",
+    "informe_id": "298118"
+  },
+  {
+    "historia_clinica": "405278",
+    "nombre_apellido": "GALESI GONZALEZ, ORLANDO ALBERTO",
+    "servicio": "0058 HOSPITAL DE 1 DIA",
+    "sala": "119-4",
+    "informe_id": "298101"
+  },
+  {
+    "historia_clinica": "1135465",
+    "nombre_apellido": "REY PENNACCA, RICARDO ORLANDO",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "316-1",
+    "informe_id": "298102"
+  },
+  {
+    "historia_clinica": "1046876",
+    "nombre_apellido": "SCALONI HN, ARMANDO LUIS ARMANDO",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "470-8",
+    "informe_id": "297205"
+  },
+  {
+    "historia_clinica": "1149202",
+    "nombre_apellido": "GONZALEZ , CARMEN BEATRIZ",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "522-5",
+    "informe_id": "297968"
+  },
+  {
+    "historia_clinica": "1148839",
+    "nombre_apellido": "RIOS , MARYSOL AYELEN",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "318-1",
+    "informe_id": "297934"
+  },
+  {
+    "historia_clinica": "954648",
+    "nombre_apellido": "QUIROGA , CECILIA ANDREA VICTORIA",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "417-4",
+    "informe_id": "298103"
+  },
+  {
+    "historia_clinica": "546342",
+    "nombre_apellido": "AGUERO , ADRIAN DAVID",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "518-2",
+    "informe_id": "297974"
+  },
+  {
+    "historia_clinica": "216694",
+    "nombre_apellido": "GARCIA AGUILAR, ANTONELLA ARIEL",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "411-4",
+    "informe_id": "298023"
+  },
+  {
+    "historia_clinica": "139447",
+    "nombre_apellido": "MALDONADO ROSALES, MARCELO FABIAN",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "324-1",
+    "informe_id": "296518"
+  },
+  {
+    "historia_clinica": "1076934",
+    "nombre_apellido": "RODRIGUEZ , RENE DAVID",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "513-1",
+    "informe_id": "297340"
+  },
+  {
+    "historia_clinica": "962702",
+    "nombre_apellido": "GIL DANIELI, NATALIA LOURDES",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "520-5",
+    "informe_id": "297290"
+  },
+  {
+    "historia_clinica": "1149261",
+    "nombre_apellido": "ROMERO ESCUDERO, FEBE ANAHI",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "411-3",
+    "informe_id": "298012"
+  },
+  {
+    "historia_clinica": "320538",
+    "nombre_apellido": "MACHUCA ACU�A, AUGUSTO",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "317-1",
+    "informe_id": "298025"
+  },
+  {
+    "historia_clinica": "1034640",
+    "nombre_apellido": "COLLADO HN, SEBASTIAN FERNANDO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "505-8",
+    "informe_id": "297923"
+  },
+  {
+    "historia_clinica": "1149130",
+    "nombre_apellido": "SANCHEZ , LAURA ELIZABETH",
+    "servicio": "0002 AISLAMIENTO",
+    "sala": "205-4",
+    "informe_id": "297880"
+  },
+  {
+    "historia_clinica": "673040",
+    "nombre_apellido": "ARANCIBIA SURIZ, EDUARDO FABIAN",
+    "servicio": "0089 UNIDAD CORONARIA",
+    "sala": "41-6",
+    "informe_id": "298080"
+  },
+  {
+    "historia_clinica": "132129",
+    "nombre_apellido": "CASTRO SUELDO, OMAR ALFREDO",
+    "servicio": "0066 UROLOGIA",
+    "sala": "110-3",
+    "informe_id": "297720"
+  },
+  {
+    "historia_clinica": "1129541",
+    "nombre_apellido": "SAMBRANO PAVEZ, ANA GLORIA",
+    "servicio": "0039 SALUD MENTAL (INTERNACION)",
+    "sala": "114-1",
+    "informe_id": "297481"
+  },
+  {
+    "historia_clinica": "353968",
+    "nombre_apellido": "MASMAN MORENO, VERONICA YAMILA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "308-2",
+    "informe_id": "297783"
+  },
+  {
+    "historia_clinica": "394729",
+    "nombre_apellido": "MASSO SERRESONE, ANALIA MABEL",
+    "servicio": "0028 GINECOLOGIA",
+    "sala": "120-2",
+    "informe_id": "298076"
+  },
+  {
+    "historia_clinica": "1003885",
+    "nombre_apellido": "GARRO GELVES, SIMON CEFERINO",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-17",
+    "informe_id": "298043"
+  },
+  {
+    "historia_clinica": "560315",
+    "nombre_apellido": "SALENCIO CUELLAR, ARMANDO PEDRO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "510-2",
+    "informe_id": "298111"
+  },
+  {
+    "historia_clinica": "741268",
+    "nombre_apellido": "PERALTA DIAZ, JAVIER FERNANDO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "513-3",
+    "informe_id": "294314"
+  },
+  {
+    "historia_clinica": "845030",
+    "nombre_apellido": "ATAMPIS ABREGO, ANDREA CEFERINA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "507-1",
+    "informe_id": "297647"
+  },
+  {
+    "historia_clinica": "1112101",
+    "nombre_apellido": "BARRIA PASTENES, MARIA CAROLINA",
+    "servicio": "0066 UROLOGIA",
+    "sala": "111-3",
+    "informe_id": "298057"
+  },
+  {
+    "historia_clinica": "210010",
+    "nombre_apellido": "FOSSAS , WALTER ANDRES",
+    "servicio": "0008 CIRUGIA",
+    "sala": "305-4",
+    "informe_id": "297962"
+  },
+  {
+    "historia_clinica": "314247",
+    "nombre_apellido": "CHIRINO HEREDIA, PAULA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "308-3",
+    "informe_id": "297939"
+  },
+  {
+    "historia_clinica": "1076234",
+    "nombre_apellido": "NU�EZ MALLEA, SERGIO FABIAN",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "413-2",
+    "informe_id": "295532"
+  },
+  {
+    "historia_clinica": "265249",
+    "nombre_apellido": "GALVAN SILVA, IVAN RODRIGO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "521-1",
+    "informe_id": "297944"
+  },
+  {
+    "historia_clinica": "373177",
+    "nombre_apellido": "SUAREZ FLORES, OSVALDO GASTON",
+    "servicio": "0098 SERVICIO NEFROLOGIA",
+    "sala": "209-4",
+    "informe_id": "298088"
+  },
+  {
+    "historia_clinica": "239690",
+    "nombre_apellido": "IBA�EZ TORO, FERNANDO AMADOR",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "504-1",
+    "informe_id": "297818"
+  },
+  {
+    "historia_clinica": "765587",
+    "nombre_apellido": "MALDONADO CASTILLO, RENE ANTONIO",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "315-1",
+    "informe_id": "298095"
+  },
+  {
+    "historia_clinica": "1003903",
+    "nombre_apellido": "RODRIGUEZ PACHAME, IGNACIO CARLOS",
+    "servicio": "0039 SALUD MENTAL (INTERNACION)",
+    "sala": "112-2",
+    "informe_id": "297798"
+  },
+  {
+    "historia_clinica": "1149189",
+    "nombre_apellido": "MENDEZ , LUIS RAMON",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "327-1",
+    "informe_id": "297955"
+  },
+  {
+    "historia_clinica": "954580",
+    "nombre_apellido": "VARAS ORTIZ, JORGE ALBERTO",
+    "servicio": "0066 UROLOGIA",
+    "sala": "111-4",
+    "informe_id": "297994"
+  },
+  {
+    "historia_clinica": "1149180",
+    "nombre_apellido": "LARA , YESICA LORENA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "308-1",
+    "informe_id": "297929"
+  },
+  {
+    "historia_clinica": "604464",
+    "nombre_apellido": "DUPERUTT ARAYA, PAMELA IRENE",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "520-4",
+    "informe_id": "297598"
+  },
+  {
+    "historia_clinica": "208730",
+    "nombre_apellido": "TALQUENCA LEMOS, ROBERTO DANIEL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "502-6",
+    "informe_id": "297999"
+  },
+  {
+    "historia_clinica": "1148280",
+    "nombre_apellido": "ACOSTA , NESTOR FABIAN",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "526-2",
+    "informe_id": "297915"
+  },
+  {
+    "historia_clinica": "1143022",
+    "nombre_apellido": "MARTIN , RAQUEL DEOLINDA",
+    "servicio": "0002 AISLAMIENTO",
+    "sala": "205-2",
+    "informe_id": "297324"
+  },
+  {
+    "historia_clinica": "804468",
+    "nombre_apellido": "ARAYA , ABELARDO CEFERINO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "503-5",
+    "informe_id": "297779"
+  },
+  {
+    "historia_clinica": "211729",
+    "nombre_apellido": "QUI�ONES CARMEN, OMAR DANIEL",
+    "servicio": "0008 CIRUGIA",
+    "sala": "302-4",
+    "informe_id": "297862"
+  },
+  {
+    "historia_clinica": "279987",
+    "nombre_apellido": "TRASLAVI�A , OSVALDO JOAQUIN",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "502-4",
+    "informe_id": "297220"
+  },
+  {
+    "historia_clinica": "1096655",
+    "nombre_apellido": "TORREZ OLIVA, TATIANA GIULIANA",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "318-2",
+    "informe_id": "297679"
+  },
+  {
+    "historia_clinica": "1043237",
+    "nombre_apellido": "GONZALEZ HN, ESTEBAN ELIAS",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "508-4",
+    "informe_id": "297116"
+  },
+  {
+    "historia_clinica": "1149068",
+    "nombre_apellido": "VARGAS GONZALVEZ, MARIA LUZ",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-18",
+    "informe_id": "297807"
+  },
+  {
+    "historia_clinica": "1148871",
+    "nombre_apellido": "VACA , CRISTIAN ANDRES",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "517-4",
+    "informe_id": "298003"
+  },
+  {
+    "historia_clinica": "1148901",
+    "nombre_apellido": "VERA , ZAIDA MARIQUENA DE LOURDES",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "522-4",
+    "informe_id": "297604"
+  },
+  {
+    "historia_clinica": "993704",
+    "nombre_apellido": "MANUELE RUGERI, SERGIO RUBEN",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "513-4",
+    "informe_id": "294506"
+  },
+  {
+    "historia_clinica": "203033",
+    "nombre_apellido": "ISGRO ROJAS, RAUL EMANUEL",
+    "servicio": "0008 CIRUGIA",
+    "sala": "302-5",
+    "informe_id": "297883"
+  },
+  {
+    "historia_clinica": "434780",
+    "nombre_apellido": "MESA SELAYA, JOSE LUIS",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "441-3",
+    "informe_id": "297386"
+  },
+  {
+    "historia_clinica": "1144882",
+    "nombre_apellido": "SANCHEZ , ROSA ISABEL",
+    "servicio": "0014 TORAX",
+    "sala": "312-1",
+    "informe_id": "298065"
+  },
+  {
+    "historia_clinica": "1046682",
+    "nombre_apellido": "FERNANDEZ GOYOCHEA, EDITH ROMINA",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "325-1",
+    "informe_id": "297731"
+  },
+  {
+    "historia_clinica": "294535",
+    "nombre_apellido": "COSTA , NESTOR",
+    "servicio": "0089 UNIDAD CORONARIA",
+    "sala": "41-2",
+    "informe_id": "298136"
+  },
+  {
+    "historia_clinica": "1149044",
+    "nombre_apellido": "JAQUE , SHEILA CINTIA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "522-3",
+    "informe_id": "297786"
+  },
+  {
+    "historia_clinica": "782696",
+    "nombre_apellido": "JUNCO MIRABILLE, FERNANDO MARIO",
+    "servicio": "0013 CARDIOVASCULAR",
+    "sala": "409-4",
+    "informe_id": "293680"
+  },
+  {
+    "historia_clinica": "1149342",
+    "nombre_apellido": "PESCETTI , ALDO ARIEL IVAN",
+    "servicio": "0089 UNIDAD CORONARIA",
+    "sala": "41-4",
+    "informe_id": "298117"
+  },
+  {
+    "historia_clinica": "115943",
+    "nombre_apellido": "TANQUILEVICH , URIEL GERMAN",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-13",
+    "informe_id": "298069"
+  },
+  {
+    "historia_clinica": "916436",
+    "nombre_apellido": "NIETO , HECTOR ANDRES",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-2",
+    "informe_id": "297941"
+  },
+  {
+    "historia_clinica": "972920",
+    "nombre_apellido": "TORRES ELIZONDO, ANDRES AVELINO",
+    "servicio": "0089 UNIDAD CORONARIA",
+    "sala": "40-2",
+    "informe_id": "297568"
+  },
+  {
+    "historia_clinica": "750153",
+    "nombre_apellido": "SOLANO ZEBALLO, TITO RUBEN",
+    "servicio": "0066 UROLOGIA",
+    "sala": "111-5",
+    "informe_id": "297993"
+  },
+  {
+    "historia_clinica": "453704",
+    "nombre_apellido": "ALMADA SALINAS, ELVIRA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "512-1",
+    "informe_id": "292576"
+  },
+  {
+    "historia_clinica": "246083",
+    "nombre_apellido": "SOSA SANCHEZ, RAUL ANGEL",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "327-5",
+    "informe_id": "298124"
+  },
+  {
+    "historia_clinica": "1136863",
+    "nombre_apellido": "PAEZ GIRLANDO, JOAQUIN ARNOLDO",
+    "servicio": "0002 AISLAMIENTO",
+    "sala": "203-1",
+    "informe_id": "297958"
+  },
+  {
+    "historia_clinica": "1008893",
+    "nombre_apellido": "ESCOBAR LUCERO, SANDRA",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "416-1",
+    "informe_id": "298054"
+  },
+  {
+    "historia_clinica": "849649",
+    "nombre_apellido": "DELGADO GUARACHI, ERNESTO FABIAN",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "505-10",
+    "informe_id": "298053"
+  },
+  {
+    "historia_clinica": "758726",
+    "nombre_apellido": "VILLEGAS , MIGUEL ANGEL",
+    "servicio": "0066 UROLOGIA",
+    "sala": "110-6",
+    "informe_id": "298100"
+  },
+  {
+    "historia_clinica": "371643",
+    "nombre_apellido": "OCARANZA SERRANO, MARCELA FABIANA",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "470-5",
+    "informe_id": "296968"
+  },
+  {
+    "historia_clinica": "1149298",
+    "nombre_apellido": "PONCE , ENZO ARIEL",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "316-4",
+    "informe_id": "298047"
+  },
+  {
+    "historia_clinica": "644646",
+    "nombre_apellido": "NU�EZ PEDRAZA, ANA CRISTINA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "304-21",
+    "informe_id": "298092"
+  },
+  {
+    "historia_clinica": "128075",
+    "nombre_apellido": "AVARIA FAUNDEZ, VERONICA ELCIRA",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "415-1",
+    "informe_id": "297414"
+  },
+  {
+    "historia_clinica": "1130075",
+    "nombre_apellido": "PORTALES CASTRO, RODRIGO DIEGO",
+    "servicio": "0002 AISLAMIENTO",
+    "sala": "204-4",
+    "informe_id": "297918"
+  },
+  {
+    "historia_clinica": "765829",
+    "nombre_apellido": "RODRIGUEZ BOHORQUEZ, ELSA HAYDEE",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "511-1",
+    "informe_id": "298052"
+  },
+  {
+    "historia_clinica": "345374",
+    "nombre_apellido": "FRASCHERI MARTIRE, VALERIA EMILCE",
+    "servicio": "0013 CARDIOVASCULAR",
+    "sala": "406-1",
+    "informe_id": "298133"
+  },
+  {
+    "historia_clinica": "1044056",
+    "nombre_apellido": "ROJAS PEREZ, LEONARDO MIGUEL",
+    "servicio": "0008 CIRUGIA",
+    "sala": "305-7",
+    "informe_id": "298134"
+  },
+  {
+    "historia_clinica": "1148856",
+    "nombre_apellido": "PEREZ OTA�O, DIEGO MARCELO",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "315-5",
+    "informe_id": "297576"
+  },
+  {
+    "historia_clinica": "1056191",
+    "nombre_apellido": "MARTINEZ , ALEXIS CRISTIAN",
+    "servicio": "0008 CIRUGIA",
+    "sala": "306-2",
+    "informe_id": "297383"
+  },
+  {
+    "historia_clinica": "1149193",
+    "nombre_apellido": "TEJADA , ORLANDO LUIS",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "505-5",
+    "informe_id": "298046"
+  },
+  {
+    "historia_clinica": "1149063",
+    "nombre_apellido": "RODRIGUEZ , GASTON IVAN",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "319-1",
+    "informe_id": "297804"
+  },
+  {
+    "historia_clinica": "195621",
+    "nombre_apellido": "RENGIFO RODRIGUEZ, GONZALO RAUL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "508-3",
+    "informe_id": "297391"
+  },
+  {
+    "historia_clinica": "1149040",
+    "nombre_apellido": "JOFRE , ALDANA KAREN",
+    "servicio": "0008 CIRUGIA",
+    "sala": "304-18",
+    "informe_id": "297784"
+  },
+  {
+    "historia_clinica": "548002",
+    "nombre_apellido": "VEGA YANZON, EZEQUIEL EMANUEL",
+    "servicio": "0098 SERVICIO NEFROLOGIA",
+    "sala": "209-1",
+    "informe_id": "297842"
+  },
+  {
+    "historia_clinica": "976850",
+    "nombre_apellido": "SOSA OCA, JUAN BERNARDO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "505-2",
+    "informe_id": "296964"
+  },
+  {
+    "historia_clinica": "296631",
+    "nombre_apellido": "MONTIVERO GARATE, RAUL OSVALDO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "503-3",
+    "informe_id": "297937"
+  },
+  {
+    "historia_clinica": "770252",
+    "nombre_apellido": "GOMEZ CESARI, FEDERICO ERNESTO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "504-2",
+    "informe_id": "297932"
+  },
+  {
+    "historia_clinica": "677055",
+    "nombre_apellido": "CORBALAN BAIGORRIA, GISELA CAROLINA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "522-6",
+    "informe_id": "297632"
+  },
+  {
+    "historia_clinica": "881412",
+    "nombre_apellido": "TORRES CHAUSINO, MARCELO ADRIAN",
+    "servicio": "0089 UNIDAD CORONARIA",
+    "sala": "40-1",
+    "informe_id": "298135"
+  },
+  {
+    "historia_clinica": "1020554",
+    "nombre_apellido": "CORDERO GARCIA, ROMINA BELEN",
+    "servicio": "0098 SERVICIO NEFROLOGIA",
+    "sala": "211-6",
+    "informe_id": "298090"
+  },
+  {
+    "historia_clinica": "1059121",
+    "nombre_apellido": "GOMEZ TORRES, SONIA MABEL",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "411-1",
+    "informe_id": "298120"
+  },
+  {
+    "historia_clinica": "200914",
+    "nombre_apellido": "ARRA , JULIETA AGUSTINA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "524-2",
+    "informe_id": "297928"
+  },
+  {
+    "historia_clinica": "1149134",
+    "nombre_apellido": "VANELLA , CRISTIAN ORLANDO",
+    "servicio": "0089 UNIDAD CORONARIA",
+    "sala": "40-4",
+    "informe_id": "297882"
+  },
+  {
+    "historia_clinica": "1148454",
+    "nombre_apellido": "BARRIOS , PAULA MILAGROS",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "524-6",
+    "informe_id": "297013"
+  },
+  {
+    "historia_clinica": "225762",
+    "nombre_apellido": "MEJIAS , JULIO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "516-4",
+    "informe_id": "296074"
+  },
+  {
+    "historia_clinica": "151694",
+    "nombre_apellido": "PENIDA , CARMEN MATILDE",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "470-4",
+    "informe_id": "296534"
+  },
+  {
+    "historia_clinica": "390635",
+    "nombre_apellido": "MENDEZ ORTUBIA, MARCOS ANTONIO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "504-3",
+    "informe_id": "297868"
+  },
+  {
+    "historia_clinica": "147056",
+    "nombre_apellido": "MOYANO , ANDREA CAROLINA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "527-1",
+    "informe_id": "298010"
+  },
+  {
+    "historia_clinica": "1098117",
+    "nombre_apellido": "RUIZ , JOSE DANIEL",
+    "servicio": "0013 CARDIOVASCULAR",
+    "sala": "472-2",
+    "informe_id": "297526"
+  },
+  {
+    "historia_clinica": "951579",
+    "nombre_apellido": "NAVARRO FARIAS, BRISA LUCIA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "520-6",
+    "informe_id": "298077"
+  },
+  {
+    "historia_clinica": "677407",
+    "nombre_apellido": "CALDERON VERON, ROBERTO CARLOS",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "503-6",
+    "informe_id": "297906"
+  },
+  {
+    "historia_clinica": "983692",
+    "nombre_apellido": "VELAZQUEZ , MARIA ALEJANDRA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "520-1",
+    "informe_id": "298048"
+  },
+  {
+    "historia_clinica": "896119",
+    "nombre_apellido": "ARGOTE HUAYGUA, BENITA",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "322-2",
+    "informe_id": "297655"
+  },
+  {
+    "historia_clinica": "683353",
+    "nombre_apellido": "ORTIZ HN, SEBASTIAN FERNANDO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "505-3",
+    "informe_id": "297654"
+  },
+  {
+    "historia_clinica": "222788",
+    "nombre_apellido": "TALQUENCA BERBEN, WALTER",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-6",
+    "informe_id": "297838"
+  },
+  {
+    "historia_clinica": "1138762",
+    "nombre_apellido": "NU�EZ VELASQUEZ, KEVIN ALEJANDRO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "504-6",
+    "informe_id": "298107"
+  },
+  {
+    "historia_clinica": "1125831",
+    "nombre_apellido": "QUIROGA SANCHEZ, MARIA BETSABE",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "325-4",
+    "informe_id": "298104"
+  },
+  {
+    "historia_clinica": "1042990",
+    "nombre_apellido": "RAGUZA , GONZALO NICOLAS",
+    "servicio": "0039 SALUD MENTAL (INTERNACION)",
+    "sala": "112-1",
+    "informe_id": "297857"
+  },
+  {
+    "historia_clinica": "171445",
+    "nombre_apellido": "MOLINA VILLEGAS, MARIA LAURA",
+    "servicio": "0047 SERVICIO O.R.L.",
+    "sala": "115-1",
+    "informe_id": "298121"
+  },
+  {
+    "historia_clinica": "224430",
+    "nombre_apellido": "MOYANO GARAY, JORGE DANIEL",
+    "servicio": "0098 SERVICIO NEFROLOGIA",
+    "sala": "210-3",
+    "informe_id": "297858"
+  },
+  {
+    "historia_clinica": "1149327",
+    "nombre_apellido": "RIOS CISNEROS, CARLOS ANDRES",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "317-4",
+    "informe_id": "298094"
+  },
+  {
+    "historia_clinica": "333198",
+    "nombre_apellido": "GONZALEZ CORIA, MARIA ELENA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "506-2",
+    "informe_id": "298116"
+  },
+  {
+    "historia_clinica": "1149153",
+    "nombre_apellido": "ROMERO , CARMEN",
+    "servicio": "0008 CIRUGIA",
+    "sala": "304-16",
+    "informe_id": "297901"
+  },
+  {
+    "historia_clinica": "1016783",
+    "nombre_apellido": "RIVERA CARDENAS, VERONICA MABEL",
+    "servicio": "0028 GINECOLOGIA",
+    "sala": "120-3",
+    "informe_id": "298085"
+  },
+  {
+    "historia_clinica": "956673",
+    "nombre_apellido": "PAROLARO JOFRE, HUMBERTO RAMON",
+    "servicio": "0089 UNIDAD CORONARIA",
+    "sala": "40-5",
+    "informe_id": "298035"
+  },
+  {
+    "historia_clinica": "899888",
+    "nombre_apellido": "AVILA CORDOBA, JUAN ADOLFO",
+    "servicio": "0066 UROLOGIA",
+    "sala": "110-1",
+    "informe_id": "297984"
+  },
+  {
+    "historia_clinica": "276147",
+    "nombre_apellido": "FERNANDEZ RODRIGUEZ, CECILIA CAROLINA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "522-2",
+    "informe_id": "296961"
+  },
+  {
+    "historia_clinica": "1149185",
+    "nombre_apellido": "SOSA , IVO DAVID",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-11",
+    "informe_id": "297959"
+  },
+  {
+    "historia_clinica": "154349",
+    "nombre_apellido": "LESCANO , DAIANA BELEN",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "411-2",
+    "informe_id": "298097"
+  },
+  {
+    "historia_clinica": "852924",
+    "nombre_apellido": "VILCA ZOTAR, MARTHA PRUDENCIA",
+    "servicio": "0002 AISLAMIENTO",
+    "sala": "205-3",
+    "informe_id": "297897"
+  },
+  {
+    "historia_clinica": "1149285",
+    "nombre_apellido": "ZEBALLOS CRUZ, LUCIANO MICHAEL",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "317-2",
+    "informe_id": "298030"
+  },
+  {
+    "historia_clinica": "1114250",
+    "nombre_apellido": "AUAD GALARCE, LUIS DANTE",
+    "servicio": "0008 CIRUGIA",
+    "sala": "302-7",
+    "informe_id": "298089"
+  },
+  {
+    "historia_clinica": "662987",
+    "nombre_apellido": "PELLICCIONI VARGAS, VICTOR DANIEL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "504-4",
+    "informe_id": "296974"
+  },
+  {
+    "historia_clinica": "452993",
+    "nombre_apellido": "MANZANEDA AYARDE ., EDITH CRISTINA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "303-14",
+    "informe_id": "298074"
+  },
+  {
+    "historia_clinica": "165536",
+    "nombre_apellido": "MERCADO GARON, CRISTIAN ENRIQUE",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "315-2",
+    "informe_id": "297936"
+  },
+  {
+    "historia_clinica": "1148507",
+    "nombre_apellido": "VILCA , MARIO ARTURO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "525-1",
+    "informe_id": "297087"
+  },
+  {
+    "historia_clinica": "104279",
+    "nombre_apellido": "MORAN , MARCELA ELIZABETH",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "522-1",
+    "informe_id": "298020"
+  },
+  {
+    "historia_clinica": "325895",
+    "nombre_apellido": "GALDAME , LUIS ENRIQUE SEBASTIAN",
+    "servicio": "0066 UROLOGIA",
+    "sala": "111-6",
+    "informe_id": "298055"
+  },
+  {
+    "historia_clinica": "1127400",
+    "nombre_apellido": "ESCOBAR , YESICA SUSANA",
+    "servicio": "0028 GINECOLOGIA",
+    "sala": "120-4",
+    "informe_id": "298109"
+  },
+  {
+    "historia_clinica": "1098243",
+    "nombre_apellido": "FLORES , JAIRO IVAN",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "413-4",
+    "informe_id": "298115"
+  },
+  {
+    "historia_clinica": "1148318",
+    "nombre_apellido": "LOPEZ , ALDO EDAURDO",
+    "servicio": "0002 AISLAMIENTO",
+    "sala": "204-3",
+    "informe_id": "297276"
+  },
+  {
+    "historia_clinica": "1149113",
+    "nombre_apellido": "VARAS FRIAS, NICOLAS ALEJANDRO",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-4",
+    "informe_id": "297865"
+  },
+  {
+    "historia_clinica": "1057946",
+    "nombre_apellido": "BARRAZA , JOEL DAVID",
+    "servicio": "0008 CIRUGIA",
+    "sala": "309-2",
+    "informe_id": "298105"
+  },
+  {
+    "historia_clinica": "971466",
+    "nombre_apellido": "ALBERTTI PUEBLA, NOELIA NOEMI",
+    "servicio": "0028 GINECOLOGIA",
+    "sala": "120-6",
+    "informe_id": "298084"
+  },
+  {
+    "historia_clinica": "158478",
+    "nombre_apellido": "MORALES PAPAGNI, YESICA LORENA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "303-12",
+    "informe_id": "298130"
+  },
+  {
+    "historia_clinica": "833344",
+    "nombre_apellido": "NADAL VICINO, JOSE ALBERTO",
+    "servicio": "0089 UNIDAD CORONARIA",
+    "sala": "41-1",
+    "informe_id": "298129"
+  },
+  {
+    "historia_clinica": "1149005",
+    "nombre_apellido": "LORCA , JONATHAN CRISTIAN",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "441-4",
+    "informe_id": "297732"
+  },
+  {
+    "historia_clinica": "1148733",
+    "nombre_apellido": "INSUA , DARIO RUBEN",
+    "servicio": "0030 VASCULAR PERIFERICO",
+    "sala": "117-1",
+    "informe_id": "297320"
+  },
+  {
+    "historia_clinica": "1026148",
+    "nombre_apellido": "AHUMADA SARMIENTO, IGNACIO SALVADOR",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "316-5",
+    "informe_id": "297921"
+  },
+  {
+    "historia_clinica": "1067680",
+    "nombre_apellido": "ROSALES , NORMA BEATRIZ",
+    "servicio": "0030 VASCULAR PERIFERICO",
+    "sala": "116-1",
+    "informe_id": "297451"
+  },
+  {
+    "historia_clinica": "633311",
+    "nombre_apellido": "HERRERA ROIS, BEATRIZ ROSARIO",
+    "servicio": "0008 CIRUGIA",
+    "sala": "310-3",
+    "informe_id": "297947"
+  },
+  {
+    "historia_clinica": "874595",
+    "nombre_apellido": "MARCHANT VENEGAS, JAVIER CEFERINO",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "441-6",
+    "informe_id": "297685"
+  },
+  {
+    "historia_clinica": "1057943",
+    "nombre_apellido": "ARANCIBIA , DIEGO ARMANDO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "518-1",
+    "informe_id": "297702"
+  },
+  {
+    "historia_clinica": "397012",
+    "nombre_apellido": "LUJAN , ESTELA MARI",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "524-3",
+    "informe_id": "298028"
+  },
+  {
+    "historia_clinica": "428780",
+    "nombre_apellido": "FIOCHETTA NU�EZ, DANIEL ENRIQUE",
+    "servicio": "0066 UROLOGIA",
+    "sala": "110-2",
+    "informe_id": "298051"
+  },
+  {
+    "historia_clinica": "847487",
+    "nombre_apellido": "CARPIO HN, MERCEDES LUIS",
+    "servicio": "0008 CIRUGIA",
+    "sala": "305-5",
+    "informe_id": "298060"
+  },
+  {
+    "historia_clinica": "888993",
+    "nombre_apellido": "QUINTEROS PERALTA, PAMELA GISELA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "524-4",
+    "informe_id": "298061"
+  },
+  {
+    "historia_clinica": "910195",
+    "nombre_apellido": "MICHEL ESPINOZA, WANDA",
+    "servicio": "0066 UROLOGIA",
+    "sala": "111-1",
+    "informe_id": "298062"
+  },
+  {
+    "historia_clinica": "1016617",
+    "nombre_apellido": "GARCIA DE LA ROSA, OSCAR 2020",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "504-5",
+    "informe_id": "297960"
+  },
+  {
+    "historia_clinica": "215205",
+    "nombre_apellido": "VERA , ENZO JAVIER",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "413-3",
+    "informe_id": "298071"
+  },
+  {
+    "historia_clinica": "1149315",
+    "nombre_apellido": "RUIZ , MAICOL BRANDON",
+    "servicio": "0039 SALUD MENTAL (INTERNACION)",
+    "sala": "113-2",
+    "informe_id": "298072"
+  },
+  {
+    "historia_clinica": "809087",
+    "nombre_apellido": "GONZALEZ MUOZ, SANTIAGO EMMANUEL",
+    "servicio": "0008 CIRUGIA",
+    "sala": "305-6",
+    "informe_id": "298073"
+  },
+  {
+    "historia_clinica": "185999",
+    "nombre_apellido": "SARANDON OLIVERA, MARIA ELIZABETH",
+    "servicio": "0098 SERVICIO NEFROLOGIA",
+    "sala": "211-4",
+    "informe_id": "298075"
+  },
+  {
+    "historia_clinica": "129795",
+    "nombre_apellido": "BLANCO , MARIO CAYETANO",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-19",
+    "informe_id": "297708"
+  },
+  {
+    "historia_clinica": "842830",
+    "nombre_apellido": "NEIRA QUIROGA, LEANDRO SEBASTIAN",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "513-5",
+    "informe_id": "295886"
+  },
+  {
+    "historia_clinica": "1149332",
+    "nombre_apellido": "BARRIONUEVO , ROBERTO ALEJANDRO",
+    "servicio": "0089 UNIDAD CORONARIA",
+    "sala": "41-7",
+    "informe_id": "298098"
+  },
+  {
+    "historia_clinica": "284712",
+    "nombre_apellido": "BUSTAMANTE , NOELIA VANINA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "512-2",
+    "informe_id": "297969"
+  },
+  {
+    "historia_clinica": "1147255",
+    "nombre_apellido": "MICHELETTI , NORMA BEATRIZ",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "519-1",
+    "informe_id": "295563"
+  },
+  {
+    "historia_clinica": "396600",
+    "nombre_apellido": "ALFARO ARECHE, SERGIO RAUL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "526-1",
+    "informe_id": "297913"
+  },
+  {
+    "historia_clinica": "434712",
+    "nombre_apellido": "OVIEDO VALLEJOS, LIS EVELINA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "310-1",
+    "informe_id": "298127"
+  },
+  {
+    "historia_clinica": "1041427",
+    "nombre_apellido": "LAGO VEGA, ENZO AGUSTIN",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "327-4",
+    "informe_id": "297776"
+  },
+  {
+    "historia_clinica": "372431",
+    "nombre_apellido": "SAAVEDRA NU�EZ, ANA MARIA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "308-6",
+    "informe_id": "298126"
+  },
+  {
+    "historia_clinica": "118302",
+    "nombre_apellido": "ALANIS , MARCELA PAULA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "308-4",
+    "informe_id": "298001"
+  },
+  {
+    "historia_clinica": "797169",
+    "nombre_apellido": "CARI ,, RAMON FRANCO",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "470-7",
+    "informe_id": "297062"
+  },
+  {
+    "historia_clinica": "1148309",
+    "nombre_apellido": "FLORES REYES, DANTE DANIEL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "503-2",
+    "informe_id": "298004"
+  },
+  {
+    "historia_clinica": "378689",
+    "nombre_apellido": "VILLEGAS , ENZO NICOLAS",
+    "servicio": "0014 TORAX",
+    "sala": "313-2",
+    "informe_id": "298038"
+  },
+  {
+    "historia_clinica": "1039924",
+    "nombre_apellido": "CASTILLO , JUAN ANDRES",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-7",
+    "informe_id": "298106"
+  },
+  {
+    "historia_clinica": "1102533",
+    "nombre_apellido": "REDONDO , MATIAS EDUARDO",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "327-2",
+    "informe_id": "298108"
+  },
+  {
+    "historia_clinica": "1148402",
+    "nombre_apellido": "PEREYRA VILLAVICENCIO, ALEJANDRO MARCELO",
+    "servicio": "8887 DPTO TRASPLANTE HEPATICO",
+    "sala": "502-1",
+    "informe_id": "298119"
+  },
+  {
+    "historia_clinica": "825113",
+    "nombre_apellido": "CARDOZO , NOELIA IVANA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "303-10",
+    "informe_id": "297942"
+  },
+  {
+    "historia_clinica": "410078",
+    "nombre_apellido": "PINTOS LOPEZ, IRIS AZUCENA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "520-3",
+    "informe_id": "297547"
+  },
+  {
+    "historia_clinica": "1055698",
+    "nombre_apellido": "VILLEGAS MOLINA, MARIO NAHUEL",
+    "servicio": "0008 CIRUGIA",
+    "sala": "305-1",
+    "informe_id": "298132"
+  },
+  {
+    "historia_clinica": "830565",
+    "nombre_apellido": "RODRIGUEZ CARRERA, RONALD IVAN",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "508-1",
+    "informe_id": "297940"
+  },
+  {
+    "historia_clinica": "952360",
+    "nombre_apellido": "SOSA VIDELA, JOSE CARLOS",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "320-1",
+    "informe_id": "297870"
+  },
+  {
+    "historia_clinica": "104193",
+    "nombre_apellido": "CORNEJO , GRACIELA NOEMI",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "524-5",
+    "informe_id": "297899"
+  },
+  {
+    "historia_clinica": "169493",
+    "nombre_apellido": "PORTUESI CORTEZ, ARIEL FERNANDO",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "441-5",
+    "informe_id": "297780"
+  },
+  {
+    "historia_clinica": "918588",
+    "nombre_apellido": "ACOSTA TOLOSA, BLANCA INES",
+    "servicio": "0098 SERVICIO NEFROLOGIA",
+    "sala": "211-1",
+    "informe_id": "298031"
+  },
+  {
+    "historia_clinica": "783864",
+    "nombre_apellido": "GOMEZ MELENDRES, LUIS ALBERTO",
+    "servicio": "0098 SERVICIO NEFROLOGIA",
+    "sala": "210-1",
+    "informe_id": "298018"
+  },
+  {
+    "historia_clinica": "214576",
+    "nombre_apellido": "CEDRO UGARTE, MARIA DELIA",
+    "servicio": "0013 CARDIOVASCULAR",
+    "sala": "408-1",
+    "informe_id": "298091"
+  },
+  {
+    "historia_clinica": "899631",
+    "nombre_apellido": "ROMERO MIRASOLE, LAURA SOLEDAD",
+    "servicio": "0008 CIRUGIA",
+    "sala": "304-19",
+    "informe_id": "298131"
+  },
+  {
+    "historia_clinica": "264062",
+    "nombre_apellido": "MU�OZ , ROMINA GISELLA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "523-1",
+    "informe_id": "298005"
+  },
+  {
+    "historia_clinica": "996374",
+    "nombre_apellido": "MOYA",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "316-3",
+    "informe_id": "298039"
+  },
+  {
+    "historia_clinica": "1149296",
+    "nombre_apellido": "ESPINA RUGGERI, MARTIN NICOLAS",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "441-8",
+    "informe_id": "298040"
+  },
+  {
+    "historia_clinica": "130787",
+    "nombre_apellido": "GONZALEZ TRASLAVI�A, TOMASA ANGELA",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "470-3",
+    "informe_id": "297053"
+  },
+  {
+    "historia_clinica": "1148903",
+    "nombre_apellido": "GONZALEZ , CARLOS DANIEL",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "441-7",
+    "informe_id": "297607"
+  },
+  {
+    "historia_clinica": "1002377",
+    "nombre_apellido": "VILLCA , DANIEL ALBERTO",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-3",
+    "informe_id": "298049"
+  },
+  {
+    "historia_clinica": "1147975",
+    "nombre_apellido": "BECERRA , CARLOS DANTE",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "516-3",
+    "informe_id": "296441"
+  },
+  {
+    "historia_clinica": "1149035",
+    "nombre_apellido": "BARRERA , HECTOR ROLANDO",
+    "servicio": "0008 CIRUGIA",
+    "sala": "302-6",
+    "informe_id": "298032"
+  },
+  {
+    "historia_clinica": "434884",
+    "nombre_apellido": "HERRERA HN, FERNANDO GABRIEL",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "327-3",
+    "informe_id": "297360"
+  },
+  {
+    "historia_clinica": "1113346",
+    "nombre_apellido": "VELAZQUEZ MAGAN, JOAQUIN NATANAEL",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "441-1",
+    "informe_id": "297824"
+  },
+  {
+    "historia_clinica": "1147631",
+    "nombre_apellido": "TARICO TORREJ�N, JORGE AGUST�N",
+    "servicio": "0008 CIRUGIA",
+    "sala": "302-8",
+    "informe_id": "298123"
+  },
+  {
+    "historia_clinica": "186106",
+    "nombre_apellido": "MU�OZ MOLINA, YESSICA PAOLA",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-10",
+    "informe_id": "297992"
+  },
+  {
+    "historia_clinica": "1149353",
+    "nombre_apellido": "MOYANO FERNANDEZ, CARLOS ARIEL",
+    "servicio": "0008 CIRUGIA",
+    "sala": "302-9",
+    "informe_id": "298125"
+  },
+  {
+    "historia_clinica": "284891",
+    "nombre_apellido": "HERRERA HN, LUDMILA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "303-11",
+    "informe_id": "298014"
+  },
+  {
+    "historia_clinica": "899238",
+    "nombre_apellido": "RUIZ REYES, JULIO ENRIQUE",
+    "servicio": "0008 CIRUGIA",
+    "sala": "305-9",
+    "informe_id": "298128"
+  },
+  {
+    "historia_clinica": "1148132",
+    "nombre_apellido": "BELTRAN , CARLOS ROLANDO",
+    "servicio": "0058 HOSPITAL DE 1 DIA",
+    "sala": "119-5",
+    "informe_id": "298114"
+  },
+  {
+    "historia_clinica": "345838",
+    "nombre_apellido": "GIL FERNANDEZ, JUAN ARMANDO",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "413-5",
+    "informe_id": "298087"
+  },
+  {
+    "historia_clinica": "184668",
+    "nombre_apellido": "BALDOR SANCHEZ, CARINA ANTONIA",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "523-2",
+    "informe_id": "298113"
+  },
+  {
+    "historia_clinica": "278903",
+    "nombre_apellido": "ZARATE LUNA, ALBERTO DANIEL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "510-1",
+    "informe_id": "298112"
+  },
+  {
+    "historia_clinica": "1142994",
+    "nombre_apellido": "RIVAS NARVAEZ, TOMAS ADRIAN",
+    "servicio": "8880 TRASPLANTE MEDULA OSEA",
+    "sala": "201-4",
+    "informe_id": "298096"
+  },
+  {
+    "historia_clinica": "219933",
+    "nombre_apellido": "ORTUBIA SOSA, CLAUDIO ARIEL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "502-5",
+    "informe_id": "297879"
+  },
+  {
+    "historia_clinica": "724313",
+    "nombre_apellido": "URBINA VILLAMARIN, GUILLERMO ORLANO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "517-3",
+    "informe_id": "298078"
+  },
+  {
+    "historia_clinica": "266768",
+    "nombre_apellido": "CARMONA CERPAS, OSVALDO ROBERTO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "508-6",
+    "informe_id": "298079"
+  },
+  {
+    "historia_clinica": "1149182",
+    "nombre_apellido": "ORTIZ , LEILA EVELIN TAMARA",
+    "servicio": "0008 CIRUGIA",
+    "sala": "310-5",
+    "informe_id": "297948"
+  },
+  {
+    "historia_clinica": "190600",
+    "nombre_apellido": "NINA TELLEZ, DELFINA",
+    "servicio": "0046 TRAUMATOLOGIA",
+    "sala": "323-2",
+    "informe_id": "297275"
+  },
+  {
+    "historia_clinica": "1044044",
+    "nombre_apellido": "LUENGO , DANIEL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "517-2",
+    "informe_id": "298070"
+  },
+  {
+    "historia_clinica": "385436",
+    "nombre_apellido": "GONZALVES CALDERON, MARIA CARINA",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "441-2",
+    "informe_id": "297810"
+  },
+  {
+    "historia_clinica": "871684",
+    "nombre_apellido": "LUCERO GONZALEZ, ALEJANDRO DAMIAN",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-5",
+    "informe_id": "297457"
+  },
+  {
+    "historia_clinica": "385534",
+    "nombre_apellido": "CHACON DEVIASI, ALDO ROLANDO",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-9",
+    "informe_id": "297982"
+  },
+  {
+    "historia_clinica": "765636",
+    "nombre_apellido": "ANDRADA MERCADO, MIGUEL ANGEL",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "505-6",
+    "informe_id": "297973"
+  },
+  {
+    "historia_clinica": "959459",
+    "nombre_apellido": "PEREIRA GADEA, MARIA DEL CARMEN",
+    "servicio": "0007 CARDIOLOGIA",
+    "sala": "401-1",
+    "informe_id": "297985"
+  },
+  {
+    "historia_clinica": "1090599",
+    "nombre_apellido": "LEYES , ENZO FACUNDO",
+    "servicio": "0014 TORAX",
+    "sala": "313-1",
+    "informe_id": "298027"
+  },
+  {
+    "historia_clinica": "1149210",
+    "nombre_apellido": "LUCERO , RICARDO ERNESTO",
+    "servicio": "0073 TERAPIA INTENSIVA",
+    "sala": "445-8",
+    "informe_id": "297987"
+  },
+  {
+    "historia_clinica": "211806",
+    "nombre_apellido": "MAMMOLI , MARIO FERNANDO",
+    "servicio": "0008 CIRUGIA",
+    "sala": "305-10",
+    "informe_id": "297988"
+  },
+  {
+    "historia_clinica": "796941",
+    "nombre_apellido": "ROMERO BAIGORRIA, ADRIANA EDITH",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "520-2",
+    "informe_id": "296625"
+  },
+  {
+    "historia_clinica": "693380",
+    "nombre_apellido": "BATTOCCHIA ZU�IGA, LUIS CESAR",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "516-2",
+    "informe_id": "297855"
+  },
+  {
+    "historia_clinica": "380024",
+    "nombre_apellido": "PEINADO , MATIAS BERNARDO",
+    "servicio": "0038 NEUROCIRUGIA",
+    "sala": "413-1",
+    "informe_id": "298122"
+  },
+  {
+    "historia_clinica": "474382",
+    "nombre_apellido": "HERRERA CELALLE, JORGE RAUL",
+    "servicio": "0058 HOSPITAL DE 1 DIA",
+    "sala": "119-1",
+    "informe_id": "298056"
+  },
+  {
+    "historia_clinica": "968882",
+    "nombre_apellido": "DAVILA MALDONADO, DANIEL JULIO",
+    "servicio": "0016 CLINICA MEDICA",
+    "sala": "508-2",
+    "informe_id": "295756"
+  },
+  {
+    "historia_clinica": "1149326",
+    "nombre_apellido": "GUTIERREZ , MARIA JOSE",
+    "servicio": "0008 CIRUGIA",
+    "sala": "304-17",
+    "informe_id": "298093"
+  }
+]

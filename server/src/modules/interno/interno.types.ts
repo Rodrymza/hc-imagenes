@@ -35,6 +35,7 @@ export interface ICoberturaClean {
 export interface IPacienteInterno {
   idPaciente: string;
   dni: string;
+  dniString: string;
   nombreCompleto: string;
   nombres: string;
   apellidos: string;
@@ -86,4 +87,12 @@ export interface IResultadoLote {
   prestacion: string;
   exito: boolean;
   error?: string;
+}
+
+export interface IPacienteInternado {
+  historia_clinica: string;
+  nombre_apellido: string;
+  servicio: string;
+  sala: string;
+  informe_id: string;
 }

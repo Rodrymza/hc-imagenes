@@ -1,7 +1,7 @@
 import { InternacionService } from "@/services/internacion.service";
 import type { IEnvioComentario, IPedidoInternacion } from "@/types/pedidos";
 import { getErrorMessage } from "@/utils/getErrorMessage";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export const usePedidosInternacion = () => {
@@ -9,35 +9,55 @@ export const usePedidosInternacion = () => {
     IPedidoInternacion[]
   >([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshingInternacion, setRefreshingInternacion] = useState(false);
+  const [lugares, setLugares] = useState<string[]>([]);
+  const pedidosRef = useRef<IPedidoInternacion[]>([]);
 
   const traerPedidosInternacion = useCallback(
-    async (silenRefresh: boolean = false, fecha?: string) => {
+    async (silenRefresh: boolean = false, fecha?: string, showFeedback = false) => {
       if (!silenRefresh) {
         setIsLoading(true);
+      } else {
+        setRefreshingInternacion(true);
       }
 
-      //await new Promise((resolve) => setTimeout(resolve, 3000));
-      // 1. Definimos la función de carga
+      const inicio = Date.now();
+
       const fetchData = async () => {
         const pedidosApi = await InternacionService.getPedidos(fecha);
+
+        if (showFeedback) {
+          const idsViejos = new Set(pedidosRef.current.map((p) => p.idEstudio));
+          const nuevos = pedidosApi.filter((p) => !idsViejos.has(p.idEstudio));
+          if (nuevos.length > 0) {
+            toast.success(`${nuevos.length} pedido${nuevos.length > 1 ? "s" : ""} nuevo${nuevos.length > 1 ? "s" : ""}`);
+          } else {
+            toast.info("No hay nuevos pedidos");
+          }
+        }
+
         setPedidosInternacion(pedidosApi);
+        pedidosRef.current = pedidosApi;
+        setLugares([
+          ...new Set(pedidosApi.map((p) => p.lugar.trim()).filter(Boolean)),
+        ]);
         return pedidosApi;
       };
 
       const traerDatosPromise = fetchData();
 
-      toast.promise(traerDatosPromise, {
-        id: "carga-pedidos", // ID único para evitar duplicados visuales
-        success: (data) => `Se cargaron ${data.length} pedidos de Internacion`,
-        error: (err) => `No se pudo cargar: ${getErrorMessage(err)}`,
-      });
-
       try {
         await traerDatosPromise;
       } catch (err) {
-        console.error("Error en la carga:", err);
+        toast.error(`No se pudo cargar: ${getErrorMessage(err)}`);
       } finally {
         setIsLoading(false);
+        const restante = Math.max(0, 800 - (Date.now() - inicio));
+        if (restante > 0) {
+          setTimeout(() => setRefreshingInternacion(false), restante);
+        } else {
+          setRefreshingInternacion(false);
+        }
       }
     },
     [],
@@ -90,6 +110,8 @@ export const usePedidosInternacion = () => {
   return {
     pedidosInternacion,
     isLoading,
+    refreshingInternacion,
+    lugares,
     traerPedidosInternacion,
     alternarEstadoPedido,
   };

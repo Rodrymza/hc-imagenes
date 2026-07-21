@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Search,
-  Database,
   PlusCircle,
   ArrowRight,
   ShieldCheck,
   ClipboardList,
-  AlertCircle,
   Loader2,
   Clock,
   Zap,
+  AlertTriangle,
+  CheckCircle2,
 } from "lucide-react";
 import { useConsumos } from "@/hooks/useConsumos";
 import { toast } from "sonner";
@@ -19,27 +19,30 @@ import { useServicioGuardia } from "@/hooks/usePedidosGuardia";
 import { getEstiloEstudio } from "@/components/pedidos/utils";
 
 export default function ConsumosPage() {
-  const [sistema, setSistema] = useState("ambulatorio");
   const [coberturaId, setCoberturaId] = useState("");
   const [searchParams] = useSearchParams();
-  const dniDesdeUrl = searchParams.get("dni"); // Captura el ?dni=12345678
-  const [dniBusqueda, setDniBusqueda] = useState(dniDesdeUrl || "");
+  const dniDesdeUrl = searchParams.get("dni");
+  const hcDesdeUrl = searchParams.get("hc");
+  const [dniBusqueda, setDniBusqueda] = useState(
+    dniDesdeUrl || hcDesdeUrl || "",
+  );
+  const [tipoBusqueda, setTipoBusqueda] = useState(hcDesdeUrl ? "hc" : "dni");
+  const [sistema, setSistema] = useState<string | null>(null);
 
   // No buscar hasta que se haga click en el boton
 
   const {
     pedidosPaciente,
-    loadingGuardia,
     buscarPedidosPaciente,
     buscarPacienteGuardia,
     pacienteGuardia,
+    loadingPedidosPaciente,
   } = useServicioGuardia();
 
   const {
     pacienteInterno,
     buscarPacienteInterno,
     loadingPaciente,
-    errorPaciente,
     exposiciones,
     prestaciones,
     agregarExposicion,
@@ -48,26 +51,68 @@ export default function ConsumosPage() {
     guardandoConsumos,
   } = useConsumos(pedidosPaciente);
 
+  // Paciente normalizado: une interno y guardia en una shape común para el JSX
+  const paciente = pacienteInterno
+    ? {
+        apellido: pacienteInterno.apellidos,
+        nombres: pacienteInterno.nombres,
+        historiaClinica: pacienteInterno.idPaciente,
+        dniString: pacienteInterno.dniString,
+        fechaNacimientoString: pacienteInterno.fechaNacimientoString,
+      }
+    : pacienteGuardia
+      ? {
+          apellido: pacienteGuardia.apellido,
+          nombres: pacienteGuardia.nombres,
+          historiaClinica: String(pacienteGuardia.historiaClinica),
+          dniString: pacienteGuardia.dniString,
+          fechaNacimientoString: pacienteGuardia.fechaNacimientoString,
+        }
+      : null;
+
+  // 1) Al montar con URL params, disparar búsquedas de paciente
   useEffect(() => {
     if (dniDesdeUrl) {
-      console.log("DNI desde URL:", dniDesdeUrl);
-      setDniBusqueda(dniDesdeUrl);
-      buscarPacienteInterno(dniDesdeUrl);
+      buscarPacienteInterno(dniDesdeUrl, null);
+      buscarPacienteGuardia(dniDesdeUrl);
+    } else if (hcDesdeUrl) {
+      buscarPacienteInterno(null, hcDesdeUrl);
     }
-  }, [dniDesdeUrl, buscarPacienteInterno]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 2) Cuando aparece un DNI válido (del interno, guardia o URL), buscar pedidos una sola vez
+  const ultimoDniBuscado = useRef("");
 
   useEffect(() => {
-    if (dniBusqueda.length < 7) return;
+    const dni = pacienteInterno?.dni || pacienteGuardia?.dni || dniDesdeUrl;
 
-    buscarPedidosPaciente(dniBusqueda);
-    setSistema("guardia");
-  }, [dniBusqueda, buscarPedidosPaciente]);
+    if (dni && dni.length > 5 && dni !== ultimoDniBuscado.current) {
+      ultimoDniBuscado.current = dni;
+      buscarPedidosPaciente(dni);
+    }
+  }, [
+    pacienteInterno?.dni,
+    pacienteGuardia?.dni,
+    dniDesdeUrl,
+    buscarPedidosPaciente,
+  ]);
 
   const handleBuscar = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (dniBusqueda.length > 7) {
-      buscarPacienteInterno(dniBusqueda);
-      buscarPacienteGuardia(dniBusqueda);
+    const valor = dniBusqueda.trim();
+
+    if (valor.length < 3) return toast.error("Ingrese un valor válido");
+
+    if (tipoBusqueda === "dni") {
+      buscarPacienteInterno(valor, null);
+      buscarPacienteGuardia(valor);
+
+      buscarPedidosPaciente(valor);
+
+      ultimoDniBuscado.current = valor;
+    } else {
+      buscarPacienteInterno(null, valor);
     }
   };
 
@@ -77,6 +122,10 @@ export default function ConsumosPage() {
       coberturaId || pacienteInterno?.coberturas?.[0]?.idCobertura || "09999";
 
     if (!pacienteInterno) return toast.error("Debe identificar un paciente");
+
+    if (!sistema) {
+      return toast.error("Debes seleccionar un sistema de ingreso");
+    }
 
     await confirmarConsumo(pacienteInterno.idPaciente, cobFinal, sistema);
   };
@@ -103,13 +152,26 @@ export default function ConsumosPage() {
               <Search className="w-4 h-4" /> Identificar Paciente
             </h3>
             <form onSubmit={handleBuscar} className="flex gap-2">
+              {/* SELECTOR DE TIPO */}
+              <select
+                value={tipoBusqueda}
+                onChange={(e) => setTipoBusqueda(e.target.value)}
+                className="bg-slate-100 border-none rounded-lg px-2 text-[10px] font-black uppercase text-slate-600 outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+              >
+                <option value="dni">DNI</option>
+                <option value="hc">H.C.</option>
+              </select>
+
               <input
                 type="number"
-                placeholder="Ingrese DNI..."
+                placeholder={
+                  tipoBusqueda === "dni" ? "Ingrese DNI..." : "Ingrese HC..."
+                }
                 className="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-4 py-2 text-lg font-bold focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                 value={dniBusqueda}
                 onChange={(e) => setDniBusqueda(e.target.value)}
               />
+
               <button
                 type="submit"
                 disabled={loadingPaciente}
@@ -122,15 +184,6 @@ export default function ConsumosPage() {
                 )}
               </button>
             </form>
-
-            {errorPaciente && (
-              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex gap-3 items-center text-amber-800">
-                <AlertCircle className="w-5 h-5 shrink-0" />
-                <p className="text-xs font-medium">
-                  El DNI no está vinculado al sistema administrativo.
-                </p>
-              </div>
-            )}
           </section>
 
           {/* 2. FICHA PACIENTE + CONTEXTO */}
@@ -143,8 +196,7 @@ export default function ConsumosPage() {
                       Paciente Identificado
                     </p>
                     <h2 className="text-xl font-black uppercase leading-tight">
-                      {pacienteInterno?.apellidos || pacienteGuardia?.apellido},{" "}
-                      {pacienteInterno?.nombres || pacienteGuardia?.nombres}
+                      {paciente?.apellido}, {paciente?.nombres}
                     </h2>
                   </div>
                   <ShieldCheck className="w-8 h-8 opacity-40" />
@@ -158,16 +210,15 @@ export default function ConsumosPage() {
                       Historia Clinica
                     </span>
                     <span className="font-bold text-slate-700">
-                      {pacienteInterno?.idPaciente ||
-                        pacienteGuardia?.historiaClinica}
+                      {paciente?.historiaClinica}
                     </span>
                   </div>
                   <div className="flex flex-col">
                     <span className="text-sm font-bold text-slate-400 uppercase">
                       Documento
                     </span>
-                    <span className="font-bold text-slate-700">
-                      {pacienteInterno?.dni || pacienteGuardia?.dni}
+                    <span className="font-bold text-slate-700 tracking-widest">
+                      {paciente?.dniString}
                     </span>
                   </div>
                   <div className="flex flex-col">
@@ -175,8 +226,7 @@ export default function ConsumosPage() {
                       Fecha Nacimiento
                     </span>
                     <span className="font-bold text-slate-700">
-                      {pacienteInterno?.fechaNacimientoString ||
-                        pacienteGuardia?.fechaNacimientoString}
+                      {paciente?.fechaNacimientoString}
                     </span>
                   </div>
                 </div>
@@ -187,10 +237,11 @@ export default function ConsumosPage() {
                       Sistema de Ingreso
                     </label>
                     <select
-                      value={sistema}
-                      onChange={(e) => setSistema(e.target.value)}
+                      value={sistema || ""}
+                      onChange={(e) => setSistema(e.target.value || null)}
                       className="w-full p-2 bg-slate-50 border border-slate-200 rounded-md text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
                     >
+                      <option value="">⚠️ Seleccione una opcion</option>
                       <option value="ambulatorio">📅 AMBULATORIO</option>
                       <option value="guardia">🚨 GUARDIA</option>
                       <option value="internacion">🏥 INTERNACIÓN</option>
@@ -244,20 +295,31 @@ export default function ConsumosPage() {
                     onRemove={quitarExposicionPorDescripcion}
                     onConfirm={handleFinalizar}
                     isSaving={guardandoConsumos}
-                    disabled={!pacienteInterno} // Bloqueado si no hay paciente
+                    disabled={!pacienteInterno || !sistema}
                   />
                 </div>
 
                 {/* FOOTER INFORMATIVO */}
-                <div className="p-5 bg-slate-50 border-t border-slate-100 rounded-b-2xl">
-                  <div className="flex items-center gap-3 text-red-800">
-                    <Database className="w-5 h-5 opacity-50" />
-                    <p className="text-base leading-tight italic">
-                      Al confirmar, los consumos se enviarán al sistema
-                      administrativo bajo el nodo de{" "}
-                      <strong>{sistema.toUpperCase()}</strong>. Asegúrese de que
-                      el paciente y la cobertura coincidan con la orden física.
-                    </p>
+                <div
+                  className={`p-5 border-t rounded-b-2xl ${sistema ? "bg-slate-50 border-slate-100" : "bg-amber-50 border-amber-200"}`}
+                >
+                  <div
+                    className={`flex items-center justify-center gap-3 ${sistema ? "text-red-800" : "text-amber-800"}`}
+                  >
+                    {!sistema && <AlertTriangle className="w-5 h-5 shrink-0" />}
+                    {sistema ? (
+                      <p className="text-sm leading-tight">
+                        Al confirmar, los consumos se enviarán al sistema
+                        administrativo bajo el nodo de{" "}
+                        <strong>{sistema.toUpperCase()}</strong>. Asegúrese de
+                        que el paciente y la cobertura coincidan con la orden
+                        física.
+                      </p>
+                    ) : (
+                      <p className="text-sm font-bold leading-tight uppercase tracking-wide">
+                        Seleccione un sistema de ingreso para habilitar el envío
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -266,11 +328,11 @@ export default function ConsumosPage() {
         )}
       </div>
       {/* --- SECCIÓN INFERIOR: PEDIDOS DE GUARDIA --- */}
-      {
+      {(pacienteInterno || pacienteGuardia) && (
         <div className="max-w-7xl mx-auto mt-6 animate-in slide-in-from-bottom-4 duration-500">
           <div className="bg-white rounded-2xl border-2 border-amber-100 shadow-md overflow-hidden">
             {/* Header de Sección */}
-            <div className="bg-amber-500 px-6 py-3 flex justify-between items-center">
+            <div className="bg-teal-700 px-6 py-3 flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-white/20 rounded-lg">
                   <Zap className="w-5 h-5 text-white fill-white" />
@@ -285,23 +347,52 @@ export default function ConsumosPage() {
                 </div>
               </div>
 
-              {loadingGuardia && (
+              {/* El loader pequeñito en el header (opcional si ya ponemos el grande) */}
+              {loadingPedidosPaciente && (
                 <Loader2 className="w-5 h-5 text-white animate-spin" />
               )}
             </div>
 
-            <div className="p-4 bg-amber-50/30">
-              {pedidosPaciente.length > 0 ? (
+            <div className="p-4 bg-amber-50/30 min-h-[150px] flex flex-col justify-center">
+              {/* 1. ESTADO: CARGANDO */}
+              {loadingPedidosPaciente ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {pedidosPaciente.map((pedido) => (
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="rounded-xl p-4 bg-white border border-slate-100 animate-pulse flex items-center gap-4"
+                    >
+                      <div className="flex flex-col items-center gap-1.5 py-2 px-3 min-w-[60px]">
+                        <div className="h-3 w-3 bg-slate-200 rounded" />
+                        <div className="h-2.5 w-10 bg-slate-200 rounded" />
+                        <div className="h-2.5 w-8 bg-slate-200 rounded" />
+                      </div>
+                      <div className="flex-1 space-y-2">
+                        <div className="h-3.5 bg-slate-200 rounded w-3/4" />
+                        <div className="h-2.5 bg-slate-200 rounded w-1/2" />
+                        <div className="h-5 bg-slate-200 rounded-full w-16 mt-1" />
+                      </div>
+                      <div className="h-8 w-20 bg-slate-200 rounded-lg" />
+                    </div>
+                  ))}
+                </div>
+              ) : /* 2. ESTADO: CON DATOS */
+              pedidosPaciente.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 h-full">
+                  {[...pedidosPaciente]
+                    .sort((a, b) => {
+                      if (a.realizado !== b.realizado) return a.realizado ? 1 : -1;
+                      return 0;
+                    })
+                    .map((pedido) => (
                     <div
                       key={pedido.idEstudio}
-                      className={`${pedido.realizado ? "bg-green-200 border-green-400" : "bg-orange-200 border-orange-400"} rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-all group`}
+                      className={`${pedido.realizado ? "bg-emerald-50 border-emerald-200" : "bg-orange-200 border-orange-400"} rounded-xl p-4 flex items-center justify-between hover:shadow-md transition-all group`}
                     >
                       <div className="flex items-center gap-4">
-                        <div className="flex flex-col items-center justify-center bg-amber-100 rounded-lg py-2 px-3 min-w-[60px]">
-                          <Clock className="w-4 h-4 text-amber-600 mb-1" />
-                          <span className="text-[10px] text-center font-black text-amber-800 whitespace-pre-line">
+                        <div className={`flex flex-col items-center justify-center rounded-lg py-2 px-3 min-w-[60px] ${pedido.realizado ? "bg-emerald-100" : "bg-amber-100"}`}>
+                          <Clock className={`w-4 h-4 mb-1 ${pedido.realizado ? "text-emerald-600" : "text-amber-600"}`} />
+                          <span className={`text-[10px] text-center font-black whitespace-pre-line ${pedido.realizado ? "text-emerald-800" : "text-amber-800"}`}>
                             {pedido.fecha.split(" ")[0] || "---"}
                             {"\n"}
                             {pedido.fecha.split(" ")[1] || "---"}
@@ -309,18 +400,18 @@ export default function ConsumosPage() {
                         </div>
 
                         <div>
-                          <h4 className="text-sm font-black text-slate-800 uppercase leading-tight">
+                          <h4 className={`text-sm font-black uppercase leading-tight ${pedido.realizado ? "text-emerald-900" : "text-slate-800"}`}>
                             {pedido.pedido}
                           </h4>
-                          <p className="text-[11px] text-slate-500 mt-0.5">
+                          <p className={`text-[11px] mt-0.5 ${pedido.realizado ? "text-emerald-600" : "text-slate-500"}`}>
                             Solicita:{" "}
-                            <span className="font-bold text-slate-700">
+                            <span className={`font-bold ${pedido.realizado ? "text-emerald-700" : "text-slate-700"}`}>
                               {pedido.doctor}
                             </span>
                           </p>
                           <div className="flex items-center gap-2 mt-1">
                             <span
-                              className={`text-sm ${pedido.realizado ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"} px-2 py-0.5 rounded font-bold uppercase`}
+                              className={`text-sm ${pedido.realizado ? "bg-emerald-100 text-emerald-800" : "bg-yellow-100 text-yellow-800"} px-2 py-0.5 rounded font-bold uppercase`}
                             >
                               {pedido.realizado ? "Realizado" : "Pendiente"}
                             </span>
@@ -329,15 +420,16 @@ export default function ConsumosPage() {
                       </div>
 
                       <span
-                        className={`flex items-center gap-2  p-2 font-bold ${getEstiloEstudio(pedido.tipoEstudio).badge} ${getEstiloEstudio(pedido.tipoEstudio).text}  ${getEstiloEstudio(pedido.tipoEstudio).bg} ${getEstiloEstudio(pedido.tipoEstudio).border} ${getEstiloEstudio(pedido.tipoEstudio).badge} py-2 rounded-lg text-xs  transition-all shadow-sm active:scale-95`}
+                        className={`flex items-center gap-2  p-2 font-bold ${pedido.realizado ? "bg-emerald-600 text-white border border-emerald-700" : `${getEstiloEstudio(pedido.tipoEstudio).badge} ${getEstiloEstudio(pedido.tipoEstudio).text} ${getEstiloEstudio(pedido.tipoEstudio).bg} ${getEstiloEstudio(pedido.tipoEstudio).border}`} py-2 rounded-lg text-xs transition-all shadow-sm active:scale-95`}
                       >
-                        {getEstiloEstudio(pedido.tipoEstudio).icon}
+                        {pedido.realizado ? <CheckCircle2 className="w-4 h-4" /> : getEstiloEstudio(pedido.tipoEstudio).icon}
                         {pedido.tipoEstudio}
                       </span>
                     </div>
                   ))}
                 </div>
               ) : (
+                /* 3. ESTADO: SIN DATOS (VACÍO) */
                 <div className="py-10 flex flex-col items-center justify-center text-slate-400 opacity-60">
                   <ClipboardList className="w-12 h-12 mb-2 stroke-1" />
                   <p className="text-sm font-medium">
@@ -348,7 +440,7 @@ export default function ConsumosPage() {
             </div>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 }

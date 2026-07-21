@@ -2,9 +2,10 @@ import {
   IConfigSistema,
   IConsumoItem,
   IEstudioConfig,
+  IPacienteInternado,
   IPacienteInterno,
   IResultadoLote,
-} from "./interno.types";
+} from "./interno.types.js";
 
 export interface InternoService {
   obtenerPrestaciones(): Promise<IEstudioConfig[]>;
@@ -20,4 +21,6 @@ export interface InternoService {
     numeroId: string,
     esHc: boolean,
   ): Promise<IPacienteInterno | null>;
+
+  getPacientesInternados(): Promise<IPacienteInternado[] | null>;
 }

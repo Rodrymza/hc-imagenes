@@ -1,0 +1,44 @@
+import { InternoService } from "./interno.service.js";
+import estudiosData from "../../data/prestaciones.json";
+import {
+  IEstudioConfig,
+  IPacienteInternado,
+  IPacienteInterno,
+  IResultadoLote,
+} from "./interno.types.js";
+import { AppError } from "../../errors/AppError.js";
+import datosPaciente from "../../mocks/pacienteInterno.json";
+import pacientesInternados from "../../mocks/datos_pacientes_internados.json";
+
+export const mockInternoService: InternoService = {
+  async crearLoteConsumos(idPaciente, idCobertura, items, sistema) {
+    const idConsumo: string = "9999";
+    let resultadoLote: IResultadoLote[] = [];
+    if (!items) {
+      throw new AppError("Falta enviar consumos");
+    }
+    let count = 0;
+    for (const item of items) {
+      count += resultadoLote.push({
+        exito: count % 2 == 0 ? true : false,
+        prestacion: item.descripcion,
+      });
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return { consumoId: idConsumo, resultados: resultadoLote };
+  },
+
+  async obtenerPrestaciones() {
+    return estudiosData.filter((e) => e.visible !== false) as IEstudioConfig[];
+  },
+
+  async buscarPacienteInterno(numeroId, esHc) {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return datosPaciente as unknown as IPacienteInterno;
+  },
+
+  async getPacientesInternados() {
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return pacientesInternados as IPacienteInternado[];
+  },
+};

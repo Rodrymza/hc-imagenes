@@ -1,0 +1,39 @@
+{
+  "idPaciente": 353838,
+  "dni": 35144093,
+  "apellidos": "CANADELA BUZON",
+  "nombres": "RICARDO GABRIEL",
+  "nombreCompleto": "CANADELA BUZON, RICARDO GABRIEL",
+  "fechaNacimiento": "1990-07-10T04:00:00.000Z",
+  "fechaNacimientoString": "10-07-1990",
+  "edad": 35,
+  "sexo": "M",
+  "domicilio": "TITO LACIAR 1198, VILLA NUEVA.",
+  "contacto": {
+    "telefono": "-2616624353",
+    "email": "ricardocanadela95@gmail.com"
+  },
+  "coberturas": [
+    {
+      "nombre": "OBRA SOCIAL PARA EL PERSONAL DE ESTACIONES DE SERVICIO, GARAGES, PLAYAS DE ESTACIONAMIENTO, LAVADEROS AUTOMATICOS Y GOMERIAS DE LA REPUBLICA ARGENTINA",
+      "sigla": "OSPES",
+      "idCobertura": 41,
+      "numeroCarnet": "S/N",
+      "tipo": "Afiliado"
+    },
+    {
+      "nombre": "SISTEMA DE SERVICIO SOCIAL Y DE SALUD",
+      "sigla": "SISTEMA DE SERVICIO",
+      "idCobertura": 224,
+      "numeroCarnet": "S/N",
+      "tipo": "Afiliado"
+    },
+    {
+      "nombre": "PROGRAMA FEDERAL INCLUIR SALUD MENDOZA",
+      "sigla": "PROFESALUDMENDOZA",
+      "idCobertura": 2100,
+      "numeroCarnet": "S/N",
+      "tipo": "Afiliado"
+    }
+  ]
+}

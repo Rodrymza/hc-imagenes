@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings:
+      "rlig" 1,
+      "calt" 1;
+  }
+}
+@media (max-height: 800px) {
+  html {
+    /* Por defecto Tailwind usa 16px (100%).
+       Al bajarlo, todo (p-4, text-xl, w-64) se recalcula automáticamente.
+       14px es aprox 87.5%
+    */
+    font-size: 14px;
+  }
+}
+
+/* Opcional: Para pantallas MUY chicas o monitores viejos */
+@media (max-width: 1280px) {
+  html {
+    font-size: 13.5px;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

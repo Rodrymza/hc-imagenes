@@ -9,13 +9,20 @@ axios.defaults.baseURL = import.meta.env.PROD
 axios.defaults.withCredentials = true;
 
 export const GuardiaService = {
-  loginGuardia: async () => {
-    const res = await axios.post("/api/guardia/login");
+  checkHsiSession: async (): Promise<{
+    hasSession: boolean;
+    operator: string;
+  }> => {
+    const res = await axios.get("/api/guardia/hsi-status");
+    return res.data;
+  },
+
+  loginGuardia: async (totpCode: string) => {
+    const res = await axios.post("/api/guardia/login", { totpCode });
     return res.data;
   },
 
   getPedidos: async (fecha?: string): Promise<IPedidoGuardia[]> => {
-    //formato fecha: YYYY-MM-DD el valor que da el input
     const url = fecha
       ? `/api/guardia/pedidos?fecha=${fecha}`
       : "/api/guardia/pedidos";
@@ -94,7 +101,7 @@ export const GuardiaService = {
       const res = await axios.post("/api/guardia/logout");
       return res.data;
     } catch (error) {
-      console.log("Error al cerrar sesión en Guardia", error);
+      console.error("Error al cerrar sesión en Guardia", error);
       throw error;
     }
   },

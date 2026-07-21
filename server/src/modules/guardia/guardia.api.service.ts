@@ -91,8 +91,7 @@ export const apiGuardiaService: GuardiaService = {
 
         return [
           ...pedidosLimpios.sort(
-            (a, b) =>
-              new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
+            (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime(),
           ),
         ];
       },
@@ -120,9 +119,7 @@ export const apiGuardiaService: GuardiaService = {
             return a.realizado ? 1 : -1;
           }
 
-          return (
-            parseFecha(b.fecha).getTime() - parseFecha(a.fecha).getTime()
-          );
+          return parseFecha(b.fecha).getTime() - parseFecha(a.fecha).getTime();
         });
         return pedidosLimpios;
       },
@@ -292,7 +289,7 @@ function crearUrlPedidosGuardia(fecha?: string): string {
     sourceTypeIds: [],
     studyTypeIds: [],
     temporaryPatient: false,
-    wlStatusIds: [],
+    wlStatusIds: [1],
     studyConcept: null,
     lastname: "oros",
   };

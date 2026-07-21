@@ -36,7 +36,9 @@ export const useServicioGuardia = () => {
           const idsViejos = new Set(pedidosRef.current.map((p) => p.idEstudio));
           const nuevos = data.filter((p) => !idsViejos.has(p.idEstudio));
           if (nuevos.length > 0) {
-            toast.success(`${nuevos.length} pedido${nuevos.length > 1 ? "s" : ""} nuevo${nuevos.length > 1 ? "s" : ""}`);
+            toast.success(
+              `${nuevos.length} pedido${nuevos.length > 1 ? "s" : ""} nuevo${nuevos.length > 1 ? "s" : ""}`,
+            );
           } else {
             toast.info("No hay nuevos pedidos");
           }
@@ -46,9 +48,7 @@ export const useServicioGuardia = () => {
         pedidosRef.current = data;
         setLugaresGuardia([
           ...new Set(
-            data.map(
-              (p) => p.ubicacion.split("-")[0] || p.ubicacion.trim(),
-            ),
+            data.map((p) => p.ubicacion.split("-")[0] || p.ubicacion.trim()),
           ),
         ]);
       } catch (e) {
@@ -63,7 +63,6 @@ export const useServicioGuardia = () => {
         }
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 

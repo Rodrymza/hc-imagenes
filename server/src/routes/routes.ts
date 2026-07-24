@@ -4,7 +4,10 @@ import internacionRoutes from "../modules/internacion/internacion.routes.js";
 import guardiaRoutes from "../modules/guardia/guardia.routes.js";
 import internoRoutes from "../modules/interno/interno.routes.js";
 import authRoutes from "../modules/auth/auth.routes.js";
-import { protegerRuta, restringirA } from "../modules/auth/auth.middleware.js";
+import {
+  protegerRuta,
+  modoAdministrador,
+} from "../modules/auth/auth.middleware.js";
 import { authAdminRoutes } from "../modules/auth/auth.admin.routes.js";
 
 const router = Router();
@@ -21,6 +24,6 @@ router.get("/error-test", () => {
 router.use("/internacion", protegerRuta, internacionRoutes);
 router.use("/guardia", protegerRuta, guardiaRoutes);
 router.use("/interno", protegerRuta, internoRoutes);
-router.use("/auth/users", protegerRuta, restringirA("ADMIN"), authAdminRoutes);
+router.use("/auth/users", protegerRuta, modoAdministrador, authAdminRoutes);
 router.use("/auth", authRoutes);
 export default router;

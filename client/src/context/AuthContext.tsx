@@ -3,6 +3,7 @@ import {
   useState,
   useContext,
   useEffect,
+  useMemo,
   type ReactNode,
 } from "react";
 import { AuthService, type User } from "../services/auth.service";
@@ -12,6 +13,8 @@ import { getErrorMessage } from "@/utils/getErrorMessage";
 
 interface AuthContextType {
   user: User | null;
+  activeOperator: User | null;
+  isAdminMode: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (credentials: {
@@ -20,6 +23,7 @@ interface AuthContextType {
     totpCode?: string;
   }) => Promise<{ hsiLogin: boolean }>;
   logout: () => void;
+  changeOperator: (pin: string) => Promise<User>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -34,8 +38,14 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [activeOperator, setActiveOperator] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+
+  const isAdminMode = useMemo(() => {
+    if (!user || !activeOperator) return false;
+    return user.rol === "ADMIN" && user.id === activeOperator.id;
+  }, [user, activeOperator]);
 
   const login = async (credentials: {
     username: string;
@@ -45,6 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       const res = await AuthService.login(credentials);
       setUser(res.user);
+      setActiveOperator(res.user);
       setIsAuthenticated(true);
       return { hsiLogin: res.hsiLogin };
     } catch (error: unknown) {
@@ -55,10 +66,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = () => {
     setUser(null);
+    setActiveOperator(null);
     setIsAuthenticated(false);
     AuthService.logout().catch(console.error);
     GuardiaService.logoutGuardia().catch(console.error);
     toast.info("Sesión cerrada");
+  };
+
+  const changeOperator = async (pin: string) => {
+    const res = await AuthService.changeOperator(pin);
+    setActiveOperator(res.operator);
+    return res.operator;
   };
 
   useEffect(() => {
@@ -67,12 +85,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         const res = await AuthService.verifyToken();
         if (res && res.user) {
           setUser(res.user);
+          setActiveOperator(res.activeOperator);
           setIsAuthenticated(true);
         }
       } catch {
         console.error("Token no válido o expirado");
         setIsAuthenticated(false);
         setUser(null);
+        setActiveOperator(null);
       } finally {
         setIsLoading(false);
       }
@@ -86,8 +106,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         login,
         logout,
         user,
+        activeOperator,
+        isAdminMode,
         isAuthenticated,
         isLoading,
+        changeOperator,
       }}
     >
       {children}

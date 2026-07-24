@@ -5,6 +5,7 @@ const guardiaRoutes = Router();
 
 guardiaRoutes.post("/login", guardiaControler.loginGuardia);
 guardiaRoutes.post("/logout", guardiaControler.logoutGuardia);
+guardiaRoutes.get("/hsi-status", guardiaControler.hsiStatus);
 guardiaRoutes.get("/pedidos", guardiaControler.getPedidosGuardia);
 guardiaRoutes.get(
   "/paciente/:idPatient/pedidos",

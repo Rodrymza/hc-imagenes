@@ -7,6 +7,7 @@ export interface AdminUser {
   apellido: string;
   rol: string;
   hsi_username: string;
+  pin: string;
 }
 
 export interface CreateUserDTO {
@@ -17,6 +18,7 @@ export interface CreateUserDTO {
   rol: string;
   hsi_username: string;
   hsi_password: string;
+  pin: string;
 }
 
 export interface UpdateUserDTO {
@@ -27,6 +29,7 @@ export interface UpdateUserDTO {
   rol?: string;
   hsi_username?: string;
   hsi_password?: string;
+  pin?: string;
 }
 
 export const AdminService = {

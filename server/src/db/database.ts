@@ -24,8 +24,19 @@ db.exec(`
     apellido TEXT NOT NULL DEFAULT '',
     rol TEXT NOT NULL DEFAULT 'USER',
     hsi_username TEXT DEFAULT '',
-    hsi_password TEXT DEFAULT ''
+    hsi_password TEXT DEFAULT '',
+    pin TEXT DEFAULT ''
   )
+`);
+
+const columns = db.prepare("PRAGMA table_info(users)").all() as { name: string }[];
+if (!columns.some((c) => c.name === "pin")) {
+  db.exec("ALTER TABLE users ADD COLUMN pin TEXT DEFAULT ''");
+}
+
+db.exec(`
+  CREATE UNIQUE INDEX IF NOT EXISTS idx_users_pin
+  ON users(pin) WHERE pin != ''
 `);
 
 const adminUser = {
@@ -36,6 +47,7 @@ const adminUser = {
   rol: "ADMIN",
   hsi_username: "reramirez",
   hsi_password: "Rr36499229",
+  pin: "0000",
 };
 
 const existing = db
@@ -44,8 +56,8 @@ const existing = db
 if (!existing) {
   const hash = bcrypt.hashSync(adminUser.password, 10);
   db.prepare(
-    `INSERT INTO users (username, password, nombre, apellido, rol, hsi_username, hsi_password)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO users (username, password, nombre, apellido, rol, hsi_username, hsi_password, pin)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     adminUser.username,
     hash,
@@ -54,9 +66,20 @@ if (!existing) {
     adminUser.rol,
     adminUser.hsi_username,
     adminUser.hsi_password,
+    adminUser.pin,
   );
   console.log(`✅ Usuario admin "${adminUser.username}" creado.`);
 } else {
+  const user = db
+    .prepare("SELECT pin FROM users WHERE username = ?")
+    .get(adminUser.username) as { pin?: string };
+  if (!user.pin) {
+    db.prepare("UPDATE users SET pin = ? WHERE username = ?").run(
+      adminUser.pin,
+      adminUser.username,
+    );
+    console.log(`ℹ️  PIN "${adminUser.pin}" asignado al admin "${adminUser.username}".`);
+  }
   console.log(`ℹ️  Usuario admin "${adminUser.username}" ya existe.`);
 }
 

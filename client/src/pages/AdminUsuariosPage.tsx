@@ -16,6 +16,8 @@ import {
   ShieldCheck,
   User,
   UserCog,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 
 const EMPTY_FORM: CreateUserDTO = {
@@ -26,6 +28,7 @@ const EMPTY_FORM: CreateUserDTO = {
   rol: "USER",
   hsi_username: "",
   hsi_password: "",
+  pin: "",
 };
 
 export default function AdminUsuariosPage() {
@@ -35,6 +38,7 @@ export default function AdminUsuariosPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<CreateUserDTO>(EMPTY_FORM);
   const [submitting, setSubmitting] = useState(false);
+  const [visiblePins, setVisiblePins] = useState<Set<number>>(new Set());
 
   const loadUsers = async () => {
     try {
@@ -69,6 +73,7 @@ export default function AdminUsuariosPage() {
       rol: u.rol,
       hsi_username: u.hsi_username || "",
       hsi_password: "",
+      pin: u.pin || "",
     });
     setShowModal(true);
   };
@@ -88,11 +93,17 @@ export default function AdminUsuariosPage() {
           hsi_password: form.hsi_password,
         };
         if (form.password) payload.password = form.password;
+        if (form.pin !== undefined) payload.pin = form.pin;
         await AdminService.updateUser(editingId, payload);
         toast.success("Usuario actualizado");
       } else {
         if (!form.password) {
           toast.error("La contraseña es requerida para nuevos usuarios");
+          setSubmitting(false);
+          return;
+        }
+        if (!form.pin || form.pin.length !== 4) {
+          toast.error("El PIN es requerido y debe ser 4 dígitos");
           setSubmitting(false);
           return;
         }
@@ -181,6 +192,9 @@ export default function AdminUsuariosPage() {
                   <th className="text-center px-4 py-3 font-bold text-slate-600">
                     HSI User
                   </th>
+                  <th className="text-center px-4 py-3 font-bold text-slate-600">
+                    PIN
+                  </th>
                   <th className="text-right px-4 py-3 font-bold text-slate-600">
                     Acciones
                   </th>
@@ -216,6 +230,39 @@ export default function AdminUsuariosPage() {
                     </td>
                     <td className="px-4 py-3 font-mono text-slate-500 text-xs text-center">
                       {u.hsi_username || "—"}
+                    </td>
+                    <td className="px-4 py-3 text-center">
+                      {u.pin ? (
+                        <div className="flex items-center justify-center gap-1">
+                          <span className="font-mono text-xs text-slate-700">
+                            {visiblePins.has(u.id) ? u.pin : "••••"}
+                          </span>
+                          <button
+                            onClick={() => {
+                              setVisiblePins((prev) => {
+                                const next = new Set(prev);
+                                if (next.has(u.id)) next.delete(u.id);
+                                else next.add(u.id);
+                                return next;
+                              });
+                            }}
+                            className="p-0.5 text-slate-400 hover:text-slate-600 transition-colors"
+                            title={
+                              visiblePins.has(u.id)
+                                ? "Ocultar PIN"
+                                : "Mostrar PIN"
+                            }
+                          >
+                            {visiblePins.has(u.id) ? (
+                              <EyeOff className="h-3.5 w-3.5" />
+                            ) : (
+                              <Eye className="h-3.5 w-3.5" />
+                            )}
+                          </button>
+                        </div>
+                      ) : (
+                        <span className="text-slate-300 text-xs">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
@@ -295,6 +342,31 @@ export default function AdminUsuariosPage() {
                     }
                   />
                 </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                    PIN (4 dígitos) *
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]{4}"
+                    maxLength={4}
+                    required={!editingId}
+                    className={inputClass}
+                    placeholder="0000"
+                    value={form.pin}
+                    onChange={(e) => {
+                      const val = e.target.value
+                        .replace(/\D/g, "")
+                        .slice(0, 4);
+                      setForm({ ...form, pin: val });
+                    }}
+                  />
+                </div>
+                <div />
               </div>
 
               <div className="grid grid-cols-2 gap-4">

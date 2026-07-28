@@ -16,8 +16,10 @@ import {
   X,
   UserCog,
   ArrowRightLeft,
+  Bell,
 } from "lucide-react";
 import ChangeOperatorModal from "@/components/ChangeOperatorModal";
+import ConfigNotificacionesPanel from "@/components/ConfigNotificacionesPanel";
 
 export function Navbar() {
   const { user, activeOperator, isAdminMode, logout, isLoading } = useAuth();
@@ -25,6 +27,7 @@ export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Dropdown perfil
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // <-- Nuevo estado para móvil
   const [showOperatorModal, setShowOperatorModal] = useState(false);
+  const [showConfigModal, setShowConfigModal] = useState(false);
 
   const getIniciales = () => {
     const op = activeOperator || user;
@@ -197,6 +200,17 @@ export function Navbar() {
                             <UserCog className="h-4 w-4" /> Administrar Usuarios
                           </Link>
                         )}
+                        {isAdminMode && (
+                          <button
+                            onClick={() => {
+                              setIsMenuOpen(false);
+                              setShowConfigModal(true);
+                            }}
+                            className="w-full flex items-center gap-2 px-4 py-3 text-sm font-bold text-emerald-600 hover:bg-emerald-50 transition-colors"
+                          >
+                            <Bell className="h-4 w-4" /> Config. Notificaciones
+                          </button>
+                        )}
                         <div className="h-px bg-slate-100 my-1" />
                         <button
                           onClick={() => {
@@ -290,6 +304,10 @@ export function Navbar() {
       <ChangeOperatorModal
         open={showOperatorModal}
         onClose={() => setShowOperatorModal(false)}
+      />
+      <ConfigNotificacionesPanel
+        open={showConfigModal}
+        onClose={() => setShowConfigModal(false)}
       />
     </>
   );

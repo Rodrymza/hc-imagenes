@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/getErrorMessage";
@@ -10,7 +11,9 @@ interface Props {
 }
 
 export default function ChangeOperatorModal({ open, onClose }: Props) {
-  const { changeOperator, activeOperator } = useAuth();
+  const { changeOperator, activeOperator, user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [pin, setPin] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -25,6 +28,14 @@ export default function ChangeOperatorModal({ open, onClose }: Props) {
       );
       setPin("");
       onClose();
+
+      const perdiendoAdmin =
+        user?.rol === "ADMIN" &&
+        user.id !== newOperator.id &&
+        location.pathname.startsWith("/admin");
+      if (perdiendoAdmin) {
+        navigate("/internacion");
+      }
     } catch (error) {
       const msg = getErrorMessage(error) || "PIN inválido";
       toast.error(msg);

@@ -124,7 +124,9 @@ function PacientesInternadosPage() {
           </div>
         ) : (
           <>
-            {tienePacientes && pacientesFiltrados && pacientesFiltrados.length > 0 ? (
+            {tienePacientes &&
+            pacientesFiltrados &&
+            pacientesFiltrados.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {pacientesFiltrados.map((paciente, index) => (
                   <div
@@ -135,7 +137,9 @@ function PacientesInternadosPage() {
                     <TarjetaPacienteInternado
                       paciente={paciente}
                       onClick={(p) => {
-                        navigate(`/consumos?hc=${p.historia_clinica}`);
+                        navigate(
+                          `/consumos?hc=${p.historia_clinica}&sistema=internacion`,
+                        );
                       }}
                     />
                   </div>

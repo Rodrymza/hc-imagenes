@@ -1,35 +1,45 @@
 import { IPedidoInternacion } from "./internacion.types.js";
 import { enviarNotificacionTelegram } from "../telegram/telegram.service.js";
 import { internacionService } from "./utils/internacion.factory.js";
+import { getConfigNotificaciones } from "./internacion.notificaciones.config.js";
 
-const CONFIG = {
-  ENVIOS_DESACTIVADOS: true,
-  HORA_INICIO: 8,
-  HORA_FIN: 14,
-  LUGAR_CRITICO: "en cama",
-  MAX_RETRIES: 3,
-  DELAY_RETRY: 1500,
-};
+const MAX_RETRIES = 3;
+const DELAY_RETRY = 1500;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const esSalaExcluida = (sala: string) => {
+  if (!sala) return false;
+
+  // Elimina espacios al inicio y verifica si comienza con "4"
+  return /^4\d{2}/.test(sala.trim());
+};
 
 // --- LÓGICA DE NEGOCIO ---
 
 const esParaNotificar = (estudio: IPedidoInternacion): boolean => {
-  if (CONFIG.ENVIOS_DESACTIVADOS) {
+  const config = getConfigNotificaciones();
+
+  if (config.ENVIOS_DESACTIVADOS) {
     return false;
   }
+  if (esSalaExcluida(estudio.sala) && config.EXCLUIR_TERAPIAS) {
+    return false;
+  }
+
+  const hoy = new Date().getDay();
+  if (!config.DIAS_PERMITIDOS.includes(hoy)) return false;
+
   const lugarActual = estudio.lugar?.toLowerCase() || "";
-  if (!lugarActual.includes(CONFIG.LUGAR_CRITICO)) return false;
+  if (!lugarActual.includes("en cama")) return false;
 
   // Regla 2: Horario
   try {
     const horaStr = estudio.fecha.split(" ")[1]?.split(":")[0];
     const hora = Number(horaStr);
 
-    if (isNaN(hora)) return false; // Protección contra fechas mal formadas
+    if (isNaN(hora)) return false;
 
-    return hora >= CONFIG.HORA_INICIO && hora < CONFIG.HORA_FIN;
+    return hora >= config.HORA_INICIO && hora < config.HORA_FIN;
   } catch (e) {
     console.error("Error parseando fecha para notificación", e);
     return false;
@@ -70,17 +80,17 @@ ${estudio.diagnostico || "No especificado"}
 };
 
 const enviarConRetry = async (mensaje: string) => {
-  for (let intento = 1; intento <= CONFIG.MAX_RETRIES; intento++) {
+  for (let intento = 1; intento <= MAX_RETRIES; intento++) {
     try {
       await enviarNotificacionTelegram(mensaje);
       console.log("✅ Telegram enviado OK");
       return;
     } catch (error: any) {
       console.warn(`🚩 Telegram fallo intento ${intento}: ${error.message}`);
-      if (intento === CONFIG.MAX_RETRIES) {
+      if (intento === MAX_RETRIES) {
         console.error("⛔ Telegram fallo definitivo");
       } else {
-        await sleep(CONFIG.DELAY_RETRY * intento);
+        await sleep(DELAY_RETRY * intento);
       }
     }
   }

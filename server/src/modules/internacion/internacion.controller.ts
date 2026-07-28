@@ -5,6 +5,10 @@ import {
   enviarMensajesPendientes,
   procesarEstudiosBackend,
 } from "./internacion.processor.js";
+import {
+  getConfigNotificaciones,
+  updateConfigNotificaciones,
+} from "./internacion.notificaciones.config.js";
 
 export const internacionController = {
   async obtenerPedidosInternacion(
@@ -40,5 +44,14 @@ export const internacionController = {
     } catch (error) {
       next(error);
     }
+  },
+
+  obtenerConfigNotificaciones(_req: Request, res: Response) {
+    res.json(getConfigNotificaciones());
+  },
+
+  actualizarConfigNotificaciones(req: Request, res: Response) {
+    const config = updateConfigNotificaciones(req.body);
+    res.json({ ok: true, config });
   },
 };

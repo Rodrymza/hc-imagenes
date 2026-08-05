@@ -15,6 +15,7 @@ export default function InternacionPage() {
     pedidosInternacion,
     traerPedidosInternacion,
     alternarEstadoPedido,
+    guardarNota,
     lugares,
   } = usePedidosInternacion();
 
@@ -269,6 +270,7 @@ export default function InternacionPage() {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         pedido={pedidoSeleccionado}
+        onGuardarNota={guardarNota}
       />
     </>
   );

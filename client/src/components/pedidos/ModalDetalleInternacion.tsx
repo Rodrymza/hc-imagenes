@@ -14,6 +14,8 @@ import {
   RefreshCw,
   FileText,
   Activity,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import type { IPedidoInternacion } from "@/types/pedidos";
 import { capitalize, getEstiloEstudio, getLugarEstilo } from "./utils";
@@ -21,17 +23,20 @@ import { useConsumos } from "@/hooks/useConsumos";
 import { PanelConsumos } from "./PanelConsumos";
 import { PanelPacienteEncontrado } from "./PanelPacienteEncontrado";
 import { useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 
 interface ModalDetalleInternacionProps {
   isOpen: boolean;
   onClose: () => void;
   pedido: IPedidoInternacion | null;
+  onGuardarNota?: (item: IPedidoInternacion, nota: string) => void;
 }
 
 export const ModalDetalleInternacion = ({
   isOpen,
   onClose,
   pedido,
+  onGuardarNota,
 }: ModalDetalleInternacionProps) => {
   const pedidosMemo = useMemo(() => (pedido ? [pedido] : []), [pedido]);
 
@@ -49,8 +54,17 @@ export const ModalDetalleInternacion = ({
   } = useConsumos(pedidosMemo);
 
   const [coberturaSeleccionada, setCoberturaSeleccionada] = useState("");
+  const [notaLocal, setNotaLocal] = useState(pedido?.nota ?? "");
+  const [editarNota, setEditarNota] = useState(false);
   const ID_COBERTURA_PARTICULAR = "09999";
   const SISTEMA_INTERNACION = "internacion";
+
+  const [pedidoIdPrev, setPedidoIdPrev] = useState(pedido?.idEstudio);
+  if (pedidoIdPrev !== pedido?.idEstudio) {
+    setPedidoIdPrev(pedido?.idEstudio);
+    setNotaLocal(pedido?.nota ?? "");
+    setEditarNota(false);
+  }
 
   const handleImputar = async () => {
     if (!pedido) return;
@@ -76,7 +90,7 @@ export const ModalDetalleInternacion = ({
     if (isOpen && pedido?.dni) {
       buscarPacienteInterno(pedido.dni.toString());
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, pedido?.dni]);
 
   if (!isOpen || !pedido) return null;
@@ -258,16 +272,114 @@ export const ModalDetalleInternacion = ({
                     </div>
 
                     {/* [nota] (siempre visible) */}
-                    <div className="flex items-center gap-3 bg-amber-50/50 p-1 rounded-xl border border-amber-100">
-                      <FileText className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-                      <span className="w-32 text-xs text-center tracking-wide font-black text-blue-700/70 uppercase block">
-                        Nota Adicional:
-                      </span>
+                    <div
+                      className={`flex items-center gap-3 p-1 rounded-xl border ${
+                        notaLocal.trim()
+                          ? "border border-amber-200 border-l-4 border-l-amber-400 bg-amber-50 shadow-sm"
+                          : "border-amber-100"
+                      }`}
+                    >
+                      <FileText
+                        className={`w-5 h-5 shrink-0 mt-1 ${
+                          notaLocal.trim() ? "text-amber-500" : "text-blue-400"
+                        }`}
+                      />
                       <span
-                        className={`text-sm ${pedido.nota ? "font-medium text-slate-700" : "italic text-blue-600/60"}`}
+                        className={`w-32 text-xs text-center tracking-wide font-black uppercase block ${
+                          notaLocal.trim()
+                            ? "text-amber-700/70"
+                            : "text-blue-700/70"
+                        }`}
                       >
-                        {pedido.nota || "Sin notas adicionales."}
+                        Nota:
                       </span>
+
+                      {editarNota ? (
+                        <div className="flex-1 flex flex-col gap-2">
+                          <textarea
+                            value={notaLocal}
+                            onChange={(e) => setNotaLocal(e.target.value)}
+                            rows={2}
+                            placeholder="Escribí la nota adicional..."
+                            autoFocus
+                            className="w-full p-2 rounded-lg border border-blue-200 bg-white text-sm font-medium text-slate-800 placeholder-blue-300 focus:border-blue-300 focus:ring-2 focus:ring-blue-100 outline-none resize-y"
+                          />
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => {
+                                setNotaLocal(pedido.nota ?? "");
+                                setEditarNota(false);
+                              }}
+                              className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 text-[11px] font-black uppercase tracking-wider hover:bg-slate-50 transition-all active:scale-95"
+                            >
+                              Cancelar
+                            </button>
+                            <button
+                              onClick={() => {
+                                if (!onGuardarNota) return;
+                                const notaFinal = notaLocal.trim();
+                                setNotaLocal(notaFinal);
+                                setEditarNota(false);
+                                onGuardarNota(pedido, notaFinal);
+                              }}
+                              disabled={!onGuardarNota}
+                              className="px-3 py-1.5 rounded-lg border border-blue-500 bg-blue-500 text-white text-[11px] font-black uppercase tracking-wider hover:bg-blue-600 hover:border-blue-600 transition-all active:scale-95 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              Guardar
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <span
+                            className={`flex-1 text-sm whitespace-pre-line ${notaLocal.trim() ? "font-medium text-slate-700" : "italic text-blue-600/60"}`}
+                          >
+                            {notaLocal.trim() || "Sin notas adicionales."}
+                          </span>
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              onClick={() => setEditarNota(true)}
+                              title={
+                                notaLocal.trim()
+                                  ? "Editar nota"
+                                  : "Agregar nota"
+                              }
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-blue-200 bg-white text-blue-700 text-[11px] font-black uppercase tracking-wider hover:bg-blue-50 transition-all active:scale-95"
+                            >
+                              <Pencil className="w-3 h-3" />
+                              {notaLocal.trim() ? "Editar" : "Agregar"}
+                            </button>
+                            {notaLocal.trim() && (
+                              <button
+                                onClick={() => {
+                                  if (!onGuardarNota) return;
+                                  toast("Eliminar nota adicional", {
+                                    description:
+                                      "¿Seguro que querés eliminar la nota?",
+                                    action: {
+                                      label: "Eliminar",
+                                      onClick: () => {
+                                        setNotaLocal("");
+                                        setEditarNota(false);
+                                        onGuardarNota(pedido, "");
+                                      },
+                                    },
+                                    cancel: {
+                                      label: "Cancelar",
+                                      onClick: () => {},
+                                    },
+                                  });
+                                }}
+                                disabled={!onGuardarNota}
+                                title="Eliminar nota"
+                                className="p-1.5 rounded-lg border border-rose-200 bg-white text-rose-600 hover:bg-rose-50 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>

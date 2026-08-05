@@ -6,12 +6,15 @@ import { getConfigNotificaciones } from "./internacion.notificaciones.config.js"
 const MAX_RETRIES = 3;
 const DELAY_RETRY = 1500;
 
+const SALAS_EXCLUIDAS = ["445", "441", "417", "470"];
+
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const esSalaExcluida = (sala: string) => {
   if (!sala) return false;
 
-  // Elimina espacios al inicio y verifica si comienza con "4"
-  return /^4\d{2}/.test(sala.trim());
+  const numero = sala.match(/\d+/)?.[0];
+
+  return numero ? SALAS_EXCLUIDAS.includes(numero) : false;
 };
 
 // --- LÓGICA DE NEGOCIO ---
@@ -22,6 +25,7 @@ const esParaNotificar = (estudio: IPedidoInternacion): boolean => {
   if (config.ENVIOS_DESACTIVADOS) {
     return false;
   }
+
   if (esSalaExcluida(estudio.sala) && config.EXCLUIR_TERAPIAS) {
     return false;
   }

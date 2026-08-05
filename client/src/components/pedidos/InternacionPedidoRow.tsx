@@ -1,5 +1,5 @@
 import type { IPedidoInternacion } from "@/types/pedidos";
-import { Eye, CalendarClock, Check, X } from "lucide-react";
+import { Eye, CalendarClock, Check, X, AlertCircle } from "lucide-react";
 import { capitalize, getLugarEstilo } from "./utils";
 
 interface PedidoRowProps {
@@ -119,9 +119,10 @@ export const InternacionPedidoRow = ({
       {/* 6. ACCIONES */}
       <td className="px-6 py-4 text-right whitespace-nowrap align-middle">
         <div className="flex flex-col items-center gap-2">
-          <button
-            onClick={() => onVerDetalle(item)}
-            className="
+          <div className="relative">
+            <button
+              onClick={() => onVerDetalle(item)}
+              className="
     flex items-center justify-center gap-2 
     w-36 h-10 px-4
     rounded-lg border-2 border-slate-200 
@@ -130,11 +131,23 @@ export const InternacionPedidoRow = ({
     transition-all hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 
     active:scale-95 shadow-sm
   "
-            title="Ver detalle completo"
-          >
-            <Eye className="w-4 h-4" strokeWidth={3} />
-            <span>Ver Detalle</span>
-          </button>
+              title="Ver detalle completo"
+            >
+              <Eye className="w-4 h-4" strokeWidth={3} />
+              <span>Ver Detalle</span>
+            </button>
+
+            {/* Dot de notificación: avisa que hay una nota */}
+            {item.nota?.trim() && (
+              <span
+                title={`Nota: ${item.nota}`}
+                onClick={() => onVerDetalle(item)}
+                className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-amber-400 text-white border-2 border-white flex items-center justify-center shadow-md shadow-amber-400 hover:bg-amber-500 transition-colors"
+              >
+                <AlertCircle className="w-2.5 h-2.5" strokeWidth={3} />
+              </span>
+            )}
+          </div>
 
           {/* EL INTERRUPTOR (Switch) */}
           {onToggleEstado && (

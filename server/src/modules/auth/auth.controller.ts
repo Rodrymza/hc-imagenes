@@ -3,11 +3,20 @@ import { authService } from "./auth.service.js";
 import { resolveActiveOperatorId } from "./auth.middleware.js";
 import { operatorService } from "./auth.operator.service.js";
 
-const COOKIE_OPTIONS = {
-  signed: true,
+const BASE_COOKIE_OPTIONS = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "strict" as const,
+};
+
+const COOKIE_OPTIONS = {
+  ...BASE_COOKIE_OPTIONS,
+  signed: true,
+  expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+};
+
+const JWT_COOKIE_OPTIONS = {
+  ...BASE_COOKIE_OPTIONS,
   expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
 };
 
@@ -26,12 +35,7 @@ export const authController = {
         totpCode,
       );
 
-      res.cookie("jwt", token, {
-        expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-      });
+      res.cookie("jwt", token, JWT_COOKIE_OPTIONS);
 
       res.cookie("activeOperator", user.id, COOKIE_OPTIONS);
 
@@ -46,11 +50,8 @@ export const authController = {
   },
 
   async logout(req: Request, res: Response) {
-    res.cookie("jwt", "loggedout", {
-      expires: new Date(Date.now() + 10 * 1000),
-      httpOnly: true,
-    });
-    res.clearCookie("activeOperator");
+    res.clearCookie("jwt", JWT_COOKIE_OPTIONS);
+    res.clearCookie("activeOperator", COOKIE_OPTIONS);
     res.status(200).json({ status: "success" });
   },
 

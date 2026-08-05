@@ -203,7 +203,7 @@ export default function ConfigNotificacionesPanel({ open, onClose }: Props) {
               <div className="flex items-center gap-2">
                 <ShieldOff className="h-4 w-4 text-slate-400" />
                 <span className="text-sm font-bold text-slate-700">
-                  Excluir terapias (salas 4xx)
+                  Excluir terapias (salas 445, 441, 417, 470)
                 </span>
               </div>
               <button

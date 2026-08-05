@@ -205,7 +205,7 @@ export default function InternacionPage() {
           </div>
 
           {/* TABLA */}
-          <div className="bg-white rounded-xl shadow-2xl overflow-hidden border border-emerald-100">
+          <div className="bg-white rounded-xl overflow-x-auto shadow-2xl overflow-hidden border border-emerald-100">
             <table className="w-full text-left border-collapse">
               <thead className="bg-emerald-900 text-white uppercase text-xs tracking-wider">
                 <tr>

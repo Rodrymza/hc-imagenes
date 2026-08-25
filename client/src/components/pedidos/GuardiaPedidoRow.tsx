@@ -6,7 +6,7 @@ import {
   CalendarClock,
   Stethoscope, // Icono para Ubicación en Guardia
 } from "lucide-react";
-import { capitalize } from "./utils";
+import { capitalize, getEstiloEstudio } from "./utils";
 
 // Importamos la interfaz base (o la defines aquí mismo si prefiere
 
@@ -15,29 +15,20 @@ interface GuardiaPedidoRowProps {
   onVerDetalle: (item: IPedidoGuardia) => Promise<void>;
 }
 
-// --- AYUDANTES DE ESTILO ---
-const getBadgeColor = (tipo: string) => {
-  const t = tipo?.toLowerCase() || "";
-  if (t.includes("tomo")) return "bg-blue-600 text-white";
-  if (t.includes("radio") || t.includes("rx")) return "bg-red-600 text-white";
-  if (t.includes("eco")) return "bg-purple-600 text-white";
-  return "bg-slate-600 text-white";
-};
-
 const getUbicacionEstilo = (ubicacion: string) => {
   const u = ubicacion?.toLowerCase() || "";
   if (u.includes("box") || u.includes("shock") || u.includes("rojo"))
     return {
-      bg: "bg-red-50 text-red-900 border-red-200",
+      bg: "bg-red-50 text-red-900 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-900",
       icon: <Activity className="w-3 h-3 mr-1" />,
     };
   if (u.includes("espera"))
     return {
-      bg: "bg-green-50 text-green-800 border-green-200",
+      bg: "bg-green-50 text-green-800 border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-900",
       icon: <MapPin className="w-3 h-3 mr-1" />,
     };
   return {
-    bg: "bg-slate-100 text-slate-700 border-slate-300",
+    bg: "bg-muted text-muted-foreground border-border",
     icon: <Stethoscope className="w-3 h-3 mr-1" />,
   };
 };
@@ -61,11 +52,11 @@ export const GuardiaPedidoRow = ({
   const estiloUbicacion = getUbicacionEstilo(item.ubicacion);
 
   return (
-    <tr className="hover:bg-slate-50 transition-colors group border-b border-slate-200 last:border-0">
+    <tr className="hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors group border-b border-border last:border-0">
       {/* 1. FECHA */}
       <td className="px-4 py-4 whitespace-nowrap text-center align-middle">
         <div className="flex items-center justify-center gap-2">
-          <CalendarClock className="w-4 h-4 text-slate-400" />
+          <CalendarClock className="w-4 h-4 text-muted-foreground" />
           <div className="flex flex-col">
             <span className="font-bold text-slate-700 text-lg">{dia}</span>
             {hora && (
@@ -80,11 +71,11 @@ export const GuardiaPedidoRow = ({
       {/* 2. PACIENTE */}
       <td className="px-6 py-4 text-center align-middle">
         <div className="flex flex-col items-center">
-          <span className="font-black text-slate-800 text-lg group-hover:text-blue-800 transition-colors">
+          <span className="font-black text-foreground text-lg group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors">
             {item.apellido}, {capitalize(item.nombre)}
           </span>
-          <div className="flex items-center gap-2 mt-1 text-sm text-slate-500 font-medium">
-            <span className="tracking-wider bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+          <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground font-medium">
+            <span className="tracking-wider bg-muted px-1.5 py-0.5 rounded border border-border">
               DNI: {item.dni}
             </span>
           </div>
@@ -95,14 +86,14 @@ export const GuardiaPedidoRow = ({
       <td className="px-6 py-4 max-w-xs align-middle">
         <div className="flex flex-col items-center gap-2">
           <span
-            className={`inline-block w-fit px-3 py-1.5 rounded text-xs font-black uppercase shadow-sm tracking-wide ${getBadgeColor(
+            className={`inline-block w-fit px-3 py-1.5 rounded text-xs font-semibold uppercase tracking-wide ${getEstiloEstudio(
               item.tipoEstudio,
-            )}`}
+            ).badge}`}
           >
             {item.tipoEstudio}
           </span>
 
-          <div className="font-semibold text-lg text-slate-800 leading-snug text-center">
+          <div className="font-semibold text-lg text-foreground leading-snug text-center">
             {solicitudLimpia}
           </div>
         </div>
@@ -113,7 +104,7 @@ export const GuardiaPedidoRow = ({
         <div className="flex flex-col items-center">
           <div
             /* Añadimos max-w y whitespace-normal */
-            className={`flex items-center px-3 py-1 rounded border text-base font-bold uppercase whitespace-normal max-w-[180px] leading-tight ${estiloUbicacion.bg}`}
+            className={`flex items-center px-3 py-1 rounded-lg border text-xs font-semibold uppercase whitespace-normal max-w-[180px] leading-tight ${estiloUbicacion.bg}`}
           >
             {estiloUbicacion.icon}
             {item.ubicacion || "General"}
@@ -130,10 +121,11 @@ export const GuardiaPedidoRow = ({
             className="
     flex items-center justify-center gap-2 
     w-36 h-10 px-4
-    rounded-lg border-2 border-slate-200 
-    bg-slate-50 text-slate-600 font-black 
+    rounded-lg border border-border 
+    bg-muted text-muted-foreground font-semibold 
     text-xs uppercase tracking-wider
     transition-all hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 
+    dark:hover:bg-blue-950/50 dark:hover:text-blue-300 dark:hover:border-blue-800
     active:scale-95 shadow-sm"
           >
             <Eye className="w-4 h-4" />

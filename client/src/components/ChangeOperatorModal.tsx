@@ -52,17 +52,17 @@ export default function ChangeOperatorModal({ open, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/40" onClick={handleClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+      <div className="relative bg-card rounded-2xl shadow-2xl w-full max-w-sm">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
           <div className="flex items-center gap-2">
             <ArrowRightLeft className="h-5 w-5 text-emerald-600" />
-            <h2 className="text-lg font-black text-slate-800">
+            <h2 className="text-lg font-black text-foreground">
               Cambiar Operador
             </h2>
           </div>
           <button
             onClick={handleClose}
-            className="p-1 text-slate-400 hover:text-slate-600 rounded"
+            className="p-1 text-muted-foreground hover:text-foreground rounded"
           >
             <X className="h-5 w-5" />
           </button>
@@ -70,10 +70,10 @@ export default function ChangeOperatorModal({ open, onClose }: Props) {
 
         {activeOperator && (
           <div className="px-6 pt-4 pb-2">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
               Operador actual
             </p>
-            <p className="text-sm font-bold text-slate-700">
+            <p className="text-sm font-bold text-foreground">
               {activeOperator.apellido}, {activeOperator.nombre}
             </p>
           </div>
@@ -85,7 +85,7 @@ export default function ChangeOperatorModal({ open, onClose }: Props) {
           className="px-6 py-5 space-y-4"
         >
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1">
+            <label className="block text-xs font-bold text-foreground/90 mb-1">
               PIN del nuevo operador
             </label>
             <input
@@ -96,7 +96,7 @@ export default function ChangeOperatorModal({ open, onClose }: Props) {
               autoComplete="off"
               autoFocus
               required
-              className="w-full px-4 py-3 border border-slate-300 rounded-lg text-center text-2xl tracking-[0.5em] font-mono text-slate-700 placeholder-slate-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              className="w-full px-4 py-3 border border-input bg-transparent rounded-lg text-center text-2xl tracking-[0.5em] font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
               placeholder="----"
               value={pin}
               onChange={(e) => {
@@ -114,7 +114,7 @@ export default function ChangeOperatorModal({ open, onClose }: Props) {
           <button
             type="button"
             onClick={handleClose}
-            className="w-full px-4 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+            className="w-full px-4 py-2.5 text-sm font-bold text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
           >
             Cancelar
           </button>

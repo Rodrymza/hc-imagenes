@@ -41,10 +41,10 @@ export default function LoginPage() {
   };
   if (isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-slate-50">
+      <div className="flex h-screen w-full items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-slate-500">Verificando sesión...</p>
+          <p className="text-sm text-muted-foreground">Verificando sesión...</p>
         </div>
       </div>
     );
@@ -55,19 +55,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{ background: "linear-gradient(135deg, #198754, #0d6efd)" }}
-    >
-      <div className="w-full max-w-sm bg-white rounded-2xl shadow-2xl overflow-hidden">
+    <div className="bg-seccion-login min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-sm bg-card rounded-2xl shadow-2xl overflow-hidden">
         <div className="pt-8 pb-6 px-8 flex flex-col items-center">
-          <div className="bg-emerald-50 p-3 rounded-full mb-4 shadow-sm">
+          <div className="bg-emerald-50 dark:bg-emerald-950/60 p-3 rounded-full mb-4 shadow-sm">
             <Stethoscope className="w-8 h-8 text-emerald-600" />
           </div>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">
+          <h1 className="text-2xl font-black text-foreground tracking-tight">
             HC Imágenes
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             Ingresa tus credenciales
           </p>
         </div>
@@ -76,7 +73,7 @@ export default function LoginPage() {
           <div className="space-y-1">
             <label
               htmlFor="username"
-              className="block text-sm font-bold text-slate-700"
+              className="block text-sm font-bold text-foreground/90"
             >
               Usuario
             </label>
@@ -86,7 +83,7 @@ export default function LoginPage() {
               required
               autoFocus
               placeholder="ej. rramirez"
-              className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-2.5 border border-input rounded-lg bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={isSubmitting}
@@ -97,7 +94,7 @@ export default function LoginPage() {
             <div className="flex justify-between items-center">
               <label
                 htmlFor="password"
-                className="block text-sm font-bold text-slate-700"
+                className="block text-sm font-bold text-foreground/90"
               >
                 Contraseña
               </label>
@@ -106,7 +103,7 @@ export default function LoginPage() {
               id="password"
               required
               placeholder="••••••••"
-              className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
+              className="w-full px-4 py-2.5 border border-input rounded-lg bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isSubmitting}
@@ -116,10 +113,10 @@ export default function LoginPage() {
           <div className="space-y-1">
             <label
               htmlFor="totpCode"
-              className="block text-sm font-bold text-slate-700"
+              className="block text-sm font-bold text-foreground/90"
             >
               Código Authenticator HSI
-              <span className="text-slate-400 font-normal">(opcional)</span>
+              <span className="text-muted-foreground font-normal">(opcional)</span>
             </label>
             <input
               id="totpCode"
@@ -128,14 +125,14 @@ export default function LoginPage() {
               pattern="[0-9]*"
               maxLength={6}
               placeholder="123456"
-              className="w-full px-4 py-2.5 border border-slate-300 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all tracking-[0.5em] text-center font-mono text-lg"
+              className="w-full px-4 py-2.5 border border-input rounded-lg bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all tracking-[0.5em] text-center font-mono text-lg"
               value={totpCode}
               onChange={(e) =>
                 setTotpCode(e.target.value.replace(/\D/g, "").slice(0, 6))
               }
               disabled={isSubmitting}
             />
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-muted-foreground">
               Ingresá el código de 6 dígitos para activar la sesión de HSI
             </p>
           </div>
@@ -156,8 +153,8 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="bg-slate-50 py-3 text-center border-t border-slate-100">
-          <p className="text-xs text-slate-400 font-medium">
+        <div className="bg-muted py-3 text-center border-t border-border">
+          <p className="text-xs text-muted-foreground font-medium">
             &copy; 2026 Sistema de Gestión Hospitalaria
           </p>
         </div>

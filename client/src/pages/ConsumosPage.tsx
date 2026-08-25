@@ -125,14 +125,14 @@ export default function ConsumosPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-4 lg:p-8">
+    <div className="min-h-screen bg-muted/40 p-4 lg:p-8">
       {/* HEADER DE PÁGINA */}
       <div className="max-w-7xl mx-auto mb-6">
-        <h1 className="text-2xl font-black text-slate-800 uppercase flex items-center gap-3">
+        <h1 className="text-2xl font-black text-foreground uppercase flex items-center gap-3">
           <PlusCircle className="w-8 h-8 text-indigo-600" />
           Registro Manual de Consumos
         </h1>
-        <p className="text-slate-500 text-sm">
+        <p className="text-muted-foreground text-sm">
           Imputación directa de prestaciones sin pedido electrónico previo.
         </p>
       </div>
@@ -141,8 +141,8 @@ export default function ConsumosPage() {
         {/* COLUMNA IZQUIERDA: IDENTIFICACIÓN (4 Cols) */}
         <div className="lg:col-span-5 space-y-6">
           {/* 1. BÚSQUEDA */}
-          <section className="bg-white rounded-2xl shadow-sm border border-slate-200 p-5">
-            <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+          <section className="bg-card rounded-2xl shadow-sm border border-border p-5">
+            <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4 flex items-center gap-2">
               <Search className="w-4 h-4" /> Identificar Paciente
             </h3>
             <form onSubmit={handleBuscar} className="flex gap-2">
@@ -150,7 +150,7 @@ export default function ConsumosPage() {
               <select
                 value={tipoBusqueda}
                 onChange={(e) => setTipoBusqueda(e.target.value)}
-                className="bg-slate-100 border-none rounded-lg px-2 text-[10px] font-black uppercase text-slate-600 outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
+                className="bg-muted dark:bg-input/50 border-none rounded-lg px-2 text-[10px] font-black uppercase text-foreground outline-none focus:ring-2 focus:ring-indigo-500 transition-all"
               >
                 <option value="dni">DNI</option>
                 <option value="hc">H.C.</option>
@@ -161,7 +161,7 @@ export default function ConsumosPage() {
                 placeholder={
                   tipoBusqueda === "dni" ? "Ingrese DNI..." : "Ingrese HC..."
                 }
-                className="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-4 py-2 text-lg font-bold focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                className="flex-1 bg-background dark:bg-input/30 border border-input rounded-lg px-4 py-2 text-lg font-bold text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
                 value={dniBusqueda}
                 onChange={(e) => setDniBusqueda(e.target.value)}
               />
@@ -196,12 +196,12 @@ export default function ConsumosPage() {
         {/* COLUMNA DERECHA: CONSUMOS (7 Cols) */}
         {pacienteInterno && (
           <div className="lg:col-span-7">
-            <section className="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col h-full min-h-[500px]">
-              <div className="p-5 border-b border-slate-100 flex justify-between items-center">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+            <section className="bg-card rounded-2xl shadow-sm border border-border flex flex-col h-full min-h-[500px]">
+              <div className="p-5 border-b border-border flex justify-between items-center">
+                <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
                   <ClipboardList className="w-4 h-4" /> Detalle de Prestaciones
                 </h3>
-                <span className="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-bold">
+                <span className="text-[10px] bg-indigo-100 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded-full font-bold">
                   Carga Manual
                 </span>
               </div>
@@ -223,10 +223,10 @@ export default function ConsumosPage() {
 
                 {/* FOOTER INFORMATIVO */}
                 <div
-                  className={`p-5 border-t rounded-b-2xl ${sistema ? "bg-slate-50 border-slate-100" : "bg-amber-50 border-amber-200"}`}
+                  className={`p-5 border-t rounded-b-2xl ${sistema ? "bg-muted/60 dark:bg-transparent border-border" : "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-900"}`}
                 >
                   <div
-                    className={`flex items-center justify-center gap-3 ${sistema ? "text-red-800" : "text-amber-800"}`}
+                    className={`flex items-center justify-center gap-3 ${sistema ? "text-red-800 dark:text-red-300" : "text-amber-800 dark:text-amber-300"}`}
                   >
                     {!sistema && <AlertTriangle className="w-5 h-5 shrink-0" />}
                     {sistema ? (

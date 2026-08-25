@@ -138,20 +138,20 @@ export default function AdminUsuariosPage() {
   };
 
   const inputClass =
-    "w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent";
+    "w-full px-3 py-2 border border-input rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent";
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <div className="bg-emerald-100 p-2 rounded-xl">
-            <UserCog className="h-6 w-6 text-emerald-700" />
+          <div className="bg-emerald-100 dark:bg-emerald-950/60 p-2 rounded-xl">
+            <UserCog className="h-6 w-6 text-emerald-700 dark:text-emerald-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-slate-800">
+            <h1 className="text-2xl font-black text-foreground">
               Administrar Usuarios
             </h1>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-muted-foreground">
               {users.length} usuario{users.length !== 1 ? "s" : ""} registrado
               {users.length !== 1 ? "s" : ""}
             </p>
@@ -166,36 +166,36 @@ export default function AdminUsuariosPage() {
       </div>
 
       {/* TABLA */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
         {loading ? (
           <div className="flex items-center justify-center py-16">
             <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
           </div>
         ) : users.length === 0 ? (
-          <div className="text-center py-16 text-slate-400">
+          <div className="text-center py-16 text-muted-foreground">
             No hay usuarios registrados
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200">
-                  <th className="text-center px-4 py-3 font-bold text-slate-600">
+                <tr className="bg-muted border-b border-border">
+                  <th className="text-center px-4 py-3 font-bold text-muted-foreground">
                     Usuario
                   </th>
-                  <th className="text-center px-4 py-3 font-bold text-slate-600">
+                  <th className="text-center px-4 py-3 font-bold text-muted-foreground">
                     Nombre
                   </th>
-                  <th className="text-center px-4 py-3 font-bold text-slate-600">
+                  <th className="text-center px-4 py-3 font-bold text-muted-foreground">
                     Rol
                   </th>
-                  <th className="text-center px-4 py-3 font-bold text-slate-600">
+                  <th className="text-center px-4 py-3 font-bold text-muted-foreground">
                     HSI User
                   </th>
-                  <th className="text-center px-4 py-3 font-bold text-slate-600">
+                  <th className="text-center px-4 py-3 font-bold text-muted-foreground">
                     PIN
                   </th>
-                  <th className="text-right px-4 py-3 font-bold text-slate-600">
+                  <th className="text-right px-4 py-3 font-bold text-muted-foreground">
                     Acciones
                   </th>
                 </tr>
@@ -204,20 +204,20 @@ export default function AdminUsuariosPage() {
                 {users.map((u) => (
                   <tr
                     key={u.id}
-                    className="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+                    className="border-b border-border hover:bg-accent/50 transition-colors"
                   >
-                    <td className="px-4 py-3 font-mono font-bold text-slate-800 text-center">
+                    <td className="px-4 py-3 font-mono font-bold text-foreground text-center">
                       {u.username}
                     </td>
-                    <td className="px-4 py-3 text-slate-700 text-center">
+                    <td className="px-4 py-3 text-foreground/90 text-center">
                       {u.apellido}, {u.nombre}
                     </td>
                     <td className="px-4 py-3 text-center">
                       <span
                         className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold ${
                           u.rol === "ADMIN"
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-blue-100 text-blue-800"
+                            ? "bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300"
+                            : "bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300"
                         }`}
                       >
                         {u.rol === "ADMIN" ? (
@@ -228,13 +228,13 @@ export default function AdminUsuariosPage() {
                         {u.rol}
                       </span>
                     </td>
-                    <td className="px-4 py-3 font-mono text-slate-500 text-xs text-center">
+                    <td className="px-4 py-3 font-mono text-muted-foreground text-xs text-center">
                       {u.hsi_username || "—"}
                     </td>
                     <td className="px-4 py-3 text-center">
                       {u.pin ? (
                         <div className="flex items-center justify-center gap-1">
-                          <span className="font-mono text-xs text-slate-700">
+                          <span className="font-mono text-xs text-foreground">
                             {visiblePins.has(u.id) ? u.pin : "••••"}
                           </span>
                           <button
@@ -246,7 +246,7 @@ export default function AdminUsuariosPage() {
                                 return next;
                               });
                             }}
-                            className="p-0.5 text-slate-400 hover:text-slate-600 transition-colors"
+                            className="p-0.5 text-muted-foreground hover:text-foreground transition-colors"
                             title={
                               visiblePins.has(u.id)
                                 ? "Ocultar PIN"
@@ -261,21 +261,21 @@ export default function AdminUsuariosPage() {
                           </button>
                         </div>
                       ) : (
-                        <span className="text-slate-300 text-xs">—</span>
+                        <span className="text-muted-foreground/50 text-xs">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => openEdit(u)}
-                          className="p-1.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-all"
+                          className="p-1.5 text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/60 rounded-lg transition-all"
                           title="Editar"
                         >
                           <Pencil className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(u)}
-                          className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                          className="p-1.5 text-muted-foreground hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition-all"
                           title="Eliminar"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -297,14 +297,14 @@ export default function AdminUsuariosPage() {
             className="fixed inset-0 bg-black/40"
             onClick={() => setShowModal(false)}
           />
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-              <h2 className="text-lg font-black text-slate-800">
+          <div className="relative bg-card rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+              <h2 className="text-lg font-black text-foreground">
                 {editingId ? "Editar Usuario" : "Nuevo Usuario"}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-1 text-slate-400 hover:text-slate-600 rounded"
+                className="p-1 text-muted-foreground hover:text-foreground rounded"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -313,7 +313,7 @@ export default function AdminUsuariosPage() {
             <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2 sm:col-span-1">
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-bold text-foreground/90 mb-1">
                     Usuario *
                   </label>
                   <input
@@ -328,7 +328,7 @@ export default function AdminUsuariosPage() {
                   />
                 </div>
                 <div className="col-span-2 sm:col-span-1">
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-bold text-foreground/90 mb-1">
                     Contraseña
                     {editingId ? " (dejar vacío para no cambiar)" : " *"}
                   </label>
@@ -346,7 +346,7 @@ export default function AdminUsuariosPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-bold text-foreground/90 mb-1">
                     PIN (4 dígitos) *
                   </label>
                   <input
@@ -371,7 +371,7 @@ export default function AdminUsuariosPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-bold text-foreground/90 mb-1">
                     Nombre
                   </label>
                   <input
@@ -384,7 +384,7 @@ export default function AdminUsuariosPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1">
+                  <label className="block text-xs font-bold text-foreground/90 mb-1">
                     Apellido
                   </label>
                   <input
@@ -399,7 +399,7 @@ export default function AdminUsuariosPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">
+                <label className="block text-xs font-bold text-foreground/90 mb-1">
                   Rol
                 </label>
                 <select
@@ -413,13 +413,13 @@ export default function AdminUsuariosPage() {
                 </select>
               </div>
 
-              <div className="border-t border-slate-200 pt-4">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
+              <div className="border-t border-border pt-4">
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-3">
                   Credenciales HSI
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 mb-1">
+                    <label className="block text-xs font-bold text-foreground/90 mb-1">
                       Usuario HSI
                     </label>
                     <input
@@ -433,7 +433,7 @@ export default function AdminUsuariosPage() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold text-slate-600 mb-1">
+                    <label className="block text-xs font-bold text-foreground/90 mb-1">
                       Contraseña HSI
                       {editingId ? " (dejar vacío para no cambiar)" : ""}
                     </label>
@@ -453,7 +453,7 @@ export default function AdminUsuariosPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-sm font-bold text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="px-4 py-2 text-sm font-bold text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
                 >
                   Cancelar
                 </button>

@@ -24,11 +24,11 @@ export default function BuscarPaciente() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 p-4 lg:p-8 transition-colors duration-500">
+    <div className="min-h-screen bg-muted/40 p-4 lg:p-8 transition-colors duration-500">
       {" "}
       {/* 1. BARRA DE BÚSQUEDA SUPERIOR */}
       <div className="max-w-6xl mx-auto mb-8 text-center">
-        <h1 className="text-3xl font-black text-slate-800 uppercase mb-6">
+        <h1 className="text-3xl font-black text-foreground uppercase mb-6">
           Consulta Maestro de Pacientes
         </h1>
         <div className="relative max-w-2xl mx-auto flex gap-2">
@@ -36,19 +36,19 @@ export default function BuscarPaciente() {
             <input
               type="number"
               placeholder="Ingrese DNI del paciente..."
-              className="w-full pl-12 pr-4 py-4 bg-white border-2 border-slate-200 rounded-2xl shadow-sm text-xl font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all"
+              className="w-full pl-12 pr-4 py-4 bg-card border-2 border-border rounded-2xl shadow-sm text-xl font-bold text-foreground focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all"
               value={dni}
               onChange={(e) => setDni(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleBuscar()}
             />
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-6 h-6" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-6 h-6" />
           </div>
 
           {/* BOTÓN DE BÚSQUEDA AGREGADO */}
           <button
             onClick={handleBuscar}
             disabled={loadingPaciente || !dni}
-            className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white px-8 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-indigo-200 active:scale-95 flex items-center gap-2"
+            className="bg-indigo-600 hover:bg-indigo-700 disabled:bg-muted disabled:text-muted-foreground text-white px-8 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-lg shadow-indigo-200 dark:shadow-none active:scale-95 flex items-center gap-2"
           >
             {loadingPaciente ? (
               <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -65,16 +65,16 @@ export default function BuscarPaciente() {
         <div className="max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
           <div className="grid grid-cols-1 gap-6">
             {/* COLUMNA 1: FICHA PERSONAL */}
-            <div className="bg-indigo-100 rounded-2xl border border-slate-200 shadow-sm overflow-hidden pb-3">
+            <div className="bg-indigo-100 dark:bg-indigo-950/60 rounded-2xl border border-border shadow-sm overflow-hidden pb-3">
               <div className="p-1 bg-indigo-600"></div>
-              <div className="p-6 text-center border-b border-slate-100">
-                <div className="w-24 h-24 bg-slate-100 rounded-full mx-auto mb-4 flex items-center justify-center text-slate-300">
+              <div className="p-6 text-center border-b border-border">
+                <div className="w-24 h-24 bg-muted rounded-full mx-auto mb-4 flex items-center justify-center text-muted-foreground">
                   <User className="w-12 h-12" />
                 </div>
-                <h2 className="text-xl font-black text-slate-800 uppercase leading-tight">
+                <h2 className="text-xl font-black text-foreground uppercase leading-tight">
                   {pacienteInterno.apellidos}, {pacienteInterno.nombres}
                 </h2>
-                <span className="text-sm font-bold tracking-tracking-widest text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full mt-2 inline-block">
+                <span className="text-sm font-bold tracking-tracking-widest text-indigo-600 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 px-3 py-1 rounded-full mt-2 inline-block">
                   HC: {pacienteInterno.idPaciente}
                 </span>
               </div>
@@ -109,8 +109,8 @@ export default function BuscarPaciente() {
             {/* COLUMNA 2: COBERTURAS Y ACCIONES */}
             <div className="lg:col-span-2 space-y-6">
               {/* Bloque Coberturas */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-                <h3 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+              <div className="bg-card rounded-2xl border border-border shadow-sm p-6">
+                <h3 className="text-sm font-black text-muted-foreground uppercase tracking-widest mb-4 flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-emerald-500" />{" "}
                   Coberturas Registradas
                 </h3>
@@ -118,12 +118,12 @@ export default function BuscarPaciente() {
                   {pacienteInterno.coberturas.map((cob) => (
                     <div
                       key={cob.idCobertura}
-                      className="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:border-emerald-200 hover:bg-emerald-50 transition-colors"
+                      className="p-4 rounded-xl border border-border bg-muted/50 hover:border-emerald-200 dark:hover:border-emerald-800 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors"
                     >
-                      <p className="text-base font-bold text-slate-800">
+                      <p className="text-base font-bold text-foreground">
                         {cob.sigla || "Sin Sigla"}
                       </p>
-                      <p className="text-xs font-bold text-slate-400 uppercase">
+                      <p className="text-xs font-bold text-muted-foreground uppercase">
                         {cob.nombre || "Sin Descripcion"}
                       </p>
                     </div>
@@ -158,14 +158,14 @@ function InfoRow({
   icon?: ReactNode;
 }) {
   return (
-    <div className="flex items-center justify-around border-b border-slate-50 pb-2 last:border-0">
-      <div className="flex items-center gap-2 text-slate-500">
+    <div className="flex items-center justify-around border-b border-border pb-2 last:border-0">
+      <div className="flex items-center gap-2 text-muted-foreground">
         {icon}
         <span className="text-sm font-bold uppercase tracking-tight">
           {label}
         </span>
       </div>
-      <span className="font-bold text-slate-700">{value}</span>
+      <span className="font-bold text-foreground">{value}</span>
     </div>
   );
 }

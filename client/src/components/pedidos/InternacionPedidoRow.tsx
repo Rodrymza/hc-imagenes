@@ -1,21 +1,17 @@
 import type { IPedidoInternacion } from "@/types/pedidos";
-import { Eye, CalendarClock, Check, X, AlertCircle } from "lucide-react";
-import { capitalize, getLugarEstilo } from "./utils";
+import { Eye, CalendarClock, AlertCircle } from "lucide-react";
+import {
+  capitalize,
+  getEstadoEstilo,
+  getEstiloEstudio,
+  getLugarEstilo,
+} from "./utils";
 
 interface PedidoRowProps {
   item: IPedidoInternacion;
   onVerDetalle: (item: IPedidoInternacion) => void;
   onToggleEstado?: (item: IPedidoInternacion) => void; // Opcional (para Guardia)
 }
-
-// --- AYUDANTES DE ESTILO (Locales al componente) ---
-const getBadgeColor = (tipo: string) => {
-  const t = tipo.toLowerCase();
-  if (t.includes("tomo")) return "bg-blue-600 text-white";
-  if (t.includes("radio") || t.includes("rx")) return "bg-red-600 text-white";
-  if (t.includes("eco")) return "bg-purple-600 text-white";
-  return "bg-slate-600 text-white";
-};
 
 export const InternacionPedidoRow = ({
   item,
@@ -30,9 +26,10 @@ export const InternacionPedidoRow = ({
   const isFinalizado =
     item.comentario.toLocaleLowerCase().includes("ok") ||
     item.comentario.toLocaleLowerCase().includes("realiz");
+  const estiloEstado = getEstadoEstilo(isFinalizado);
 
   return (
-    <tr className="hover:bg-emerald-50/60 transition-colors group border-slate-100 last:border-0">
+    <tr className="hover:bg-emerald-50/60 dark:hover:bg-emerald-950/30 transition-colors group border-border last:border-0">
       {/* 1. FECHA */}
       <td className="px-6 py-4 whitespace-nowrap text-center align-middle">
         <div className="flex items-center justify-center gap-2">
@@ -49,12 +46,12 @@ export const InternacionPedidoRow = ({
       {/* 2. PACIENTE */}
       <td className="px-6 py-4 text-center align-middle">
         <div className="flex flex-col items-center">
-          <span className="font-black text-slate-800 pb-2 md:tracking-tight text-lg group-hover:text-emerald-800 transition-colors">
+          <span className="font-black text-foreground pb-2 md:tracking-tight text-lg group-hover:text-emerald-800 dark:group-hover:text-emerald-300 transition-colors">
             {item.apellidos}, {capitalize(item.nombres)}
           </span>
-          <div className="flex items-center gap-2 mt-1 text-sm text-slate-500 font-medium">
+          <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground font-medium">
             {" "}
-            <span className="tracking-wider bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+            <span className="tracking-wider bg-muted px-1.5 py-0.5 rounded border border-border">
               DNI: {item.dniString}
             </span>
           </div>
@@ -66,21 +63,21 @@ export const InternacionPedidoRow = ({
         <div className="flex flex-col items-center gap-2">
           {/* Modalidad */}
           <span
-            className={`inline-block w-fit px-3 py-1.5 rounded-md text-xs font-black uppercase shadow-sm tracking-wide ${getBadgeColor(
+            className={`inline-block w-fit px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wide ${getEstiloEstudio(
               item.tipoEstudio,
-            )}`}
+            ).badge}`}
           >
             {item.tipoEstudio}
           </span>
 
           {/* Estudio */}
-          <div className="font-semibold text-center text-lg text-slate-800 leading-snug whitespace-pre-line">
+          <div className="font-semibold text-center text-lg text-foreground leading-snug whitespace-pre-line">
             {solicitudLimpia}
           </div>
 
           {/* Diagnóstico */}
           {item.diagnostico && (
-            <div className="text-xs text-slate-500 italic truncate border-l-2 border-emerald-200 pl-2">
+            <div className="text-xs text-muted-foreground italic truncate border-l-2 border-emerald-200 dark:border-emerald-800 pl-2">
               {item.diagnostico}
             </div>
           )}
@@ -92,7 +89,7 @@ export const InternacionPedidoRow = ({
         <div className="flex flex-col items-center gap-1.5">
           {/* Badge Lugar */}
           <div
-            className={`flex items-center px-3 py-1 rounded border text-base font-bold uppercase ${estiloLugar.bg}`}
+            className={`flex items-center px-3 py-1 rounded-lg border text-xs font-semibold uppercase ${estiloLugar.bg}`}
           >
             {estiloLugar.icon}
             {item.lugar}
@@ -100,16 +97,16 @@ export const InternacionPedidoRow = ({
 
           {/* Sala Grande */}
           {item.sala ? (
-            <div className="bg-indigo text-indigo-800 font-black px-3 py-0.5 rounded border-b-2 border-indigo-200 text-lg shadow-sm min-w-[60px] text-center">
+            <div className="bg-indigo-50 dark:bg-indigo-950/60 text-indigo-800 dark:text-indigo-300 font-black px-3 py-0.5 rounded-lg border-b-2 border-indigo-200 dark:border-indigo-800 text-lg shadow-sm min-w-[60px] text-center">
               {item.sala}
             </div>
           ) : (
-            <span className="text-[10px] italic text-slate-400">Sin sala</span>
+            <span className="text-[10px] italic text-muted-foreground">Sin sala</span>
           )}
 
           {/* Alerta Urgente */}
           {esUrgente && (
-            <div className="flex items-center gap-1 text-xs font-black text-red-600 animate-pulse bg-red-50 px-3 py-1 rounded-full border border-red-100">
+            <div className="flex items-center gap-1 text-xs font-black text-red-600 dark:text-red-400 animate-pulse bg-red-50 dark:bg-red-950/50 px-3 py-1 rounded-full border border-red-100 dark:border-red-900">
               URGENTE
             </div>
           )}
@@ -122,13 +119,14 @@ export const InternacionPedidoRow = ({
           <div className="relative">
             <button
               onClick={() => onVerDetalle(item)}
-              className="
+                className="
     flex items-center justify-center gap-2 
     w-36 h-10 px-4
-    rounded-lg border-2 border-slate-200 
-    bg-slate-50 text-slate-600 font-black 
+    rounded-lg border border-border 
+    bg-muted text-muted-foreground font-semibold 
     text-xs uppercase tracking-wider
     transition-all hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 
+    dark:hover:bg-blue-950/50 dark:hover:text-blue-300 dark:hover:border-blue-800
     active:scale-95 shadow-sm
   "
               title="Ver detalle completo"
@@ -165,27 +163,17 @@ export const InternacionPedidoRow = ({
                 }
                 className={`
     flex items-center justify-center gap-2 
-    w-36 h-10 px-4 rounded-lg border-2 
-    text-xs font-black uppercase tracking-widest 
-    transition-all active:scale-95 shadow-sm
-    ${
-      isFinalizado
-        ? "bg-emerald-600 text-white border-emerald-700 hover:bg-emerald-700 shadow-emerald-100"
-        : "bg-red-600 text-white border-red-700 hover:bg-red-700 shadow-red-100"
-    }
+    w-36 h-10 px-4 rounded-lg border 
+    font-semibold text-xs tracking-wide shadow-sm
+    transition-all active:scale-95
+    ${estiloEstado.badge} ${estiloEstado.hover}
   `}
               >
                 {/* Texto del estado */}
-                <span className="leading-none">
-                  {isFinalizado ? "Realizado" : "Pendiente"}
-                </span>
+                <span className="leading-none">{estiloEstado.label}</span>
 
-                {/* Iconos Dinámicos */}
-                {isFinalizado ? (
-                  <Check className="w-4 h-4" strokeWidth={4} />
-                ) : (
-                  <X className="w-4 h-4" strokeWidth={4} />
-                )}
+                {/* Icono dinámico */}
+                {estiloEstado.icon}
               </button>
             </div>
           )}

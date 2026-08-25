@@ -27,8 +27,8 @@ export function FichaPaciente({
   coberturas,
 }: FichaPacienteProps) {
   return (
-    <section className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden animate-in fade-in slide-in-from-left-4 duration-300">
-      <div className="bg-emerald-500 p-4 text-white">
+    <section className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden animate-in fade-in slide-in-from-left-4 duration-300">
+      <div className="bg-emerald-600 dark:bg-emerald-700 p-4 text-white">
         <div className="flex justify-between items-start">
           <div>
             <p className="text-[10px] font-bold uppercase opacity-80">
@@ -45,40 +45,40 @@ export function FichaPaciente({
       <div className="p-5 space-y-4">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-slate-400 uppercase">
+            <span className="text-sm font-bold text-muted-foreground uppercase">
               Historia Clinica
             </span>
-            <span className="font-bold text-slate-700">
+            <span className="font-bold text-foreground">
               {paciente.historiaClinica}
             </span>
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-slate-400 uppercase">
+            <span className="text-sm font-bold text-muted-foreground uppercase">
               Documento
             </span>
-            <span className="font-bold text-slate-700 tracking-widest">
+            <span className="font-bold text-foreground tracking-widest">
               {paciente.dniString}
             </span>
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-slate-400 uppercase">
+            <span className="text-sm font-bold text-muted-foreground uppercase">
               Fecha Nacimiento
             </span>
-            <span className="font-bold text-slate-700">
+            <span className="font-bold text-foreground">
               {paciente.fechaNacimientoString}
             </span>
           </div>
         </div>
 
-        <div className="space-y-3 pt-4 border-t border-slate-100">
+        <div className="space-y-3 pt-4 border-t border-border">
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-400 uppercase">
+            <label className="text-[10px] font-bold text-muted-foreground uppercase">
               Sistema de Ingreso
             </label>
             <select
               value={sistema || ""}
               onChange={(e) => onSistemaChange(e.target.value || null)}
-              className="w-full p-2 bg-slate-50 border border-slate-200 rounded-md text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full p-2 bg-background dark:bg-input/30 border border-input rounded-md text-sm font-bold text-foreground outline-none focus:ring-2 focus:ring-indigo-500"
             >
               <option value="">⚠️ Seleccione una opcion</option>
               <option value="ambulatorio">📅 AMBULATORIO</option>
@@ -88,13 +88,13 @@ export function FichaPaciente({
           </div>
 
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-400 uppercase">
+            <label className="text-[10px] font-bold text-muted-foreground uppercase">
               Obra Social
             </label>
             <select
               value={coberturaId}
               onChange={(e) => onCoberturaChange(e.target.value)}
-              className="w-full p-2 bg-slate-50 border border-slate-200 rounded-md text-sm font-bold text-slate-700 outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full p-2 bg-background dark:bg-input/30 border border-input rounded-md text-sm font-bold text-foreground outline-none focus:ring-2 focus:ring-indigo-500"
             >
               {coberturas?.map((cob) => (
                 <option key={cob.idCobertura} value={cob.idCobertura}>

@@ -2,23 +2,10 @@ import { Request, Response, NextFunction } from "express";
 import { authService } from "./auth.service.js";
 import { resolveActiveOperatorId } from "./auth.middleware.js";
 import { operatorService } from "./auth.operator.service.js";
-
-const BASE_COOKIE_OPTIONS = {
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict" as const,
-};
-
-const COOKIE_OPTIONS = {
-  ...BASE_COOKIE_OPTIONS,
-  signed: true,
-  expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-};
-
-const JWT_COOKIE_OPTIONS = {
-  ...BASE_COOKIE_OPTIONS,
-  expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-};
+import {
+  jwtCookieOptions,
+  operatorCookieOptions,
+} from "./auth.cookies.js";
 
 export const authController = {
   async login(req: Request, res: Response, next: NextFunction) {
@@ -35,9 +22,9 @@ export const authController = {
         totpCode,
       );
 
-      res.cookie("jwt", token, JWT_COOKIE_OPTIONS);
+      res.cookie("jwt", token, jwtCookieOptions());
 
-      res.cookie("activeOperator", user.id, COOKIE_OPTIONS);
+      res.cookie("activeOperator", user.id, operatorCookieOptions());
 
       res.status(200).json({
         success: true,
@@ -50,8 +37,8 @@ export const authController = {
   },
 
   async logout(req: Request, res: Response) {
-    res.clearCookie("jwt", JWT_COOKIE_OPTIONS);
-    res.clearCookie("activeOperator", COOKIE_OPTIONS);
+    res.clearCookie("jwt", jwtCookieOptions());
+    res.clearCookie("activeOperator", operatorCookieOptions());
     res.status(200).json({ status: "success" });
   },
 
@@ -60,7 +47,7 @@ export const authController = {
     const operator = operatorService.obtenerPorId(operatorId);
 
     if (!req.signedCookies?.activeOperator) {
-      res.cookie("activeOperator", operatorId, COOKIE_OPTIONS);
+      res.cookie("activeOperator", operatorId, operatorCookieOptions());
     }
 
     res.status(200).json({

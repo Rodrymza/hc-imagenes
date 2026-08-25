@@ -20,15 +20,18 @@ export function setSesion(
   accessToken: string,
   refreshToken: string,
   hsiUsername: string,
+  allCookies?: string,
 ): HsiSession {
   removeSesion(userId);
+
+  const cookieHeader = allCookies || `token=${accessToken}; refreshToken=${refreshToken}`;
 
   const axiosInstance = wrapper(
     axios.create({
       baseURL: BASE_URL,
       headers: {
         "Content-Type": "application/json",
-        Cookie: `token=${accessToken}; refreshToken=${refreshToken}`,
+        Cookie: cookieHeader,
       },
     }) as any,
   ) as unknown as AxiosInstance;
@@ -40,6 +43,7 @@ export function setSesion(
   sesiones.set(userId, session);
 
   console.log(`✅ Sesión HSI creada para usuario "${userId}" (expira: ${new Date(expiresAt).toLocaleString()})`);
+  console.log(`🍪 Cookies de sesión: ${cookieHeader.substring(0, 120)}...`);
   return session;
 }
 

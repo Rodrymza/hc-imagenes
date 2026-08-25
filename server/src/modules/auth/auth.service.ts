@@ -4,9 +4,10 @@ import { AppError } from "../../errors/AppError.js";
 import { IUsuarioDB, IUsuarioResponse, IUserPayload } from "./auth.types.js";
 import { loginCon2FA } from "../guardia/guardia.auth.service.js";
 import { db } from "../../db/database.js";
+import { SESSION_TTL_MS } from "./auth.cookies.js";
 
 const SECRET = process.env.JWT_SECRET;
-const EXPIRES_IN = "6h";
+const EXPIRES_IN = `${SESSION_TTL_MS / 1000}s`;
 
 export const authService = {
   generarToken(user: IUsuarioDB | IUsuarioResponse): string {

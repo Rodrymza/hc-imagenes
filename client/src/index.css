@@ -3,6 +3,42 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 222 47% 11%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 162 93% 31%;
+    --primary: 162 93% 31%;
+    --primary-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 96%;
+    --card: 220 42% 10%;
+    --card-foreground: 210 40% 96%;
+    --muted: 218 33% 15%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 218 33% 17%;
+    --accent-foreground: 210 40% 96%;
+    --border: 217 30% 22%;
+    --input: 217 30% 22%;
+    --ring: 160 84% 45%;
+    --primary: 160 84% 45%;
+    --primary-foreground: 222 47% 6%;
+    --destructive: 0 63% 55%;
+    --destructive-foreground: 210 40% 98%;
+  }
+
   * {
     @apply border-border;
   }
@@ -11,6 +47,30 @@
     font-feature-settings:
       "rlig" 1,
       "calt" 1;
+  }
+}
+
+@layer components {
+  /* Gradientes identitarios por sección (versión clara y oscura) */
+  .bg-seccion-internacion {
+    background: linear-gradient(135deg, #0e6d55, #6fd3b6);
+  }
+  .dark .bg-seccion-internacion {
+    background: linear-gradient(135deg, #04241c, #0b3b2f);
+  }
+
+  .bg-seccion-guardia {
+    background: linear-gradient(135deg, #7c1919, #d44545);
+  }
+  .dark .bg-seccion-guardia {
+    background: linear-gradient(135deg, #230a0a, #4a1a1a);
+  }
+
+  .bg-seccion-login {
+    background: linear-gradient(135deg, #198754, #0d6efd);
+  }
+  .dark .bg-seccion-login {
+    background: linear-gradient(135deg, #0b2e1f, #0d2352);
   }
 }
 @media (max-height: 800px) {

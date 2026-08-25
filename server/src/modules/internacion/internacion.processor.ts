@@ -26,6 +26,11 @@ const esParaNotificar = (estudio: IPedidoInternacion): boolean => {
     return false;
   }
 
+  const tipoLower = estudio.tipoEstudio?.toLowerCase() ?? "";
+  if (!tipoLower.includes("radiogra")) {
+    return false;
+  }
+
   if (esSalaExcluida(estudio.sala) && config.EXCLUIR_TERAPIAS) {
     return false;
   }

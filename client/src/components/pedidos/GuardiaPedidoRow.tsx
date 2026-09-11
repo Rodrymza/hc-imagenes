@@ -7,12 +7,13 @@ import {
   Stethoscope, // Icono para Ubicación en Guardia
 } from "lucide-react";
 import { capitalize, getEstiloEstudio } from "./utils";
+import { TiempoDemora } from "./TiempoDemora";
 
 // Importamos la interfaz base (o la defines aquí mismo si prefiere
 
 interface GuardiaPedidoRowProps {
   item: IPedidoGuardia;
-  onVerDetalle: (item: IPedidoGuardia) => Promise<void>;
+  onVerDetalle: (item: IPedidoGuardia) => void | Promise<void>;
 }
 
 const getUbicacionEstilo = (ubicacion: string) => {
@@ -57,12 +58,18 @@ export const GuardiaPedidoRow = ({
       <td className="px-4 py-4 whitespace-nowrap text-center align-middle">
         <div className="flex items-center justify-center gap-2">
           <CalendarClock className="w-4 h-4 text-muted-foreground" />
-          <div className="flex flex-col">
+          <div className="flex flex-col w-full items-center">
             <span className="font-bold text-slate-700 text-lg">{dia}</span>
             {hora && (
               <span className="text-base text-slate-400 font-mono">
                 {hora} hs
               </span>
+            )}
+            {item.fecha && (
+              <TiempoDemora
+                fechaCreacion={String(item.fecha)}
+                solicitud={item.solicitud}
+              />
             )}
           </div>
         </div>
@@ -76,7 +83,7 @@ export const GuardiaPedidoRow = ({
           </span>
           <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground font-medium">
             <span className="tracking-wider bg-muted px-1.5 py-0.5 rounded border border-border">
-              DNI: {item.dni}
+              DNI: {item.dni ?? "S/D"}
             </span>
           </div>
         </div>
@@ -86,9 +93,9 @@ export const GuardiaPedidoRow = ({
       <td className="px-6 py-4 max-w-xs align-middle">
         <div className="flex flex-col items-center gap-2">
           <span
-            className={`inline-block w-fit px-3 py-1.5 rounded text-xs font-semibold uppercase tracking-wide ${getEstiloEstudio(
-              item.tipoEstudio,
-            ).badge}`}
+            className={`inline-block w-fit px-3 py-1.5 rounded text-xs font-semibold uppercase tracking-wide ${
+              getEstiloEstudio(item.tipoEstudio).badge
+            }`}
           >
             {item.tipoEstudio}
           </span>

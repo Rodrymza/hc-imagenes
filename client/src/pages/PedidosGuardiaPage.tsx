@@ -2,7 +2,6 @@ import spinnerGif from "@/assets/spinner.gif";
 import { GuardiaPedidoRow } from "@/components/pedidos/GuardiaPedidoRow";
 import { PedidoCard } from "@/components/pedidos/PedidoCard";
 import PaginationBar from "@/components/PaginationBar";
-import { ModalDetalleGuardia } from "@/components/pedidos/ModalDetalleGuardia";
 import { useServicioGuardia } from "@/hooks/usePedidosGuardia";
 import type { IPedidoGuardia } from "@/types/pedidos";
 import type { PedidoCardData } from "@/types/pedidoCard";
@@ -19,25 +18,23 @@ import {
 } from "lucide-react";
 import { PedidosFooter } from "@/components/layouts/PedidosFooter";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { GuardiaService } from "@/services/guardia.service";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import { dniAString } from "@/utils/dni";
 import { useAuth } from "@/context/AuthContext";
 import { capitalize } from "@/components/pedidos/utils";
 
 export default function PedidosGuardiaPage() {
+  const navigate = useNavigate();
+
   const {
     loadingGuardia,
     refreshingGuardia,
     pedidosGuardia,
-    pedidosPaciente,
     lugaresGuardia,
     traerPedidosGuardia,
-    buscarPedidosPaciente,
-    transferirPedido,
-    pacienteGuardia,
-    buscarPacienteGuardia,
-    loadingPedidosPaciente,
   } = useServicioGuardia();
 
   const [hsiSessionActive, setHsiSessionActive] = useState<boolean | null>(
@@ -89,9 +86,6 @@ export default function PedidosGuardiaPage() {
   const [busqueda, setBusqueda] = useState("");
   const [filtroLugar, setFiltroLugar] = useState("todos");
   const [filtroModalidad, setFiltroModalidad] = useState("todos");
-  const [pedidoSeleccionado, setPedidoSeleccionado] =
-    useState<IPedidoGuardia | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
   const { activeOperator } = useAuth();
 
   const hoy = new Date().toISOString().split("T")[0];
@@ -139,16 +133,15 @@ export default function PedidosGuardiaPage() {
     });
   };
 
-  const handleVerDetalle = async (item: IPedidoGuardia) => {
-    setPedidoSeleccionado(item);
-    setModalOpen(true);
-
-    await buscarPacienteGuardia(item.dni.toString());
-    await buscarPedidosPaciente(item.dni.toString());
-  };
-
-  const handleFinalizarPedido = async (idEstudio: string) => {
-    await transferirPedido(idEstudio);
+  const handleVerDetalle = (item: IPedidoGuardia) => {
+    const dni = dniAString(item.dni);
+    if (!dni) {
+      toast.info(
+        "El paciente no tiene DNI registrado. No se pueden buscar sus pedidos.",
+      );
+      return;
+    }
+    navigate(`/guardia/paciente/${dni}`, { state: { pedidoGeneral: item } });
   };
 
   const pedidosFiltrados = pedidosGuardia.filter((p: IPedidoGuardia) => {
@@ -157,7 +150,7 @@ export default function PedidosGuardiaPage() {
     const cumpleBusqueda =
       p.apellido.toLowerCase().includes(textoBusqueda) ||
       p.nombre.toLowerCase().includes(textoBusqueda) ||
-      p.dni.toString().includes(busqueda); // dni es number, pasamos a string
+      dniAString(p.dni).includes(busqueda);
 
     // 2. Modalidad
     const cumpleModalidad =
@@ -186,12 +179,13 @@ export default function PedidosGuardiaPage() {
     return {
       id: p.idEstudio,
       patientName: `${p.apellido}, ${capitalize(p.nombre)}`,
-      dni: p.dni.toString(),
+      dni: dniAString(p.dni),
       date: partesFecha[0],
       time: partesFecha[1] || "",
       studyType: p.tipoEstudio,
       studyDescription: solicitudLimpia,
       location: p.ubicacion || "General",
+      createdAt: p.fecha ? String(p.fecha) : undefined,
     };
   });
 
@@ -512,17 +506,6 @@ export default function PedidosGuardiaPage() {
           ]}
         />
       </div>
-      {modalOpen && (
-        <ModalDetalleGuardia
-          isOpen={modalOpen}
-          onClose={() => setModalOpen(false)}
-          paciente={pacienteGuardia!}
-          pedidoGeneral={pedidoSeleccionado!}
-          pedidos={pedidosPaciente}
-          loadingPedidosPaciente={loadingPedidosPaciente}
-          onFinalizarEstudio={handleFinalizarPedido}
-        />
-      )}
     </>
   );
 }

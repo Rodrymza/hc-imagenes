@@ -12,4 +12,5 @@ export interface PedidoCardData {
   isUrgent?: boolean;
   hasNotification?: boolean;
   status?: "realizado" | "pendiente";
+  createdAt?: string;
 }

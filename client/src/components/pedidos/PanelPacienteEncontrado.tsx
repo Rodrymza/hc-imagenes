@@ -1,5 +1,6 @@
 import { UserCheck, Building2, CreditCard } from "lucide-react";
 import type { IPacienteInterno } from "@/types/interno";
+import { formatearDni } from "@/utils/dni";
 
 interface PanelPacienteEncontradoProps {
   paciente: IPacienteInterno;
@@ -29,7 +30,7 @@ export const PanelPacienteEncontrado = ({
                 {paciente.apellidos}, {paciente.nombres}
               </span>
               <span className="text-xs font-bold text-emerald-700/70 dark:text-emerald-500 mt-0.5">
-                DNI: {parseInt(paciente.dni).toLocaleString("ES-AR")}
+                DNI: {formatearDni(paciente.dni)}
               </span>
             </div>
           </div>

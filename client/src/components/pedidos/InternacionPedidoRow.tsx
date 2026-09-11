@@ -6,6 +6,7 @@ import {
   getEstiloEstudio,
   getLugarEstilo,
 } from "./utils";
+import { TiempoDemora } from "./TiempoDemora";
 
 interface PedidoRowProps {
   item: IPedidoInternacion;
@@ -29,16 +30,28 @@ export const InternacionPedidoRow = ({
   const estiloEstado = getEstadoEstilo(isFinalizado);
 
   return (
-    <tr className="hover:bg-emerald-50/60 dark:hover:bg-emerald-950/30 transition-colors group border-border last:border-0">
+    <tr
+      className={`hover:bg-emerald-50/60 dark:hover:bg-emerald-950/30 transition-colors group border-border last:border-0 ${
+        isFinalizado ? "opacity-70 grayscale" : ""
+      }`}
+    >
       {/* 1. FECHA */}
       <td className="px-6 py-4 whitespace-nowrap text-center align-middle">
         <div className="flex items-center justify-center gap-2">
           <CalendarClock className="w-4 h-4 text-emerald-600/50" />
-          <div className="flex flex-col">
+          <div className="flex flex-col w-full items-center">
             <span className="font-bold text-slate-700 text-lg">{dia}</span>
             <span className="text-base text-slate-400 font-mono">
               {hora} hs
             </span>
+            <TiempoDemora
+              fechaCreacion={item.fechaIso}
+              finalizado={isFinalizado}
+              tipoEstudio={item.tipoEstudio}
+              lugar={item.lugar}
+              urgente={item.urgente}
+              solicitud={item.solicitud}
+            />
           </div>
         </div>
       </td>
@@ -63,9 +76,9 @@ export const InternacionPedidoRow = ({
         <div className="flex flex-col items-center gap-2">
           {/* Modalidad */}
           <span
-            className={`inline-block w-fit px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wide ${getEstiloEstudio(
-              item.tipoEstudio,
-            ).badge}`}
+            className={`inline-block w-fit px-3 py-1.5 rounded-md text-xs font-semibold uppercase tracking-wide ${
+              getEstiloEstudio(item.tipoEstudio).badge
+            }`}
           >
             {item.tipoEstudio}
           </span>
@@ -101,7 +114,9 @@ export const InternacionPedidoRow = ({
               {item.sala}
             </div>
           ) : (
-            <span className="text-[10px] italic text-muted-foreground">Sin sala</span>
+            <span className="text-[10px] italic text-muted-foreground">
+              Sin sala
+            </span>
           )}
 
           {/* Alerta Urgente */}
@@ -119,7 +134,7 @@ export const InternacionPedidoRow = ({
           <div className="relative">
             <button
               onClick={() => onVerDetalle(item)}
-                className="
+              className="
     flex items-center justify-center gap-2 
     w-36 h-10 px-4
     rounded-lg border border-border 

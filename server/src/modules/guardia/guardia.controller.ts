@@ -3,9 +3,12 @@ import { IPedidoGuardia } from "./guardia.types.js";
 import { AppError } from "../../errors/AppError.js";
 import { guardiaService } from "./utils/guardia.factory.js";
 import { loginCon2FA, logoutHsi } from "./guardia.auth.service.js";
-import { hasSesion } from "./guardia.session.js";
+import { mockLoginCon2FA } from "./guardia.mock.service.js";
+import { hasSesion, removeSesion } from "./guardia.session.js";
 import { resolveActiveOperatorId } from "../auth/auth.middleware.js";
 import { operatorService } from "../auth/auth.operator.service.js";
+
+const useMock = process.env.USE_MOCK_API === "true";
 
 function getOperatorUsername(req: Request): string {
   const operatorId = resolveActiveOperatorId(req);
@@ -22,7 +25,7 @@ export const guardiaControler = {
       const operatorUsername = getOperatorUsername(req);
       const { totpCode } = req.body;
 
-      if (!totpCode) {
+      if (!totpCode && !useMock) {
         throw new AppError(
           "Falta el código TOTP",
           400,
@@ -39,16 +42,19 @@ export const guardiaControler = {
         );
       }
 
-      const result = await loginCon2FA(
+      const loginFn = useMock ? mockLoginCon2FA : loginCon2FA;
+      const result = await loginFn(
         operatorUsername,
         operator.hsi_username,
         operator.hsi_password,
-        totpCode,
+        totpCode || "mock",
       );
 
       return res.json({
         success: true,
-        message: `Sesión HSI iniciada para ${result.username}`,
+        message: useMock
+          ? `[MOCK] Sesión HSI iniciada para ${result.username}`
+          : `Sesión HSI iniciada para ${result.username}`,
       });
     } catch (error) {
       next(error);
@@ -58,11 +64,18 @@ export const guardiaControler = {
   async logoutGuardia(req: Request, res: Response, next: NextFunction) {
     try {
       const operatorUsername = getOperatorUsername(req);
-      logoutHsi(operatorUsername);
+      if (useMock) {
+        removeSesion(operatorUsername);
+        console.log(`[MOCK] Sesión HSI eliminada para "${operatorUsername}"`);
+      } else {
+        logoutHsi(operatorUsername);
+      }
 
       return res.json({
         success: true,
-        message: "Sesión HSI cerrada",
+        message: useMock
+          ? `[MOCK] Sesión HSI cerrada para ${operatorUsername}`
+          : "Sesión HSI cerrada",
       });
     } catch (error) {
       next(error);

@@ -11,6 +11,14 @@ axios.defaults.baseURL = isProd
 // 2. IMPORTANTE: Activar credenciales
 axios.defaults.withCredentials = true;
 
+export interface INotificacionesConfig {
+  ENVIOS_DESACTIVADOS: boolean;
+  HORA_INICIO: number;
+  HORA_FIN: number;
+  EXCLUIR_TERAPIAS: boolean;
+  DIAS_PERMITIDOS: number[];
+}
+
 export const InternacionService = {
   getPedidos: async (fecha?: string): Promise<IPedidoInternacion[]> => {
     const url = fecha
@@ -22,6 +30,18 @@ export const InternacionService = {
 
   enviarComentario: async (body: IEnvioComentario) => {
     const res = await axios.post("/api/internacion/comentarios", body);
+    return res.data;
+  },
+
+  getConfigNotificaciones: async (): Promise<INotificacionesConfig> => {
+    const res = await axios.get("/api/internacion/notificaciones/config");
+    return res.data;
+  },
+
+  updateConfigNotificaciones: async (
+    config: Partial<INotificacionesConfig>,
+  ): Promise<{ ok: boolean; config: INotificacionesConfig }> => {
+    const res = await axios.put("/api/internacion/notificaciones/config", config);
     return res.data;
   },
 };

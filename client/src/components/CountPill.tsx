@@ -1,4 +1,4 @@
-type TipoEstudio = "Total" | "Filtrados" | "Radiografia" | "Tomografia" | "Ecografia" | "Otro";
+export type TipoEstudio = "Total" | "Filtrados" | "Radiografia" | "Tomografia" | "Ecografia" | "Otro";
 
 interface Props {
   tipo: TipoEstudio;

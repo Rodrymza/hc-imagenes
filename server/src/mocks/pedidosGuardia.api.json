@@ -270,5 +270,37 @@
     "fechaNacimientoString": "20/05/1981",
     "edad": 44,
     "ubicacion": "Sala de espera"
+  },
+  {
+    "idEstudio": 663706,
+    "fecha": "2026-01-21T14:45:00.000Z",
+    "fechaString": "21/01/2026 11:45",
+    "solicitud": "tomografía computarizada de cerebro",
+    "tipoEstudio": "Tomografia",
+    "idPaciente": 930038,
+    "apellido": "GONZALEZ",
+    "nombre": "Petrona",
+    "dni": null,
+    "sexo": "Femenino",
+    "fechaNacimiento": "1945-06-15T03:00:00.000Z",
+    "fechaNacimientoString": "15/06/1945",
+    "edad": 80,
+    "ubicacion": "Box de atención - BOX 1"
+  },
+  {
+    "idEstudio": 663707,
+    "fecha": "2026-01-21T14:50:00.000Z",
+    "fechaString": "21/01/2026 11:50",
+    "solicitud": "radiografía simple de tórax",
+    "tipoEstudio": "Radiografia",
+    "idPaciente": 930039,
+    "apellido": "WU",
+    "nombre": "Lili",
+    "dni": "C2434234",
+    "sexo": "Femenino",
+    "fechaNacimiento": "1992-02-20T03:00:00.000Z",
+    "fechaNacimientoString": "20/02/1992",
+    "edad": 33,
+    "ubicacion": "Sala de espera"
   }
 ]

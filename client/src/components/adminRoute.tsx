@@ -2,8 +2,8 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Loader2 } from "lucide-react";
 
-export const ProtectedRoute = () => {
-  const { isAuthenticated, isLoading, user, activeOperator } = useAuth();
+export const AdminRoute = () => {
+  const { isAuthenticated, isLoading, isAdminMode } = useAuth();
 
   if (isLoading) {
     return (
@@ -16,8 +16,12 @@ export const ProtectedRoute = () => {
     );
   }
 
-  if (!isAuthenticated || !user || !activeOperator) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (!isAdminMode) {
+    return <Navigate to="internacion/" replace />;
   }
 
   return <Outlet />;

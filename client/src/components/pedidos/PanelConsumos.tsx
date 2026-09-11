@@ -19,6 +19,7 @@ interface PanelConsumosProps {
   onConfirm: () => void;
   isSaving: boolean;
   disabled?: boolean;
+  hideConfirmButton?: boolean;
 }
 
 export const PanelConsumos = ({
@@ -29,6 +30,7 @@ export const PanelConsumos = ({
   onConfirm,
   isSaving,
   disabled = false,
+  hideConfirmButton = false,
 }: PanelConsumosProps) => {
   const [busqueda, setBusqueda] = useState("");
   const [mostrarResultados, setMostrarResultados] = useState(false);
@@ -90,11 +92,11 @@ export const PanelConsumos = ({
 
   return (
     // Quitamos los bordes superiores y sombras duras para que sea un bloque interno limpio
-    <div className="bg-white p-5 w-full">
+    <div className="bg-card p-5 w-full">
       <div className="flex flex-col gap-3">
         {/* BUSCADOR MANUAL (Ahora es full-width y apilado) */}
         <div className="flex flex-col gap-3">
-          <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+          <h4 className="text-[11px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
             <Zap className="w-4 h-4 text-indigo-400 fill-indigo-400" />
             Consumos a Imputar
           </h4>
@@ -105,7 +107,7 @@ export const PanelConsumos = ({
                 type="text"
                 autoComplete="off"
                 placeholder="Buscar prestación manual..."
-                className="w-full pl-10 pr-4 py-3 text-sm border-2 border-slate-100 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 bg-slate-50 font-medium transition-all"
+                className="w-full pl-10 pr-4 py-3 text-sm border-2 border-border rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 bg-muted/50 text-foreground placeholder:text-muted-foreground font-medium transition-all"
                 value={busqueda}
                 onChange={(e) => {
                   setBusqueda(e.target.value);
@@ -116,14 +118,14 @@ export const PanelConsumos = ({
                 onFocus={() => setMostrarResultados(true)}
                 disabled={disabled}
               />
-              <Search className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Search className="w-5 h-5 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
             </div>
 
             {/* Dropdown de Resultados */}
             {mostrarResultados && busqueda.length > 1 && (
-              <div className="absolute top-full mt-2 left-0 w-full bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden z-50">
+              <div className="absolute top-full mt-2 left-0 w-full bg-card border border-border rounded-xl shadow-xl overflow-hidden z-50">
                 {resultados.length === 0 ? (
-                  <div className="p-4 text-sm text-slate-400 text-center font-medium">
+                  <div className="p-4 text-sm text-muted-foreground text-center font-medium">
                     No se encontraron resultados
                   </div>
                 ) : (
@@ -136,11 +138,11 @@ export const PanelConsumos = ({
                         setMostrarResultados(false);
                         setSelectedIndex(-1);
                       }}
-                      className={`w-full text-left px-4 py-3 text-sm transition-colors border-b border-slate-50 last:border-0 font-bold
+                      className={`w-full text-left px-4 py-3 text-sm transition-colors border-b border-border/50 last:border-0 font-bold
                         ${
                           index === selectedIndex
                             ? "bg-indigo-600 text-white"
-                            : "hover:bg-indigo-50 text-slate-700"
+                            : "hover:bg-indigo-50 dark:hover:bg-indigo-950/50 text-foreground"
                         }`}
                     >
                       {res.descripcion}
@@ -154,12 +156,12 @@ export const PanelConsumos = ({
 
         {/* LISTA DE CHIPS (Área de drop/selección más limpia) */}
         <div className="flex flex-col gap-2">
-          <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
             Exposiciones Seleccionadas
           </span>
-          <div className="flex flex-col gap-2 min-h-[80px] bg-slate-50 p-3 rounded-xl border-2 border-dashed border-slate-200">
+          <div className="flex flex-col gap-2 min-h-[80px] bg-muted/50 p-3 rounded-xl border-2 border-dashed border-border">
             {exposiciones.length === 0 ? (
-              <div className="flex flex-col items-center justify-center gap-2 text-slate-400 h-full py-4 opacity-60">
+              <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground h-full py-4 opacity-60">
                 <AlertCircle className="w-8 h-8 stroke-1" />
                 <span className="text-xs font-bold uppercase tracking-wider">
                   Sin consumos
@@ -170,11 +172,11 @@ export const PanelConsumos = ({
                 <div
                   key={`${exp.id}-${index}`}
                   className={`
-                    flex items-center justify-between pl-3 pr-2 py-2 rounded-lg border shadow-sm animate-in zoom-in-95 duration-200 
+                    flex items-center justify-between pl-3 pr-2 py-2 rounded-lg border shadow-sm animate-in zoom-in-95 duration-200
                     ${
                       exp.origen === "AUTO"
-                        ? "bg-rose-50 border-rose-200 text-rose-800"
-                        : "bg-indigo-50 border-indigo-200 text-indigo-900"
+                        ? "bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-900 text-rose-800 dark:text-rose-300"
+                        : "bg-indigo-50 dark:bg-indigo-950/40 border-indigo-200 dark:border-indigo-900 text-indigo-900 dark:text-indigo-200"
                     }
                   `}
                 >
@@ -191,7 +193,7 @@ export const PanelConsumos = ({
                   <button
                     onClick={() => onRemove(exp.descripcion)}
                     disabled={disabled || isSaving}
-                    className="p-1.5 hover:bg-white/60 rounded-md transition-colors text-slate-500 shrink-0"
+                    className="p-1.5 hover:bg-white/60 dark:hover:bg-white/10 rounded-md transition-colors text-muted-foreground shrink-0"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -202,32 +204,34 @@ export const PanelConsumos = ({
         </div>
 
         {/* BOTON DE ACCION (Full width para diseño de columna) */}
-        <div className="pt-2">
-          <button
-            onClick={onConfirm}
-            disabled={exposiciones.length === 0 || isSaving || disabled}
-            className={`
-              flex items-center justify-center gap-3 w-full py-4 rounded-xl font-black text-sm uppercase tracking-widest transition-all
-              ${
-                exposiciones.length === 0 || disabled || isSaving
-                  ? "bg-slate-200 text-slate-400 cursor-not-allowed"
-                  : "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white shadow-lg shadow-indigo-200 active:scale-95"
-              }
-            `}
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" />
-                Enviando consumos al sistema...
-              </>
-            ) : (
-              <>
-                <Save className="w-5 h-5" />
-                Enviar a Worklist ({exposiciones.length})
-              </>
-            )}
-          </button>
-        </div>
+        {!hideConfirmButton && (
+          <div className="pt-2">
+            <button
+              onClick={onConfirm}
+              disabled={exposiciones.length === 0 || isSaving || disabled}
+              className={`
+                flex items-center justify-center gap-3 w-full py-3 rounded-xl font-black text-sm uppercase tracking-widest transition-all
+                ${
+                  exposiciones.length === 0 || disabled || isSaving
+                    ? "bg-muted text-muted-foreground cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white shadow-lg shadow-indigo-200 dark:shadow-none active:scale-95"
+                }
+              `}
+            >
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Enviando consumos al sistema...
+                </>
+              ) : (
+                <>
+                  <Save className="w-5 h-5" />
+                  Enviar a Worklist ({exposiciones.length})
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

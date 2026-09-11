@@ -2,11 +2,13 @@ import { GuardiaService } from "./guardia.service.js";
 import pedidos from "../../mocks/pedidosGuardia.api.json";
 import paciente from "../../mocks/pacienteGuardia.json";
 import detallePedidos from "../../mocks/pedidosPacienteGuardia.json";
+import mockTokens from "../../mocks/login2faGuardia.json";
 import {
   IDatosPacienteGuardia,
   IDetallePedidoGuardia,
   IPedidoGuardia,
 } from "./guardia.types.js";
+import { setSesion } from "./guardia.session.js";
 
 export const mockGuardiaService: GuardiaService = {
   async obtenerPedidosGuardia(_userId, fecha) {
@@ -51,4 +53,26 @@ const parseFecha = (fecha: string) => {
   const [hora, minuto] = horaParte.split(":").map(Number);
 
   return new Date(anio, mes - 1, dia, hora, minuto);
+};
+
+export const mockLoginCon2FA = async (
+  userId: string,
+  hsiUser: string,
+  _hsiPass: string,
+  _totpCode: string,
+): Promise<{ success: boolean; username: string }> => {
+  console.log(`[MOCK] Login 2FA simulado para "${hsiUser}"`);
+
+  const expiresAt = Date.now() + mockTokens.expiresIn * 1000;
+  const decoded = { exp: Math.floor(expiresAt / 1000) };
+  const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+  const payload = btoa(JSON.stringify({ ...decoded, sub: hsiUser }));
+  const mockAccessToken = `${header}.${payload}.mock-signature`;
+  const mockRefreshToken = mockTokens.refreshToken;
+
+  setSesion(userId, mockAccessToken, mockRefreshToken, hsiUser);
+
+  console.log(`[MOCK] Sesión HSI creada para "${hsiUser}" (expira: ${new Date(expiresAt).toLocaleString()})`);
+
+  return { success: true, username: hsiUser };
 };

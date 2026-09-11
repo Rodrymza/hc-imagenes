@@ -43,7 +43,7 @@ export interface IPedidoGuardia {
   idPaciente: number | string;
   apellido: string;
   nombre: string;
-  dni: number;
+  dni: string | number | null;
   sexo: string;
   fechaNacimiento: Date | null;
   fechaNacimientoString: string;

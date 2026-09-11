@@ -97,5 +97,16 @@
     "lugar": "Guardia",
     "doctor": "Ibañez, Rodrigo",
     "realizado": true
+  },
+  {
+    "idEstudio": "700001",
+    "fecha": "10/09/2026 09:30",
+    "pedido": "ecografía renal",
+    "diagnostico": "cólico renal",
+    "observaciones": "Sin observaciones",
+    "tipoEstudio": "Ecografia",
+    "lugar": "Guardia",
+    "doctor": "Fernandez, Juan",
+    "realizado": false
   }
 ]

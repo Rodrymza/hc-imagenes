@@ -31,7 +31,7 @@ export const AuthService = {
   },
 
   logout: async () => {
-    return await axios.post("/api/auth/logout");
+    return await axios.get("/api/auth/logout");
   },
 
   verifyToken: async () => {

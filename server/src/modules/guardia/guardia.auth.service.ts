@@ -13,11 +13,29 @@ const BASE_URL = "https://hsi.mendoza.gov.ar";
 
 const REFRESH_MARGIN_MS = 5 * 60 * 1000;
 
-function parseTokensFromSetCookie(
-  setCookieHeaders: string[],
-): { accessToken: string; refreshToken: string } {
+async function extractTokensFromJar(
+  jar: CookieJar,
+): Promise<{ accessToken: string; refreshToken: string; allCookies: string }> {
+  const cookies = await jar.getCookies(BASE_URL);
   let accessToken = "";
   let refreshToken = "";
+  const parts: string[] = [];
+
+  for (const cookie of cookies) {
+    if (cookie.key === "token") accessToken = cookie.value;
+    if (cookie.key === "refreshToken") refreshToken = cookie.value;
+    parts.push(`${cookie.key}=${cookie.value}`);
+  }
+
+  return { accessToken, refreshToken, allCookies: parts.join("; ") };
+}
+
+function parseAllCookiesFromSetCookie(
+  setCookieHeaders: string[],
+): { accessToken: string; refreshToken: string; allCookies: string } {
+  let accessToken = "";
+  let refreshToken = "";
+  const parts: string[] = [];
 
   for (const header of setCookieHeaders) {
     const [nameValue] = header.split(";");
@@ -26,9 +44,10 @@ function parseTokensFromSetCookie(
     const value = nameValue.substring(eqIndex + 1).trim();
     if (name === "token") accessToken = value;
     if (name === "refreshToken") refreshToken = value;
+    parts.push(`${name}=${value}`);
   }
 
-  return { accessToken, refreshToken };
+  return { accessToken, refreshToken, allCookies: parts.join("; ") };
 }
 
 export const loginCon2FA = async (
@@ -43,10 +62,11 @@ export const loginCon2FA = async (
       axios.create({
         baseURL: BASE_URL,
         headers: { "Content-Type": "application/json" },
-        withCredentials: true,
         jar: tempJar,
       }) as any,
     ) as any;
+
+    console.log(`🔑 Login HSI para "${hsiUser}"...`);
 
     const loginRes = await tempApi.post("/api/auth", {
       username: hsiUser,
@@ -66,14 +86,39 @@ export const loginCon2FA = async (
       );
     }
 
+    console.log(`✅ Login exitoso, obteniendo permisos...`);
+
     await tempApi.get("/api/account/permissions");
+
+    console.log(`📲 Enviando código 2FA: ${totpCode}...`);
 
     const totpRes = await tempApi.post("/api/auth/login-2fa", {
       code: totpCode,
     });
 
+    console.log(`📡 Respuesta 2FA: status=${totpRes.status}, data=`, JSON.stringify(totpRes.data));
+
     const setCookieHeaders = (totpRes.headers["set-cookie"] as string[]) || [];
-    const { accessToken, refreshToken } = parseTokensFromSetCookie(setCookieHeaders);
+    console.log(`🍪 Set-Cookie headers (${setCookieHeaders.length}):`, setCookieHeaders.map(h => h.substring(0, 80)));
+
+    let accessToken = "";
+    let refreshToken = "";
+    let allCookies = "";
+
+    if (setCookieHeaders.length > 0) {
+      const parsed = parseAllCookiesFromSetCookie(setCookieHeaders);
+      accessToken = parsed.accessToken;
+      refreshToken = parsed.refreshToken;
+      allCookies = parsed.allCookies;
+    }
+
+    if (!accessToken || !refreshToken) {
+      console.log(`⚠️ Set-Cookie no tiene tokens, extrayendo del CookieJar...`);
+      const jarTokens = await extractTokensFromJar(tempJar);
+      accessToken = jarTokens.accessToken;
+      refreshToken = jarTokens.refreshToken;
+      allCookies = jarTokens.allCookies;
+    }
 
     const finalAccessToken = accessToken || totpRes.data?.token || totpRes.data?.accessToken;
     const finalRefreshToken = refreshToken || totpRes.data?.refreshToken;
@@ -94,7 +139,9 @@ export const loginCon2FA = async (
       );
     }
 
-    setSesion(userId, finalAccessToken, finalRefreshToken, hsiUser);
+    console.log(`🔐 Tokens 2FA obtenidos correctamente`);
+
+    setSesion(userId, finalAccessToken, finalRefreshToken, hsiUser, allCookies);
 
     return { success: true, username: hsiUser };
   } catch (error: any) {
@@ -123,9 +170,21 @@ export const refreshTokenSiEsNecesario = async (
   try {
     const refreshRes = await session.axios.post("/api/auth/refresh");
 
+    console.log(`📡 Respuesta refresh: status=${refreshRes.status}, data=`, JSON.stringify(refreshRes.data).substring(0, 200));
+
     const refreshHeaders = (refreshRes.headers["set-cookie"] as string[]) || [];
-    const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-      parseTokensFromSetCookie(refreshHeaders);
+    console.log(`🍪 Refresh Set-Cookie headers (${refreshHeaders.length}):`, refreshHeaders.map(h => h.substring(0, 80)));
+
+    let newAccessToken = "";
+    let newRefreshToken = "";
+    let refreshAllCookies = "";
+
+    if (refreshHeaders.length > 0) {
+      const parsed = parseAllCookiesFromSetCookie(refreshHeaders);
+      newAccessToken = parsed.accessToken;
+      newRefreshToken = parsed.refreshToken;
+      refreshAllCookies = parsed.allCookies;
+    }
 
     const finalNewAccessToken =
       newAccessToken || refreshRes.data?.token || refreshRes.data?.accessToken;
@@ -138,6 +197,7 @@ export const refreshTokenSiEsNecesario = async (
         finalNewAccessToken,
         finalNewRefreshToken || "",
         session.username,
+        refreshAllCookies || undefined,
       );
       console.log(`✅ Token HSI renovado para "${userId}"`);
     } else {

@@ -1,10 +1,9 @@
 import { Outlet } from "react-router-dom";
 import { Navbar } from "./Navbar";
-import { Footer } from "./Footer";
 
 export function MainLayout() {
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-background">
       {/* 1. Header Fijo */}
       <Navbar />
 
@@ -15,7 +14,6 @@ export function MainLayout() {
       </main>
 
       {/* 3. Footer Fijo abajo */}
-      <Footer />
     </div>
   );
 }

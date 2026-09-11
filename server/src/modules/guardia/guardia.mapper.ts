@@ -10,6 +10,14 @@ import {
 } from "./guardia.types.js";
 import { calcularEdad, crearFecha, definirTipoEstudio } from "./guardia.utils.js";
 
+const formatearDni = (dni: unknown): string => {
+  if (dni == null) return "S/D";
+  const s = String(dni).trim();
+  if (s === "") return "S/D";
+  if (/^\d+$/.test(s)) return Number(s).toLocaleString("es-AR");
+  return s;
+};
+
 export const cleanPacienteGuardia = (
   apiPaciente: any,
 ): IDatosPacienteGuardia => {
@@ -27,8 +35,8 @@ export const cleanPacienteGuardia = (
     historiaClinica: person.id,
 
     // 👤 Datos Personales (todos dentro de person)
-    dni: person.identificationNumber,
-    dniString: Number(person.identificationNumber).toLocaleString("es-AR"),
+    dni: person.identificationNumber || "",
+    dniString: formatearDni(person.identificationNumber),
     apellido: apellidoCompleto,
     nombres: nombresCompletos,
     fechaNacimiento: fechaNac,
@@ -80,9 +88,7 @@ export const cleanPedidoListaHsi = (
     nombre: pacienteRaw?.firstName
       ? capitalize(pacienteRaw.firstName)
       : "Sin nombre",
-    dni: pacienteRaw?.identificationNumber
-      ? parseInt(pacienteRaw.identificationNumber)
-      : 0,
+    dni: pacienteRaw?.identificationNumber || null,
     sexo: pacienteRaw?.gender?.description || "Sin sexo",
     fechaNacimiento: fechaNac,
     fechaNacimientoString: fechaNac ? formatearFecha(fechaNac) : "Sin fecha",

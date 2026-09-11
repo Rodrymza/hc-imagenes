@@ -107,6 +107,35 @@ export const usePedidosInternacion = () => {
     [pedidosInternacion],
   ); // Necesitamos pedidosInternacion para la copia de seguridad
 
+  const guardarNota = useCallback(
+    async (item: IPedidoInternacion, nuevaNota: string) => {
+      const copiaAnterior = [...pedidosInternacion];
+
+      setPedidosInternacion((prev) =>
+        prev.map((p) =>
+          p.idEstudio === item.idEstudio ? { ...p, nota: nuevaNota } : p,
+        ),
+      );
+
+      const datosEnvio: IEnvioComentario = {
+        idEstudio: item.idEstudio,
+        idMovimiento: item.idMovimiento,
+        comentario: item.comentario,
+        nota: nuevaNota,
+      };
+
+      toast.promise(InternacionService.enviarComentario(datosEnvio), {
+        loading: "Guardando nota...",
+        success: (data) => data.message || "Nota guardada en el servidor",
+        error: (err) => {
+          setPedidosInternacion(copiaAnterior);
+          return `Error al guardar: ${getErrorMessage(err)}`;
+        },
+      });
+    },
+    [pedidosInternacion],
+  );
+
   return {
     pedidosInternacion,
     isLoading,
@@ -114,5 +143,6 @@ export const usePedidosInternacion = () => {
     lugares,
     traerPedidosInternacion,
     alternarEstadoPedido,
+    guardarNota,
   };
 };

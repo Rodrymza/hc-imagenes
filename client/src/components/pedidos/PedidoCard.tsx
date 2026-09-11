@@ -1,6 +1,7 @@
 import { Eye, CalendarClock, AlertCircle } from "lucide-react";
 import type { PedidoCardData } from "@/types/pedidoCard";
 import { getEstadoEstilo, getEstiloEstudio, getLugarEstilo } from "./utils";
+import { TiempoDemora } from "./TiempoDemora";
 
 interface PedidoCardProps {
   item: PedidoCardData;
@@ -26,7 +27,9 @@ export const PedidoCard = ({
 
   return (
     <div
-      className={`relative bg-card rounded-xl border border-border shadow-sm overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5`}
+      className={`relative bg-card rounded-xl border border-border shadow-sm overflow-hidden transition-all hover:shadow-md hover:-translate-y-0.5 ${
+        item.status === "realizado" ? "opacity-70 grayscale" : ""
+      }`}
     >
       {/* Stripe izquierda */}
       <div className={`absolute left-0 top-0 bottom-0 w-1 ${stripeColor}`} />
@@ -45,6 +48,16 @@ export const PedidoCard = ({
               <span className="flex items-center gap-1 text-[10px] font-black text-red-600 dark:text-red-400 animate-pulse bg-red-50 dark:bg-red-950/50 px-2 py-0.5 rounded-full border border-red-100 dark:border-red-900">
                 URGENTE
               </span>
+            )}
+            {item.createdAt && (
+              <TiempoDemora
+                fechaCreacion={item.createdAt}
+                finalizado={item.status === "realizado"}
+                tipoEstudio={item.studyType}
+                lugar={item.location}
+                urgente={item.isUrgent ? "SI" : "NO"}
+                solicitud={item.studyDescription}
+              />
             )}
             <div className="flex items-center gap-1 text-xs text-slate-500">
               <CalendarClock className="w-3 h-3" />

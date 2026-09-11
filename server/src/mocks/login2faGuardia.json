@@ -1,0 +1,6 @@
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.mock-access-token",
+  "refreshToken": "mock-refresh-token-simulado",
+  "expiresIn": 1800,
+  "tokenType": "Bearer"
+}

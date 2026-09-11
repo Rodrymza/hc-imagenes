@@ -5,6 +5,7 @@ import { MainLayout } from "./components/layouts/MainLayout";
 import LoginPage from "./pages/Login";
 import InternacionPage from "./pages/InternacionPage";
 import PedidosGuardiaPage from "./pages/PedidosGuardiaPage";
+import DetalleGuardiaPage from "./pages/DetalleGuardiaPage";
 import ConsumosPage from "./pages/ConsumosPage";
 import BuscarPaciente from "./pages/BuscarPaciente";
 import PacientesInternadosPage from "./pages/PacientesInternadosPage";
@@ -26,6 +27,7 @@ export const AppRoutes = () => (
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/internacion" element={<InternacionPage />} />
         <Route path="/guardia" element={<PedidosGuardiaPage />} />
+        <Route path="/guardia/paciente/:dni" element={<DetalleGuardiaPage />} />
         <Route path="/consumos" element={<ConsumosPage />} />
         <Route path="/buscar-paciente" element={<BuscarPaciente />} />
         <Route path="/pacientes-internacion" element={<PacientesInternadosPage />} />

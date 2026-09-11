@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useConsumos } from "@/hooks/useConsumos";
 import { Link } from "react-router-dom"; // O tu router
+import { formatearDni } from "@/utils/dni";
 
 export default function BuscarPaciente() {
   const [dni, setDni] = useState("");
@@ -81,7 +82,7 @@ export default function BuscarPaciente() {
               <div className="p-6 space-y-4 tracking-widest">
                 <InfoRow
                   label="DNI / Documento"
-                  value={parseInt(pacienteInterno.dni).toLocaleString("ES-AR")}
+                  value={formatearDni(pacienteInterno.dni)}
                   icon={<Fingerprint className="w-4 h-4" />}
                 />
                 <InfoRow

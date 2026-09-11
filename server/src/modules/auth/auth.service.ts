@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { AppError } from "../../errors/AppError.js";
 import { IUsuarioDB, IUsuarioResponse, IUserPayload } from "./auth.types.js";
 import { loginCon2FA } from "../guardia/guardia.auth.service.js";
+import { mockLoginCon2FA } from "../guardia/guardia.mock.service.js";
 import { db } from "../../db/database.js";
 import { SESSION_TTL_MS } from "./auth.cookies.js";
 
@@ -52,7 +53,9 @@ export const authService = {
 
     if (totpCode && usuario.hsi_username && hsi_password) {
       try {
-        await loginCon2FA(
+        const useMock = process.env.USE_MOCK_API === "true";
+        const loginFn = useMock ? mockLoginCon2FA : loginCon2FA;
+        await loginFn(
           usuario.username,
           usuario.hsi_username,
           hsi_password,

@@ -9,6 +9,9 @@ import {
   EyeClosed,
   Hospital,
   Bed,
+  ArrowUp,
+  ArrowDown,
+  ArrowUpDown,
 } from "lucide-react";
 import { InternacionPedidoRow } from "@/components/pedidos/InternacionPedidoRow";
 import { PedidoCard } from "@/components/pedidos/PedidoCard";
@@ -50,8 +53,14 @@ export default function InternacionPage() {
   const [pedidoSeleccionado, setPedidoSeleccionado] =
     useState<IPedidoInternacion | null>(null);
 
-  const ITEMS_POR_PAGINA = 10;
+  const ITEMS_POR_PAGINA = 20;
   const [paginaActual, setPaginaActual] = useState(1);
+
+  type CampoOrden = "sala" | "fecha" | "paciente";
+  const [orden, setOrden] = useState<{
+    campo: CampoOrden;
+    direccion: "asc" | "desc";
+  } | null>(null);
 
   const GRUPOS_SALA = [
     {
@@ -116,6 +125,7 @@ export default function InternacionPage() {
     setFiltroFecha(hoy);
     setPaginaActual(1);
     setEnCama(false);
+    setOrden(null);
   };
 
   const toggleEnCama = () => {
@@ -165,11 +175,66 @@ export default function InternacionPage() {
     );
   });
 
+  const toggleOrden = (campo: CampoOrden) => {
+    setOrden((prev) =>
+      prev && prev.campo === campo
+        ? { campo, direccion: prev.direccion === "asc" ? "desc" : "asc" }
+        : { campo, direccion: "asc" },
+    );
+    setPaginaActual(1);
+  };
+
   const totalPaginas = Math.ceil(pedidosFiltrados.length / ITEMS_POR_PAGINA);
-  const pedidosPaginados = pedidosFiltrados.slice(
-    (paginaActual - 1) * ITEMS_POR_PAGINA,
-    paginaActual * ITEMS_POR_PAGINA,
+  const paginaSegura = Math.min(
+    Math.max(paginaActual, 1),
+    Math.max(totalPaginas, 1),
   );
+  const pedidosOrdenados = useMemo(() => {
+    if (!orden) return pedidosFiltrados;
+    return [...pedidosFiltrados].sort((a, b) => {
+      let cmp = 0;
+      if (orden.campo === "sala") {
+        cmp = (a.sala ?? "").localeCompare(b.sala ?? "", "es", {
+          numeric: true,
+          sensitivity: "base",
+        });
+      } else if (orden.campo === "fecha") {
+        cmp = a.fechaIso.localeCompare(b.fechaIso);
+      } else {
+        cmp = `${a.apellidos}, ${a.nombres}`.localeCompare(
+          `${b.apellidos}, ${b.nombres}`,
+          "es",
+          { sensitivity: "base" },
+        );
+      }
+      return orden.direccion === "asc" ? cmp : -cmp;
+    });
+  }, [pedidosFiltrados, orden]);
+  const pedidosPaginados = pedidosOrdenados.slice(
+    (paginaSegura - 1) * ITEMS_POR_PAGINA,
+    paginaSegura * ITEMS_POR_PAGINA,
+  );
+
+  const renderOrdenHeader = (campo: CampoOrden, label: string) => {
+    const activo = orden?.campo === campo;
+    const Icono = !activo
+      ? ArrowUpDown
+      : orden.direccion === "asc"
+        ? ArrowUp
+        : ArrowDown;
+    return (
+      <button
+        onClick={() => toggleOrden(campo)}
+        className={`inline-flex items-center justify-center gap-1 uppercase transition-colors cursor-pointer ${
+          activo ? "text-emerald-200" : "hover:text-emerald-200"
+        }`}
+        title={`Ordenar por ${label}`}
+      >
+        {label}
+        <Icono className={`w-3.5 h-3.5 ${activo ? "" : "opacity-50"}`} />
+      </button>
+    );
+  };
 
   const pedidosCardData: PedidoCardData[] = pedidosPaginados.map((p) => {
     const [dia, hora] = p.fecha.split(" ");
@@ -190,6 +255,7 @@ export default function InternacionPage() {
       isUrgent: p.urgente?.toLowerCase() === "si",
       hasNotification: !!p.nota?.trim(),
       status: isFinalizado ? "realizado" : "pendiente",
+      createdAt: p.fechaIso,
     };
   });
 
@@ -221,9 +287,7 @@ export default function InternacionPage() {
 
   return (
     <>
-      <div
-        className="bg-seccion-internacion min-h-screen flex flex-col font-sans"
-      >
+      <div className="bg-seccion-internacion min-h-screen flex flex-col font-sans">
         {/* HEADER STICKY */}
         <div className="sticky top-16 z-10 shrink-0">
           <div className="p-4 md:p-2 pb-0">
@@ -271,7 +335,10 @@ export default function InternacionPage() {
                       <input
                         type="date"
                         value={filtroFecha}
-                        onChange={(e) => setFiltroFecha(e.target.value)}
+                        onChange={(e) => {
+                          setFiltroFecha(e.target.value);
+                          setPaginaActual(1);
+                        }}
                         className="pl-8 pr-2 py-3 bg-white dark:bg-card border-none rounded-lg text-xs font-bold text-emerald-900 dark:text-foreground"
                       />
                     </div>
@@ -440,7 +507,8 @@ export default function InternacionPage() {
                     />
                   ))}
                   <PaginationBar
-                    currentPage={paginaActual}
+                    variant="dark"
+                    currentPage={paginaSegura}
                     totalPages={totalPaginas}
                     totalItems={pedidosFiltrados.length}
                     itemsPerPage={ITEMS_POR_PAGINA}
@@ -454,16 +522,16 @@ export default function InternacionPage() {
                     <thead className="bg-emerald-900 dark:bg-emerald-950 text-white uppercase text-xs tracking-wider">
                       <tr>
                         <th className="px-6 py-4 font-bold text-center">
-                          Fecha
+                          {renderOrdenHeader("fecha", "Fecha")}
                         </th>
                         <th className="px-6 py-4 font-bold text-center">
-                          Paciente
+                          {renderOrdenHeader("paciente", "Paciente")}
                         </th>
                         <th className="px-6 py-4 font-bold text-center">
                           Estudio
                         </th>
                         <th className="px-6 py-4 font-bold text-center">
-                          Ubicación
+                          {renderOrdenHeader("sala", "Ubicación")}
                         </th>
                         <th className="px-6 py-4 font-bold text-center">
                           Acciones
@@ -471,7 +539,7 @@ export default function InternacionPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border [&>tr:nth-child(even)]:bg-muted">
-                      {pedidosFiltrados.map((item) => (
+                      {pedidosPaginados.map((item) => (
                         <InternacionPedidoRow
                           key={item.idEstudio}
                           item={item}
@@ -481,6 +549,14 @@ export default function InternacionPage() {
                       ))}
                     </tbody>
                   </table>
+                  <PaginationBar
+                    variant="light"
+                    currentPage={paginaSegura}
+                    totalPages={totalPaginas}
+                    totalItems={pedidosFiltrados.length}
+                    itemsPerPage={ITEMS_POR_PAGINA}
+                    onPageChange={setPaginaActual}
+                  />
                 </div>
               </>
             )}

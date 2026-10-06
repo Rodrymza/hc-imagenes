@@ -55,15 +55,16 @@
   .bg-seccion-internacion {
     background: linear-gradient(135deg, #0e6d55, #6fd3b6);
   }
-  .dark .bg-seccion-internacion {
-    background: linear-gradient(135deg, #04241c, #0b3b2f);
+  .dark .bg-seccion-internacion,
+  .dark .bg-seccion-guardia {
+    background: linear-gradient(135deg, #0f1624, #080c16);
   }
 
-  .bg-seccion-guardia {
-    background: linear-gradient(135deg, #7c1919, #d44545);
+  .bg-seccion-mamografia {
+    background: linear-gradient(135deg, #be185d, #f472b6);
   }
-  .dark .bg-seccion-guardia {
-    background: linear-gradient(135deg, #230a0a, #4a1a1a);
+  .dark .bg-seccion-mamografia {
+    background: linear-gradient(135deg, #500724, #831843);
   }
 
   .bg-seccion-login {

@@ -18,10 +18,15 @@ export interface EstiloEstudio {
   icon: JSX.Element;
 }
 
+export const esTomografia = (tipo: string = ""): boolean => {
+  const t = tipo.toLowerCase();
+  return t.includes("tomo") || t.includes("tc");
+};
+
 export const getEstiloEstudio = (tipo: string = ""): EstiloEstudio => {
   const t = tipo.toLowerCase();
 
-  if (t.includes("tomo") || t.includes("tc")) {
+  if (esTomografia(tipo)) {
     return {
       bg: "bg-blue-200 dark:bg-blue-950/70",
       border: "border-blue-400 dark:border-blue-800",
@@ -79,24 +84,72 @@ export interface EstiloEstado {
   label: string;
 }
 
-export const getEstadoEstilo = (realizado: boolean): EstiloEstado =>
-  realizado
-    ? {
-        badge:
-          "bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-700",
-        hover:
-          "hover:bg-emerald-100 hover:border-emerald-400 dark:hover:bg-emerald-900/60 dark:hover:border-emerald-600",
-        icon: <Check className="w-4 h-4" strokeWidth={2.5} />,
-        label: "Realizado",
-      }
-    : {
-        badge:
-          "bg-orange-50 text-orange-700 border-orange-300 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-700",
-        hover:
-          "hover:bg-orange-100 hover:border-orange-400 dark:hover:bg-orange-900/50 dark:hover:border-orange-600",
-        icon: <Clock className="w-4 h-4" strokeWidth={2.5} />,
-        label: "Pendiente",
-      };
+const FORMULARIO_TOMOGRAFIA_URL =
+  "https://hc-imagenes.fillout.com/t/htM57BZNAtus";
+
+export interface DatosFormularioTomografia {
+  nombre: string;
+  dni: string;
+  sala?: string;
+  diagnostico?: string;
+  servicio?: string;
+}
+
+export const getUrlFormularioTomografia = (
+  datos: DatosFormularioTomografia,
+  tecnico?: string,
+  origen: string = "Internación",
+): string => {
+  const query = [
+    `nombre=${encodeURIComponent(datos.nombre || "")}`,
+    `dni=${encodeURIComponent(datos.dni || "")}`,
+    `sala=${encodeURIComponent(datos.sala || "")}`,
+    `diagnostico=${encodeURIComponent(datos.diagnostico || "")}`,
+    `tecnico=${encodeURIComponent(tecnico || "")}`,
+    `servicio=${encodeURIComponent(datos.servicio || "")}`,
+    `origen=${encodeURIComponent(origen || "")}`,
+  ].join("&");
+
+  return `${FORMULARIO_TOMOGRAFIA_URL}?${query}`;
+};
+
+export type VarianteEstado = "superficie" | "solido";
+
+export const getEstadoEstilo = (
+  realizado: boolean,
+  variante: VarianteEstado = "superficie",
+): EstiloEstado =>
+  variante === "solido"
+    ? realizado
+      ? {
+          badge: "bg-emerald-700 text-white border-emerald-800",
+          hover: "hover:bg-emerald-800",
+          icon: <Check className="w-4 h-4" strokeWidth={2.5} />,
+          label: "Realizado",
+        }
+      : {
+          badge: "bg-orange-700 text-white border-orange-800",
+          hover: "hover:bg-orange-800",
+          icon: <Clock className="w-4 h-4" strokeWidth={2.5} />,
+          label: "Pendiente",
+        }
+    : realizado
+      ? {
+          badge:
+            "bg-emerald-50 text-emerald-700 border-emerald-300 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-700",
+          hover:
+            "hover:bg-emerald-100 hover:border-emerald-400 dark:hover:bg-emerald-900/60 dark:hover:border-emerald-600",
+          icon: <Check className="w-4 h-4" strokeWidth={2.5} />,
+          label: "Realizado",
+        }
+      : {
+          badge:
+            "bg-orange-50 text-orange-700 border-orange-300 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-700",
+          hover:
+            "hover:bg-orange-100 hover:border-orange-400 dark:hover:bg-orange-900/50 dark:hover:border-orange-600",
+          icon: <Clock className="w-4 h-4" strokeWidth={2.5} />,
+          label: "Pendiente",
+        };
 
 export function capitalize(text?: string): string {
   if (!text || typeof text !== "string") return "";

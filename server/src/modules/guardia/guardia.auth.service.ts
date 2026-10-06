@@ -61,6 +61,7 @@ export const loginCon2FA = async (
     const tempApi = wrapper(
       axios.create({
         baseURL: BASE_URL,
+        timeout: 15000,
         headers: { "Content-Type": "application/json" },
         jar: tempJar,
       }) as any,

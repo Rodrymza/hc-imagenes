@@ -2,10 +2,10 @@ import { InternoService } from "./interno.service.js";
 import estudiosData from "../../data/prestaciones.json";
 import {
   IEstudioConfig,
-  IPacienteInternado,
   IPacienteInterno,
   IResultadoLote,
 } from "./interno.types.js";
+import { normalizarServicio } from "../../utils/servicios.utils.js";
 import { AppError } from "../../errors/AppError.js";
 import datosPaciente from "../../mocks/pacienteInterno.json";
 import pacientesInternados from "../../mocks/datos_pacientes_internados.json";
@@ -39,6 +39,9 @@ export const mockInternoService: InternoService = {
 
   async getPacientesInternados() {
     await new Promise((resolve) => setTimeout(resolve, 500));
-    return pacientesInternados as IPacienteInternado[];
+    return pacientesInternados.map((p) => ({
+      ...p,
+      servicio: normalizarServicio(p.servicio),
+    }));
   },
 };

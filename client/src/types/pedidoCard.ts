@@ -6,6 +6,11 @@ export interface PedidoCardData {
   time: string;
   studyType: string;
   studyDescription: string;
+  studies?: {
+    studyType: string;
+    studyDescription: string;
+    createdAt?: string;
+  }[];
   diagnosis?: string;
   location: string;
   subLocation?: string;
@@ -13,4 +18,5 @@ export interface PedidoCardData {
   hasNotification?: boolean;
   status?: "realizado" | "pendiente";
   createdAt?: string;
+  consumoEnviado?: boolean;
 }

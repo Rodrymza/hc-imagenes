@@ -17,20 +17,33 @@ import {
   Activity,
   Pencil,
   Trash2,
+  CheckCircle2,
+  ExternalLink,
 } from "lucide-react";
 import type { IPedidoInternacion } from "@/types/pedidos";
-import { capitalize, getEstiloEstudio, getLugarEstilo } from "./utils";
+import {
+  capitalize,
+  esTomografia,
+  getEstadoEstilo,
+  getEstiloEstudio,
+  getLugarEstilo,
+  getUrlFormularioTomografia,
+} from "./utils";
 import { useConsumos } from "@/hooks/useConsumos";
 import { PanelConsumos } from "./PanelConsumos";
 import { PanelPacienteEncontrado } from "./PanelPacienteEncontrado";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 interface ModalDetalleInternacionProps {
   isOpen: boolean;
   onClose: () => void;
   pedido: IPedidoInternacion | null;
   onGuardarNota?: (item: IPedidoInternacion, nota: string) => void;
+  onToggleEstado?: (item: IPedidoInternacion) => void;
+  consumoEnviado?: boolean;
+  onConsumoEnviado?: (ids: string[]) => void | Promise<void>;
 }
 
 export const ModalDetalleInternacion = ({
@@ -38,6 +51,9 @@ export const ModalDetalleInternacion = ({
   onClose,
   pedido,
   onGuardarNota,
+  onToggleEstado,
+  consumoEnviado = false,
+  onConsumoEnviado,
 }: ModalDetalleInternacionProps) => {
   const pedidosMemo = useMemo(() => (pedido ? [pedido] : []), [pedido]);
 
@@ -52,7 +68,7 @@ export const ModalDetalleInternacion = ({
     loadingPaciente,
     buscarPacienteInterno,
     pacienteInterno,
-  } = useConsumos(pedidosMemo);
+  } = useConsumos(pedidosMemo, "INTERNACION", { onConsumoEnviado });
 
   const [coberturaSeleccionada, setCoberturaSeleccionada] = useState("");
   const [notaLocal, setNotaLocal] = useState(pedido?.nota ?? "");
@@ -87,6 +103,8 @@ export const ModalDetalleInternacion = ({
     }
   };
 
+  const { user } = useAuth();
+
   useEffect(() => {
     if (isOpen && pedido?.dni) {
       buscarPacienteInterno(pedido.dni.toString());
@@ -99,6 +117,13 @@ export const ModalDetalleInternacion = ({
   const estilo = getEstiloEstudio(pedido.tipoEstudio);
   const estiloLugar = getLugarEstilo(pedido.lugar);
   const esUrgente = pedido.urgente === "SI";
+  const isFinalizado =
+    pedido.comentario?.toLocaleLowerCase().includes("ok") ||
+    pedido.comentario?.toLocaleLowerCase().includes("realiz");
+  const estiloEstado = getEstadoEstilo(isFinalizado, "solido");
+  const tecnico = user
+    ? `${capitalize(user.apellido)}, ${capitalize(user.nombre)}`
+    : "";
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
@@ -218,6 +243,11 @@ export const ModalDetalleInternacion = ({
                       {estilo.icon}
                       {pedido.tipoEstudio}
                     </div>
+                    {consumoEnviado && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-sm font-black uppercase tracking-wide bg-indigo-100 text-indigo-700 dark:bg-emerald-950/60 dark:text-indigo-300">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Consumo enviado
+                      </span>
+                    )}
                     {esUrgente && (
                       <div className="flex items-center gap-1.5 text-orange-700 bg-orange-50 px-3 py-1.5 rounded-lg border border-orange-200 shadow-sm">
                         <AlertCircle className="w-4 h-4" />
@@ -248,6 +278,17 @@ export const ModalDetalleInternacion = ({
 
                   {/* BLOQUE INFERIOR - Pegado abajo con mt-auto */}
                   <div className="mt-auto flex flex-col gap-4 pt-6 border-t border-border/60">
+                    {/* [solicitante] - Removed del footer por peso visual */}
+                    <div className="flex items-start gap-3 p-3 rounded-xl border border-indigo-200 bg-indigo-50/70 shadow-sm dark:bg-indigo-950/40 dark:border-indigo-800">
+                      <Stethoscope className="w-5 h-5 text-indigo-500 dark:text-indigo-400 shrink-0 mt-0.5" />
+                      <span className="w-32 shrink-0 text-xs text-center font-black text-indigo-700/80 dark:text-indigo-300/80 uppercase tracking-wide pt-1">
+                        Solicitante:
+                      </span>
+                      <p className="flex-1 min-w-0 text-base font-black text-foreground break-words">
+                        {pedido.solicitante}
+                      </p>
+                    </div>
+
                     {/* [diagnostico] */}
                     <div className="flex items-center gap-3 bg-amber-50/50 dark:bg-amber-950/20 p-1 rounded-xl border border-amber-100 dark:border-amber-900">
                       <Activity className="w-4 h-4 text-indigo-400" />
@@ -391,17 +432,64 @@ export const ModalDetalleInternacion = ({
 
                 {/* FOOTER TARJETA (Solo visual, mismo estilo que el header) */}
                 <div
-                  className={`px-3 py-3 ${estilo.border} ${estilo.bg} flex flex-col sm:flex-row justify-between items-center gap-4`}
+                  className={`px-3 py-3 ${estilo.border} ${estilo.bg} flex flex-col sm:flex-row sm:justify-end items-stretch sm:items-center gap-2`}
                 >
-                  <div className="flex items-center gap-3 font-bold text-foreground bg-card/80 p-2  rounded-xl shadow-sm border border-border/50 w-full sm:w-auto">
-                    <Stethoscope className="w-5 h-5 text-indigo-500" />
-                    <span className="uppercase text-center w-32 tracking-tight text-sm text-muted-foreground">
-                      Solicitante:
+                  {esTomografia(pedido.tipoEstudio) && tecnico && (
+                    <span className="inline-flex items-center justify-center gap-1.5 w-full sm:w-auto px-2.5 py-1.5 rounded-lg border border-border/50 bg-card/70 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      <User className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
+                      Registra: {tecnico}
                     </span>
-                    <span className="truncate max-w-[200px] pr-3">
-                      {pedido.solicitante}
-                    </span>
-                  </div>
+                  )}
+
+                  {esTomografia(pedido.tipoEstudio) && (
+                    <a
+                      href={getUrlFormularioTomografia(
+                        {
+                          nombre: `${pedido.apellidos}, ${pedido.nombres}`,
+                          dni: pedido.dni || pedido.hclinica,
+                          sala: pedido.sala,
+                          diagnostico: pedido.diagnostico,
+                          servicio: pedido.servicio,
+                        },
+                        tecnico,
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Se abre en una pestaña nueva"
+                      className="
+                          flex items-center justify-center gap-2
+                          w-full sm:w-auto h-10 px-4 rounded-lg border-2
+                          border-teal-800 bg-teal-700 text-white
+                          text-xs font-black uppercase tracking-wider shadow-sm
+                          transition-all hover:bg-teal-800 active:scale-95
+                        "
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Registrar Tomografía
+                    </a>
+                  )}
+
+                  {onToggleEstado && (
+                    <button
+                      onClick={() => onToggleEstado(pedido)}
+                      aria-pressed={isFinalizado}
+                      title={
+                        isFinalizado
+                          ? "Marcar como Pendiente"
+                          : "Marcar como Finalizado"
+                      }
+                      className={`
+    flex items-center justify-center gap-2
+    w-full sm:w-40 h-10 px-4 rounded-lg border-2
+    font-semibold text-xs tracking-wide shadow-sm
+    transition-all active:scale-95
+    ${estiloEstado.badge} ${estiloEstado.hover}
+  `}
+                    >
+                      <span className="leading-none">{estiloEstado.label}</span>
+                      {estiloEstado.icon}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

@@ -4,9 +4,22 @@ import { CookieJar } from "tough-cookie";
 
 export const cookieJar = new CookieJar();
 
+export const esErrorDeRed = (code?: string | null): boolean =>
+  !!code &&
+  [
+    "ECONNABORTED", // timeout de axios
+    "ETIMEDOUT",
+    "ECONNREFUSED",
+    "ENETUNREACH",
+    "EHOSTUNREACH",
+    "ENOTFOUND",
+    "EAI_AGAIN",
+  ].includes(code);
+
 export const internoApi = wrapper(
   axios.create({
     baseURL: process.env.HOSPITAL_INTERNAL_URL || "http://10.101.0.4",
+    timeout: 30000,
     withCredentials: true,
     jar: cookieJar,
     headers: {

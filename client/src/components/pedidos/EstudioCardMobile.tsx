@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   Activity,
+  CheckCircle2,
   Clock,
   Stethoscope,
 } from "lucide-react";
@@ -14,6 +15,7 @@ interface EstudioCardMobileProps {
   estado: EstadoPedido;
   procesando: boolean;
   onTransferir: (idEstudio: string) => void;
+  consumoEnviado?: boolean;
 }
 
 export const EstudioCardMobile = ({
@@ -21,6 +23,7 @@ export const EstudioCardMobile = ({
   estado,
   procesando,
   onTransferir,
+  consumoEnviado = false,
 }: EstudioCardMobileProps) => {
   const estilo = getEstiloEstudio(pedido.tipoEstudio);
   const esActivo = estado === "activo";
@@ -59,6 +62,11 @@ export const EstudioCardMobile = ({
 
       {/* Cuerpo */}
       <div className="p-3 space-y-2 bg-card">
+        {consumoEnviado && (
+          <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wide bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 w-fit">
+            <CheckCircle2 className="w-3.5 h-3.5" /> Consumo enviado
+          </div>
+        )}
         <h3 className="text-base text-center py-1 font-bold leading-snug whitespace-pre-line text-foreground">
           {pedido.pedido}
         </h3>

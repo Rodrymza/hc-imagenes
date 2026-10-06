@@ -2,12 +2,11 @@ export interface IUsuarioDB {
   id: number;
   username: string;
   password?: string;
-  rol: "ADMIN" | "USER";
+  rol: "ADMIN" | "USER" | "MAMO" | "MEDICO";
   nombre: string;
   apellido: string;
   hsi_username?: string;
   hsi_password?: string;
-  pin?: string;
 }
 
 export type IUsuarioResponse = Omit<IUsuarioDB, "password" | "hsi_password">;

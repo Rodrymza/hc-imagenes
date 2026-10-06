@@ -1,4 +1,4 @@
-import type { IPedidoGuardia } from "@/types/pedidos";
+import type { GrupoPedidoGuardia, IPedidoGuardia } from "@/types/pedidos";
 import {
   Eye,
   Activity,
@@ -9,11 +9,9 @@ import {
 import { capitalize, getEstiloEstudio } from "./utils";
 import { TiempoDemora } from "./TiempoDemora";
 
-// Importamos la interfaz base (o la defines aquí mismo si prefiere
-
 interface GuardiaPedidoRowProps {
-  item: IPedidoGuardia;
-  onVerDetalle: (item: IPedidoGuardia) => void | Promise<void>;
+  grupo: GrupoPedidoGuardia;
+  onVerDetalle: (grupo: GrupoPedidoGuardia) => void | Promise<void>;
 }
 
 const getUbicacionEstilo = (ubicacion: string) => {
@@ -34,23 +32,23 @@ const getUbicacionEstilo = (ubicacion: string) => {
   };
 };
 
+const solicitudLimpia = (p: IPedidoGuardia) =>
+  p.solicitud?.slice(0, 1).toUpperCase() +
+    p.solicitud?.split("<br>")[0].slice(1, p.solicitud.length) || "Sin detalle";
+
 export const GuardiaPedidoRow = ({
-  item,
+  grupo,
   onVerDetalle,
 }: GuardiaPedidoRowProps) => {
-  // 1. Procesamiento de Fecha (Split seguro)
-  // Asumiendo que fechaString viene algo como "2026-01-26 14:30" o similar
-  const partesFecha = item.fechaString
-    ? item.fechaString.split(" ")
+  const representante = grupo.representante;
+  const partesFecha = representante.fechaString
+    ? representante.fechaString.split(" ")
     : ["--", "--"];
   const dia = partesFecha[0];
-  const hora = partesFecha[1] || ""; // Por si viene solo la fecha
+  const hora = partesFecha[1] || "";
 
-  const solicitudLimpia =
-    item.solicitud?.slice(0, 1).toUpperCase() +
-      item.solicitud?.split("<br>")[0].slice(1, item.solicitud.length) ||
-    "Sin detalle";
-  const estiloUbicacion = getUbicacionEstilo(item.ubicacion);
+  const estiloEstudio = getEstiloEstudio(grupo.modalidad);
+  const estiloUbicacion = getUbicacionEstilo(representante.ubicacion);
 
   return (
     <tr className="hover:bg-slate-50 dark:hover:bg-slate-900/40 transition-colors group border-b border-border last:border-0">
@@ -58,20 +56,22 @@ export const GuardiaPedidoRow = ({
       <td className="px-4 py-4 whitespace-nowrap text-center align-middle">
         <div className="flex items-center justify-center gap-2">
           <CalendarClock className="w-4 h-4 text-muted-foreground" />
-          <div className="flex flex-col w-full items-center">
-            <span className="font-bold text-slate-700 text-lg">{dia}</span>
-            {hora && (
-              <span className="text-base text-slate-400 font-mono">
-                {hora} hs
-              </span>
-            )}
-            {item.fecha && (
-              <TiempoDemora
-                fechaCreacion={String(item.fecha)}
-                solicitud={item.solicitud}
-              />
-            )}
-          </div>
+<div className="flex flex-col w-full items-center">
+              <span className="font-bold text-slate-700 text-lg">{dia}</span>
+              {hora && (
+                <span className="text-base text-slate-400 font-mono">
+                  {hora} hs
+                </span>
+              )}
+              {representante.fecha && (
+                <div className="w-full mt-1">
+                  <TiempoDemora
+                    fechaCreacion={String(representante.fecha)}
+                    solicitud={representante.solicitud}
+                  />
+                </div>
+              )}
+            </div>
         </div>
       </td>
 
@@ -79,11 +79,11 @@ export const GuardiaPedidoRow = ({
       <td className="px-6 py-4 text-center align-middle">
         <div className="flex flex-col items-center">
           <span className="font-black text-foreground text-lg group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors">
-            {item.apellido}, {capitalize(item.nombre)}
+            {representante.apellido}, {capitalize(representante.nombre)}
           </span>
           <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground font-medium">
             <span className="tracking-wider bg-muted px-1.5 py-0.5 rounded border border-border">
-              DNI: {item.dni ?? "S/D"}
+              DNI: {representante.dni ?? "S/D"}
             </span>
           </div>
         </div>
@@ -93,15 +93,20 @@ export const GuardiaPedidoRow = ({
       <td className="px-6 py-4 max-w-xs align-middle">
         <div className="flex flex-col items-center gap-2">
           <span
-            className={`inline-block w-fit px-3 py-1.5 rounded text-xs font-semibold uppercase tracking-wide ${
-              getEstiloEstudio(item.tipoEstudio).badge
-            }`}
+            className={`inline-block w-fit px-3 py-1.5 rounded text-xs font-semibold uppercase tracking-wide ${estiloEstudio.badge}`}
           >
-            {item.tipoEstudio}
+            {grupo.modalidad}
           </span>
 
-          <div className="font-semibold text-lg text-foreground leading-snug text-center">
-            {solicitudLimpia}
+          <div className="w-full grid gap-2 grid-cols-1">
+            {grupo.items.map((estudio) => (
+              <span
+                key={String(estudio.idEstudio)}
+                className="font-semibold text-center text-lg text-foreground leading-snug whitespace-pre-line"
+              >
+                {solicitudLimpia(estudio)}
+              </span>
+            ))}
           </div>
         </div>
       </td>
@@ -110,11 +115,10 @@ export const GuardiaPedidoRow = ({
       <td className="px-6 py-4 align-middle text-center hidden md:table-cell">
         <div className="flex flex-col items-center">
           <div
-            /* Añadimos max-w y whitespace-normal */
             className={`flex items-center px-3 py-1 rounded-lg border text-xs font-semibold uppercase whitespace-normal max-w-[180px] leading-tight ${estiloUbicacion.bg}`}
           >
             {estiloUbicacion.icon}
-            {item.ubicacion || "General"}
+            {representante.ubicacion || "General"}
           </div>
         </div>
       </td>
@@ -122,9 +126,8 @@ export const GuardiaPedidoRow = ({
       {/* 5. ACCIONES */}
       <td className="px-4 py-4 text-right whitespace-nowrap align-middle">
         <div className="flex flex-col items-center gap-2">
-          {/* Botón Ver Detalle */}
           <button
-            onClick={() => onVerDetalle(item)}
+            onClick={() => onVerDetalle(grupo)}
             className="
     flex items-center justify-center gap-2 
     w-36 h-10 px-4

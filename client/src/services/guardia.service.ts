@@ -11,7 +11,7 @@ axios.defaults.withCredentials = true;
 export const GuardiaService = {
   checkHsiSession: async (): Promise<{
     hasSession: boolean;
-    operator: string;
+    username: string;
   }> => {
     const res = await axios.get("/api/guardia/hsi-status");
     return res.data;

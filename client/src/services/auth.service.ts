@@ -17,7 +17,6 @@ export interface LoginResponse {
 export interface VerifyResponse {
   status: string;
   user: User;
-  activeOperator: User;
 }
 
 export const AuthService = {
@@ -36,11 +35,6 @@ export const AuthService = {
 
   verifyToken: async () => {
     const res = await axios.get<VerifyResponse>("/api/auth/verify");
-    return res.data;
-  },
-
-  changeOperator: async (pin: string) => {
-    const res = await axios.post("/api/auth/change-operator", { pin });
     return res.data;
   },
 };

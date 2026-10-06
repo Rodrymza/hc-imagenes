@@ -2,7 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AppError } from "../../errors/AppError.js";
 import { IUserPayload } from "./auth.types.js";
-import { db } from "../../db/database.js";
 
 const SECRET = process.env.JWT_SECRET;
 
@@ -40,16 +39,6 @@ export const restringirA = (...rolesPermitidos: string[]) => {
   };
 };
 
-export function resolveActiveOperatorId(req: Request): number {
-  const signedId = req.signedCookies?.activeOperator;
-  if (signedId) {
-    const id = Number(signedId);
-    const exists = db.prepare("SELECT 1 FROM users WHERE id = ?").get(id);
-    if (exists) return id;
-  }
-  return req.user!.id;
-}
-
 export const modoAdministrador = (
   req: Request,
   res: Response,
@@ -59,14 +48,22 @@ export const modoAdministrador = (
   if (!user || user.rol !== "ADMIN") {
     return next(new AppError("No tienes permisos de administrador", 403));
   }
-  const operatorId = resolveActiveOperatorId(req);
-  if (operatorId !== user.id) {
-    return next(
-      new AppError(
-        "Modo administrador requiere que el operador activo sea usted",
-        403,
-      ),
-    );
-  }
   next();
+};
+
+export const puedeEliminarEstudio = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  const user = req.user as IUserPayload;
+  if (!user) {
+    return next(new AppError("No estás logueado. Por favor inicia sesión.", 401));
+  }
+  if (user.rol === "MAMO" || user.rol === "ADMIN") {
+    return next();
+  }
+  return next(
+    new AppError("No tienes permisos para eliminar estudios", 403),
+  );
 };

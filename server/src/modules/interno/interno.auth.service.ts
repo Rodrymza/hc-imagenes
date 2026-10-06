@@ -1,4 +1,5 @@
-import { internoApi, cookieJar } from "./interno.api.js";
+import { isAxiosError } from "axios";
+import { esErrorDeRed, internoApi, cookieJar } from "./interno.api.js";
 import { AppError } from "../../errors/AppError.js";
 
 const BASE_URL = process.env.HOSPITAL_INTERNAL_URL || "http://10.101.0.4";
@@ -61,6 +62,13 @@ export const loginInterno = async (
     return true;
   } catch (error) {
     console.error("❌ Error en Login Interno:", error);
+    if (isAxiosError(error) && esErrorDeRed(error.code)) {
+      throw new AppError(
+        "No se pudo conectar con el sistema interno",
+        502,
+        "Verifique la conexión a la intranet e intente nuevamente.",
+      );
+    }
     throw new AppError("Error de autenticación con el sistema interno", 500);
   }
 };

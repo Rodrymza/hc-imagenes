@@ -10,8 +10,3 @@ const BASE_COOKIE_OPTIONS = () => ({
 export const jwtCookieOptions = () => ({
   ...BASE_COOKIE_OPTIONS(),
 });
-
-export const operatorCookieOptions = () => ({
-  ...BASE_COOKIE_OPTIONS(),
-  signed: true,
-});

@@ -12,8 +12,12 @@ import type {
   IPedidoInternacion,
 } from "@/types/pedidos";
 import { getErrorMessage } from "@/utils/getErrorMessage";
+import { useEstudiosConsumo, type OrigenConsumo } from "./useEstudiosConsumo";
 
-export type Exposicion = IConsumoItem & { origen: "AUTO" | "MANUAL" };
+export type Exposicion = IConsumoItem & {
+  origen: "AUTO" | "MANUAL";
+  idEstudio?: string;
+};
 
 const REGLAS_DETECCION = [
   { regex: /t[oó]rax|pecho/i, match: "TORAX" },
@@ -41,6 +45,8 @@ const REGLAS_DETECCION = [
 
 export const useConsumos = (
   pedidos: IDetallePedidoGuardia[] | IPedidoInternacion[] | null,
+  origenConsumo: OrigenConsumo = "GUARDIA",
+  opciones?: { onConsumoEnviado?: (ids: string[]) => void | Promise<void> },
 ) => {
   const [prestaciones, setPrestaciones] = useState<IConsumoItem[]>([]);
   const [exposiciones, setExposiciones] = useState<Exposicion[]>([]);
@@ -55,10 +61,22 @@ export const useConsumos = (
     IPacienteInternado[]
   >([]);
 
+  const { idEstudiosEnviados, marcarEnviados } = useEstudiosConsumo(
+    (pedidos ?? []).map((p) => p.idEstudio),
+    origenConsumo,
+    {
+      persistir: opciones?.onConsumoEnviado
+        ? false
+        : origenConsumo === "INTERNACION",
+    },
+  );
+
   const [firmaPedidosProcesados, setFirmaPedidosProcesados] =
     useState<string>("");
   const firmaPedidosRef = useRef(firmaPedidosProcesados);
-  useEffect(() => { firmaPedidosRef.current = firmaPedidosProcesados; }, [firmaPedidosProcesados]);
+  useEffect(() => {
+    firmaPedidosRef.current = firmaPedidosProcesados;
+  }, [firmaPedidosProcesados]);
   // 1. Cargar Catálogo
   useEffect(() => {
     const cargarPrestaciones = async () => {
@@ -114,7 +132,9 @@ export const useConsumos = (
         textoSolicitud = pedido.pedido + " " + pedido.observaciones;
         if (pedido.realizado) return;
       }
-      textoSolicitud = textoSolicitud.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      textoSolicitud = textoSolicitud
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "");
 
       REGLAS_DETECCION.forEach((regla) => {
         if (regla.regex.test(textoSolicitud)) {
@@ -124,7 +144,11 @@ export const useConsumos = (
           });
 
           if (encontrado) {
-            nuevasDetectadas.push({ ...encontrado, origen: "AUTO" });
+            nuevasDetectadas.push({
+              ...encontrado,
+              origen: "AUTO",
+              idEstudio: pedido.idEstudio,
+            });
           }
         }
       });
@@ -159,6 +183,7 @@ export const useConsumos = (
   ) => {
     if (exposiciones.length === 0) return;
     const firmaAlEnviar = firmaPedidosRef.current;
+    const esAmbulatorio = sistema.toLowerCase() === "ambulatorio";
     setGuardandoConsumos(true);
     try {
       const res: IResultadoLoteConsumo = await InternoService.registrarConsumos(
@@ -171,6 +196,22 @@ export const useConsumos = (
 
       const errores = resultados.filter((r) => !r.exito);
       const exitos = resultados.filter((r) => r.exito);
+      const prestacionesExitosas = new Set(exitos.map((r) => r.prestacion));
+      const idEstudiosEnviadosAhora = exposiciones
+        .filter((e) => e.idEstudio && prestacionesExitosas.has(e.descripcion))
+        .map((e) => e.idEstudio as string);
+
+      // Contexto de un solo estudio (modal de internación / guardia con un
+      // pedido): aunque la exposición sea manual, el envío corresponde a ese estudio.
+      if (
+        !esAmbulatorio &&
+        exitos.length > 0 &&
+        pedidos?.length === 1 &&
+        !idEstudiosEnviadosAhora.includes(pedidos[0].idEstudio)
+      ) {
+        idEstudiosEnviadosAhora.push(pedidos[0].idEstudio);
+      }
+
       if (errores.length > 0) {
         toast.warning(
           <>
@@ -190,6 +231,14 @@ export const useConsumos = (
         );
         if (firmaPedidosRef.current === firmaAlEnviar) {
           limpiarTodo();
+        }
+      }
+
+      if (!esAmbulatorio && idEstudiosEnviadosAhora.length > 0) {
+        if (opciones?.onConsumoEnviado) {
+          await opciones.onConsumoEnviado(idEstudiosEnviadosAhora);
+        } else {
+          await marcarEnviados(idEstudiosEnviadosAhora);
         }
       }
     } catch (error) {
@@ -251,6 +300,7 @@ export const useConsumos = (
     exposiciones,
     loadingCatalogo,
     guardandoConsumos,
+    idEstudiosEnviados,
     agregarExposicion,
     quitarExposicionPorDescripcion,
     limpiarTodo,

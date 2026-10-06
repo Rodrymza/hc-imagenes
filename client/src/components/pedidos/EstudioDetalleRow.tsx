@@ -1,5 +1,5 @@
 import type { IDetallePedidoGuardia } from "@/types/pedidos";
-import { CalendarClock, Stethoscope } from "lucide-react";
+import { CalendarClock, CheckCircle2, Stethoscope } from "lucide-react";
 import { getEstiloEstudio } from "./utils";
 import { BotonTransferirPedido } from "./BotonTransferirPedido";
 import type { EstadoPedido } from "@/utils/pedidos";
@@ -9,6 +9,7 @@ interface EstudioDetalleRowProps {
   estado: EstadoPedido;
   procesando: boolean;
   onTransferir: (idEstudio: string) => void;
+  consumoEnviado?: boolean;
 }
 
 export const EstudioDetalleRow = ({
@@ -16,6 +17,7 @@ export const EstudioDetalleRow = ({
   estado,
   procesando,
   onTransferir,
+  consumoEnviado = false,
 }: EstudioDetalleRowProps) => {
   const estilo = getEstiloEstudio(pedido.tipoEstudio);
   const [dia, hora] = pedido.fecha.split(" ");
@@ -48,8 +50,18 @@ export const EstudioDetalleRow = ({
           >
             {pedido.tipoEstudio}
           </span>
+          {consumoEnviado && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+              <CheckCircle2 className="w-3 h-3" /> Consumo enviado
+            </span>
+          )}
           <span className="font-semibold text-foreground text-sm leading-snug text-center whitespace-normal break-words">
             {pedido.pedido}
+          </span>
+          <span className="italic text-sm leading-snug text-center whitespace-normal break-words">
+            {pedido.observaciones != "Sin observaciones"
+              ? pedido.observaciones
+              : ""}
           </span>
         </div>
       </td>

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { AppError } from "../../errors/AppError.js";
+import { db } from "../../db/database.js";
 import { apiInternoService } from "./interno.api.service.js";
 import { loginInterno } from "./interno.auth.service.js";
 import {
@@ -27,6 +28,71 @@ export const internoController = {
     try {
       const pacientesInternados = await internoService.getPacientesInternados();
       return res.json(pacientesInternados);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getEstudiosConsumo(req: Request, res: Response, next: NextFunction) {
+    try {
+      const idsParam = req.query.ids as string;
+      const ids = idsParam
+        ? idsParam.split(",").map((i) => i.trim()).filter(Boolean)
+        : [];
+      if (ids.length === 0) return res.json({ idEstudios: [] });
+
+      const placeholders = ids.map(() => "?").join(",");
+      const rows = db
+        .prepare(
+          `SELECT id_estudio FROM estudio_consumo WHERE id_estudio IN (${placeholders})`,
+        )
+        .all(...ids) as { id_estudio: string }[];
+      return res.json({ idEstudios: rows.map((r) => r.id_estudio) });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async marcarEstudiosConsumo(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { idEstudios, idPaciente, origen } = req.body;
+
+      if (!Array.isArray(idEstudios) || idEstudios.length === 0) {
+        throw new AppError(
+          "Datos faltantes",
+          400,
+          "Faltan idEstudios (array con los identificadores de estudio)",
+        );
+      }
+
+      const origenValido = ["GUARDIA", "INTERNACION", "AMBULATORIO"].includes(
+        origen,
+      )
+        ? origen
+        : "GUARDIA";
+      const idsLimpiados = idEstudios
+        .map((id: unknown) => (typeof id === "string" ? id.trim() : ""))
+        .filter(Boolean);
+
+      if (idsLimpiados.length === 0) {
+        return res.status(201).json({ success: true, marcados: 0 });
+      }
+
+      const insertar = db.prepare(
+        `INSERT OR IGNORE INTO estudio_consumo (id_estudio, id_paciente, origen)
+         VALUES (?, ?, ?)`,
+      );
+      const transaccion = db.transaction((lista: string[]) => {
+        lista.forEach((id) =>
+          insertar.run(id, idPaciente ?? null, origenValido),
+        );
+      });
+      transaccion(idsLimpiados);
+
+      return res.status(201).json({
+        success: true,
+        marcados: idsLimpiados.length,
+      });
     } catch (error) {
       next(error);
     }

@@ -37,7 +37,7 @@ export interface IEnvioComentario {
 
 export interface IPedidoGuardia {
   idEstudio: number | string;
-  fecha: Date | null;
+  fecha: string | null;
   fechaString: string;
   solicitud: string;
   tipoEstudio: string;
@@ -62,4 +62,11 @@ export interface IDetallePedidoGuardia {
   lugar: string;
   doctor: string;
   realizado: boolean;
+}
+
+export interface GrupoPedidoGuardia {
+  key: string;
+  modalidad: string;
+  items: IPedidoGuardia[];
+  representante: IPedidoGuardia;
 }

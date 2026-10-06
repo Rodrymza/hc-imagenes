@@ -1,4 +1,4 @@
-import { Eye, CalendarClock, AlertCircle } from "lucide-react";
+import { Eye, CalendarClock, AlertCircle, CheckCircle2 } from "lucide-react";
 import type { PedidoCardData } from "@/types/pedidoCard";
 import { getEstadoEstilo, getEstiloEstudio, getLugarEstilo } from "./utils";
 import { TiempoDemora } from "./TiempoDemora";
@@ -43,6 +43,12 @@ export const PedidoCard = ({
             {item.studyType}
           </span>
 
+          {item.consumoEnviado && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
+              <CheckCircle2 className="w-3 h-3" /> Consumo enviado
+            </span>
+          )}
+
           <div className="flex items-center gap-2">
             {item.isUrgent && (
               <span className="flex items-center gap-1 text-[10px] font-black text-red-600 dark:text-red-400 animate-pulse bg-red-50 dark:bg-red-950/50 px-2 py-0.5 rounded-full border border-red-100 dark:border-red-900">
@@ -75,9 +81,26 @@ export const PedidoCard = ({
         </span>
 
         {/* Estudio */}
-        <p className="font-semibold text-sm text-foreground leading-snug mb-1 whitespace-pre-line">
-          {item.studyDescription}
-        </p>
+        {item.studies && item.studies.length > 0 ? (
+          <div className="flex flex-col gap-1.5 mb-1">
+            {item.studies.map((s, i) => (
+              <div key={i} className="flex items-center gap-1.5">
+                <span
+                  className={`inline-block w-fit px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wide ${getEstiloEstudio(s.studyType).badge}`}
+                >
+                  {s.studyType}
+                </span>
+                <span className="font-semibold text-sm text-foreground leading-snug">
+                  {s.studyDescription}
+                </span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="font-semibold text-sm text-foreground leading-snug mb-1 whitespace-pre-line">
+            {item.studyDescription}
+          </p>
+        )}
 
         {/* Diagnóstico */}
         {item.diagnosis && (

@@ -1,3 +1,6 @@
+import { isAxiosError } from "axios";
+import { esErrorDeRed } from "./interno/interno.api.js";
+
 export const ejecutarPeticionInterna = async <T>(
   descripcion: string,
   login: (forzarLogueo: boolean) => Promise<void>,
@@ -15,6 +18,20 @@ export const ejecutarPeticionInterna = async <T>(
       throw error;
     }
 
+    // Timeout o error de red: relogueamos con sesión limpia y reintentamos UNA vez
+    if (isAxiosError(error) && esErrorDeRed(error.code)) {
+      console.warn(
+        `🔌 Error de red/timeout en "${descripcion}" (${error.code}). Reintentando con login fresco...`,
+      );
+      try {
+        await login(true);
+        return await operacion();
+      } catch (loginError: any) {
+        console.error(`💥 Falló el reintento de red para ${descripcion}.`);
+        throw loginError;
+      }
+    }
+
     // SOLO si es 401 (No autorizado) o 403, intentamos renovar sesión
     if (status === 401 || status === 403) {
       console.warn(
@@ -29,7 +46,7 @@ export const ejecutarPeticionInterna = async <T>(
       }
     }
 
-    // Cualquier otro error (500, Timeout, etc) se lanza directo
+    // Cualquier otro error (500, etc) se lanza directo
     console.error(
       `⚠️ Error en "${descripcion}" (Status: ${status || "Desconocido"})`,
     );

@@ -23,6 +23,7 @@ import type { PedidoCardData } from "@/types/pedidoCard";
 import { ModalDetalleInternacion } from "@/components/pedidos/ModalDetalleInternacion";
 import { PedidosFooter } from "@/components/layouts/PedidosFooter";
 import { capitalize } from "@/components/pedidos/utils";
+import { useEstudiosConsumo } from "@/hooks/useEstudiosConsumo";
 
 export default function InternacionPage() {
   // 1. Iniciamos con un array vacío para esperar los datos reales de la API
@@ -36,13 +37,22 @@ export default function InternacionPage() {
     lugares,
   } = usePedidosInternacion();
 
+  const { idEstudiosEnviados, marcarEnviados } = useEstudiosConsumo(
+    pedidosInternacion.map((p) => p.idEstudio),
+    "INTERNACION",
+  );
+
   // Estados de los filtros
   const [busqueda, setBusqueda] = useState("");
   const [filtroLugar, setFiltroLugar] = useState("todos");
   const [filtroModalidad, setFiltroModalidad] = useState("todos");
   const [filtroEstado, setFiltroEstado] = useState("todos");
   const [filtroPiso, setFiltroPiso] = useState("todos");
-  const hoy = new Date().toISOString().split("T")[0];
+  const hoy = (() => {
+    const ahora = new Date();
+    const offset = ahora.getTimezoneOffset() * 60000;
+    return new Date(ahora.getTime() - offset).toISOString().split("T")[0];
+  })();
   const [filtroFecha, setFiltroFecha] = useState(hoy);
   const [showFiltros, setShowFiltros] = useState(
     () => localStorage.getItem("filtrosInternacion") !== "false",
@@ -115,6 +125,16 @@ export default function InternacionPage() {
     setPedidoSeleccionado(pedido); // Guardamos el objeto completo que ya tiene todo
     setModalOpen(true); // Abrimos el modal
   };
+
+  // Mantiene el modal sincronizado con el estado real (optimista) de la lista
+  const pedidoEnModal = useMemo(() => {
+    if (!pedidoSeleccionado) return null;
+    return (
+      pedidosInternacion.find(
+        (p) => p.idEstudio === pedidoSeleccionado.idEstudio,
+      ) ?? pedidoSeleccionado
+    );
+  }, [pedidoSeleccionado, pedidosInternacion]);
 
   const limpiarFiltros = () => {
     setBusqueda("");
@@ -256,6 +276,7 @@ export default function InternacionPage() {
       hasNotification: !!p.nota?.trim(),
       status: isFinalizado ? "realizado" : "pendiente",
       createdAt: p.fechaIso,
+      consumoEnviado: idEstudiosEnviados.has(p.idEstudio),
     };
   });
 
@@ -278,12 +299,12 @@ export default function InternacionPage() {
 
   useEffect(() => {
     const intervalo = setInterval(() => {
-      if (!document.hidden) traerPedidosInternacion(true);
+      if (!document.hidden) traerPedidosInternacion(true, filtroFecha);
     }, 30000);
 
     // LIMPIEZA: Muy importante limpiar el intervalo al desmontar
     return () => clearInterval(intervalo);
-  }, [traerPedidosInternacion]);
+  }, [traerPedidosInternacion, filtroFecha]);
 
   return (
     <>
@@ -545,6 +566,9 @@ export default function InternacionPage() {
                           item={item}
                           onVerDetalle={handleVerDetalle}
                           onToggleEstado={alternarEstadoPedido}
+                          consumoEnviado={idEstudiosEnviados.has(
+                            item.idEstudio,
+                          )}
                         />
                       ))}
                     </tbody>
@@ -579,8 +603,13 @@ export default function InternacionPage() {
       <ModalDetalleInternacion
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
-        pedido={pedidoSeleccionado}
+        pedido={pedidoEnModal}
         onGuardarNota={guardarNota}
+        onToggleEstado={alternarEstadoPedido}
+        consumoEnviado={idEstudiosEnviados.has(
+          pedidoSeleccionado?.idEstudio ?? "",
+        )}
+        onConsumoEnviado={marcarEnviados}
       />
     </>
   );

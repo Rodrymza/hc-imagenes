@@ -3,7 +3,7 @@ import { GuardiaPedidoRow } from "@/components/pedidos/GuardiaPedidoRow";
 import { PedidoCard } from "@/components/pedidos/PedidoCard";
 import PaginationBar from "@/components/PaginationBar";
 import { useServicioGuardia } from "@/hooks/usePedidosGuardia";
-import type { IPedidoGuardia } from "@/types/pedidos";
+import type { GrupoPedidoGuardia, IPedidoGuardia } from "@/types/pedidos";
 import type { PedidoCardData } from "@/types/pedidoCard";
 import {
   CalendarClock,
@@ -86,7 +86,7 @@ export default function PedidosGuardiaPage() {
   const [busqueda, setBusqueda] = useState("");
   const [filtroLugar, setFiltroLugar] = useState("todos");
   const [filtroModalidad, setFiltroModalidad] = useState("todos");
-  const { activeOperator } = useAuth();
+  const { user } = useAuth();
 
   const hoy = new Date().toISOString().split("T")[0];
   const [filtroFecha, setFiltroFecha] = useState(hoy);
@@ -133,59 +133,118 @@ export default function PedidosGuardiaPage() {
     });
   };
 
-  const handleVerDetalle = (item: IPedidoGuardia) => {
-    const dni = dniAString(item.dni);
+  const solicitudLimpia = (p: IPedidoGuardia) =>
+    p.solicitud?.slice(0, 1).toUpperCase() +
+      p.solicitud?.split("<br>")[0].slice(1, p.solicitud.length) ||
+    "Sin detalle";
+
+  const fechaTimestamp = (f: IPedidoGuardia["fecha"]): number =>
+    f ? new Date(f).getTime() : 0;
+
+  const VENTANA_GRUPO_MS = 5 * 60 * 1000;
+
+  const grupos = useMemo(() => {
+    const lista: GrupoPedidoGuardia[] = [];
+    const pedidos = [...pedidosGuardia].sort((a, b) => {
+      const pac = String(a.idPaciente).localeCompare(String(b.idPaciente));
+      if (pac !== 0) return pac;
+      const mod = a.tipoEstudio.localeCompare(b.tipoEstudio);
+      if (mod !== 0) return mod;
+      return fechaTimestamp(a.fecha) - fechaTimestamp(b.fecha);
+    });
+
+    for (const p of pedidos) {
+      const ultimo = lista[lista.length - 1];
+      const mismoGrupo =
+        ultimo &&
+        String(ultimo.representante.idPaciente) === String(p.idPaciente) &&
+        ultimo.modalidad === p.tipoEstudio &&
+        p.fecha &&
+        fechaTimestamp(p.fecha) - fechaTimestamp(ultimo.items[0].fecha) <=
+          VENTANA_GRUPO_MS;
+      if (mismoGrupo) {
+        ultimo.items.push(p);
+      } else {
+        lista.push({
+          key: `${p.idPaciente}|${p.tipoEstudio}|${p.fecha ?? "sin-fecha"}`,
+          modalidad: p.tipoEstudio,
+          items: [p],
+          representante: p,
+        });
+      }
+    }
+
+    return lista.sort(
+      (a, b) =>
+        fechaTimestamp(a.representante.fecha) -
+        fechaTimestamp(b.representante.fecha),
+    );
+  }, [pedidosGuardia, VENTANA_GRUPO_MS]);
+
+  const handleVerDetalle = (grupo: GrupoPedidoGuardia) => {
+    const representante = grupo.representante;
+    const dni = dniAString(representante.dni);
     if (!dni) {
       toast.info(
         "El paciente no tiene DNI registrado. No se pueden buscar sus pedidos.",
       );
       return;
     }
-    navigate(`/guardia/paciente/${dni}`, { state: { pedidoGeneral: item } });
+    navigate(`/guardia/paciente/${dni}`, {
+      state: { pedidoGeneral: representante },
+    });
   };
 
-  const pedidosFiltrados = pedidosGuardia.filter((p: IPedidoGuardia) => {
+  const gruposFiltrados = grupos.filter((grupo) => {
     // 1. Busqueda: Usamos apellido (singular) y nombre
     const textoBusqueda = busqueda.toLowerCase();
-    const cumpleBusqueda =
-      p.apellido.toLowerCase().includes(textoBusqueda) ||
-      p.nombre.toLowerCase().includes(textoBusqueda) ||
-      dniAString(p.dni).includes(busqueda);
+    const cumpleBusqueda = grupo.items.some(
+      (p) =>
+        p.apellido.toLowerCase().includes(textoBusqueda) ||
+        p.nombre.toLowerCase().includes(textoBusqueda) ||
+        dniAString(p.dni).includes(busqueda),
+    );
 
     // 2. Modalidad
     const cumpleModalidad =
-      filtroModalidad === "todos" || p.tipoEstudio === filtroModalidad;
+      filtroModalidad === "todos" || grupo.modalidad === filtroModalidad;
 
     // 3. Lugar: Usamos p.ubicacion
-    const cumpleLugar =
-      filtroLugar === "todos" ||
-      p.ubicacion?.toLowerCase().includes(filtroLugar.toLowerCase());
+    const cumpleLugar = grupo.items.some(
+      (p) =>
+        filtroLugar === "todos" ||
+        p.ubicacion?.toLowerCase().includes(filtroLugar.toLowerCase()),
+    );
 
     return cumpleBusqueda && cumpleModalidad && cumpleLugar;
   });
 
-  const totalPaginas = Math.ceil(pedidosFiltrados.length / ITEMS_POR_PAGINA);
-  const pedidosPaginados = pedidosFiltrados.slice(
+  const totalPaginas = Math.ceil(gruposFiltrados.length / ITEMS_POR_PAGINA);
+  const gruposPaginados = gruposFiltrados.slice(
     (paginaActual - 1) * ITEMS_POR_PAGINA,
     paginaActual * ITEMS_POR_PAGINA,
   );
 
-  const pedidosCardData: PedidoCardData[] = pedidosPaginados.map((p) => {
-    const partesFecha = p.fechaString ? p.fechaString.split(" ") : ["--", "--"];
-    const solicitudLimpia =
-      p.solicitud?.slice(0, 1).toUpperCase() +
-        p.solicitud?.split("<br>")[0].slice(1, p.solicitud.length) ||
-      "Sin detalle";
+  const pedidosCardData: PedidoCardData[] = gruposPaginados.map((grupo) => {
+    const parte = grupo.representante;
+    const partesFecha = parte.fechaString
+      ? parte.fechaString.split(" ")
+      : ["--", "--"];
     return {
-      id: p.idEstudio,
-      patientName: `${p.apellido}, ${capitalize(p.nombre)}`,
-      dni: dniAString(p.dni),
+      id: grupo.key,
+      patientName: `${parte.apellido}, ${capitalize(parte.nombre)}`,
+      dni: dniAString(parte.dni),
       date: partesFecha[0],
       time: partesFecha[1] || "",
-      studyType: p.tipoEstudio,
-      studyDescription: solicitudLimpia,
-      location: p.ubicacion || "General",
-      createdAt: p.fecha ? String(p.fecha) : undefined,
+      studyType: grupo.modalidad,
+      studyDescription: solicitudLimpia(parte),
+      studies: grupo.items.map((p) => ({
+        studyType: p.tipoEstudio,
+        studyDescription: solicitudLimpia(p),
+        createdAt: p.fecha ? String(p.fecha) : undefined,
+      })),
+      location: parte.ubicacion || "General",
+      createdAt: parte.fecha ? String(parte.fecha) : undefined,
     };
   });
 
@@ -195,17 +254,15 @@ export default function PedidosGuardiaPage() {
       Radiografia: 0,
       Ecografia: 0,
     };
-    pedidosGuardia.forEach((p) => {
-      if (p.tipoEstudio in counts) counts[p.tipoEstudio]++;
+    grupos.forEach((g) => {
+      if (g.modalidad in counts) counts[g.modalidad]++;
     });
     return counts;
-  }, [pedidosGuardia]);
+  }, [grupos]);
 
   if (hsiChecking) {
     return (
-      <div
-        className="bg-seccion-guardia min-h-screen flex items-center justify-center font-sans"
-      >
+      <div className="bg-seccion-guardia min-h-screen flex items-center justify-center font-sans">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-white" />
           <span className="text-white font-bold">
@@ -218,12 +275,10 @@ export default function PedidosGuardiaPage() {
 
   if (!hsiSessionActive) {
     return (
-      <div
-        className="bg-seccion-guardia min-h-screen flex items-center justify-center px-4 font-sans"
-      >
+      <div className="bg-seccion-guardia min-h-screen flex items-center justify-center px-4 font-sans">
         <div className="w-full max-w-sm bg-card rounded-2xl shadow-2xl overflow-hidden">
           <div className="pt-8 pb-6 px-8 flex flex-col items-center">
-            <div className="bg-red-50 dark:bg-red-950/60 p-3 rounded-full mb-4 shadow-sm">
+            <div className="bg-red-50 dark:bg-red-950/30 p-3 rounded-full mb-4 shadow-sm">
               <ShieldCheck className="w-8 h-8 text-red-600 dark:text-red-400" />
             </div>
             <h1 className="text-xl font-black text-foreground tracking-tight">
@@ -233,7 +288,7 @@ export default function PedidosGuardiaPage() {
               Ingresá el código de tu Authenticator para acceder a Guardia
             </p>
             <p className="text-sm text-muted-foreground mt-1 text-center">
-              Usuario: <strong>{activeOperator?.username}</strong>
+              Usuario: <strong>{user?.username}</strong>
             </p>
           </div>
 
@@ -288,9 +343,7 @@ export default function PedidosGuardiaPage() {
 
   return (
     <>
-      <div
-        className="bg-seccion-guardia min-h-screen flex flex-col font-sans"
-      >
+      <div className="bg-seccion-guardia min-h-screen flex flex-col font-sans">
         {/* HEADER STICKY */}
         <div className="sticky top-16 z-10 shrink-0">
           <div className="p-4 md:p-6 pb-0">
@@ -419,7 +472,7 @@ export default function PedidosGuardiaPage() {
                   </span>
                 </div>
               </div>
-            ) : pedidosFiltrados.length === 0 ? (
+            ) : gruposFiltrados.length === 0 ? (
               <div className="bg-card rounded-xl shadow-2xl overflow-hidden border border-red-100 dark:border-red-950 py-20">
                 <div className="px-6 text-center text-muted-foreground">
                   <Search className="w-12 h-12 mx-auto opacity-20 mb-2" />
@@ -434,14 +487,14 @@ export default function PedidosGuardiaPage() {
                 <div className="block md:hidden space-y-3">
                   {pedidosCardData.map((item) => (
                     <PedidoCard
-                      key={item.id}
+                      key={String(item.id)}
                       item={item}
                       accentColor="red"
                       onVerDetalle={() => {
-                        const original = pedidosPaginados.find(
-                          (p) => p.idEstudio === item.id,
+                        const grupo = gruposPaginados.find(
+                          (g) => g.key === item.id,
                         );
-                        if (original) handleVerDetalle(original);
+                        if (grupo) handleVerDetalle(grupo);
                       }}
                       buttonLabel="Ver Pedidos"
                     />
@@ -449,7 +502,7 @@ export default function PedidosGuardiaPage() {
                   <PaginationBar
                     currentPage={paginaActual}
                     totalPages={totalPaginas}
-                    totalItems={pedidosFiltrados.length}
+                    totalItems={gruposFiltrados.length}
                     itemsPerPage={ITEMS_POR_PAGINA}
                     onPageChange={setPaginaActual}
                   />
@@ -478,10 +531,10 @@ export default function PedidosGuardiaPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border [&>tr:nth-child(even)]:bg-muted">
-                      {pedidosFiltrados.map((item: IPedidoGuardia) => (
+                      {gruposPaginados.map((grupo) => (
                         <GuardiaPedidoRow
-                          key={item.idEstudio}
-                          item={item}
+                          key={grupo.key}
+                          grupo={grupo}
                           onVerDetalle={handleVerDetalle}
                         />
                       ))}
@@ -498,8 +551,8 @@ export default function PedidosGuardiaPage() {
           titulo="Recuento de urgencias"
           accent="red"
           contadores={[
-            { tipo: "Total", valor: pedidosGuardia.length },
-            { tipo: "Filtrados", valor: pedidosFiltrados.length },
+            { tipo: "Total", valor: grupos.length },
+            { tipo: "Filtrados", valor: gruposFiltrados.length },
             { tipo: "Radiografia", valor: conteoPorTipo.Radiografia },
             { tipo: "Tomografia", valor: conteoPorTipo.Tomografia },
             { tipo: "Ecografia", valor: conteoPorTipo.Ecografia },

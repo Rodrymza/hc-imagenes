@@ -3,7 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Loader2 } from "lucide-react";
 
 export const ProtectedRoute = () => {
-  const { isAuthenticated, isLoading, user, activeOperator } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   if (isLoading) {
     return (
@@ -16,7 +16,7 @@ export const ProtectedRoute = () => {
     );
   }
 
-  if (!isAuthenticated || !user || !activeOperator) {
+  if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />;
   }
 

@@ -1,5 +1,6 @@
 import { XMLParser } from "fast-xml-parser";
-import { internoApi } from "./interno.api.js";
+import { isAxiosError } from "axios";
+import { esErrorDeRed, internoApi } from "./interno.api.js";
 import { loginInterno } from "./interno.auth.service.js";
 import { AppError } from "../../errors/AppError.js";
 import {
@@ -61,6 +62,21 @@ const ejecutarPeticionInterna = async <T>(
     await loginInterno(false);
     return await operacion();
   } catch (error: any) {
+    // 🛑 Red caída: no tiene sentido reintentar la sesión, fallamos rápido con 502.
+    if (isAxiosError(error) && esErrorDeRed(error.code)) {
+      throw new AppError(
+        "No se pudo conectar con el sistema interno",
+        502,
+        "Verifique la conexión a la intranet e intente nuevamente.",
+      );
+    }
+    if (
+      error instanceof AppError &&
+      error.message === "No se pudo conectar con el sistema interno"
+    ) {
+      throw error;
+    }
+
     // 🛑 Si es un error de negocio (ej: 404 Paciente no existe), NO reintentamos.
     if (
       error instanceof AppError &&

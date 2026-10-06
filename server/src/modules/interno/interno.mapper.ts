@@ -4,6 +4,7 @@ import {
   ICoberturaRaw,
   IPacienteInternado,
 } from "./interno.types.js";
+import { normalizarServicio } from "../../utils/servicios.utils.js";
 
 import * as cheerio from "cheerio";
 
@@ -123,7 +124,9 @@ export const formatearPacientesInternados = (
       $tr.find('span[id$="-sala"]').text().split(" ")[0]?.trim() || "";
     const cama =
       $tr.find('span[id$="-cama"]').text().split(" ")[0]?.trim() || "";
-    const servicio = $tr.find('span[id$="-servicio"]').text().trim();
+    const servicio = normalizarServicio(
+      $tr.find('span[id$="-servicio"]').text().trim(),
+    );
     const informeId = $tr.find('span[id$="-informeid"]').text().trim();
 
     // Armamos el objeto final

@@ -1,4 +1,5 @@
 import { formatearFecha } from "../../utils/date.utils.js";
+import { normalizarServicio } from "../../utils/servicios.utils.js";
 import { capitalize } from "../../utils/string.utils.js";
 import { IPedidoInternacion } from "./internacion.types.js";
 import { obtenerTipoEstudio } from "./utils/estudio.utils.js";
@@ -62,12 +63,13 @@ export function mapearPedidoInternacion(apiEstudio: any): IPedidoInternacion {
     return `${apellido || ""}, ${nombre || ""}`.trim();
   })();
 
-  const servicio =
-    capitalize(apiEstudio?.legajo_a_la_fecha?.servicio_nombre) ||
-    "Sin servicio";
-
   // === INTERNACIÓN ===
   const infoInternacion = apiEstudio?.internacion_a_la_fecha;
+
+  const servicio =
+    normalizarServicio(infoInternacion?.servicioid) ||
+    normalizarServicio(apiEstudio?.legajo_a_la_fecha?.servicio_nombre) ||
+    "Sin servicio";
 
   const sala = obtenerSala(infoInternacion);
   const fechaHoraIngreso = obtenerFechaHoraIngreso(infoInternacion);

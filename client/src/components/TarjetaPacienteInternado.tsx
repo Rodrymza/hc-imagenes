@@ -24,7 +24,7 @@ export const TarjetaPacienteInternado = ({
         <div className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 rounded-lg text-xs font-black uppercase tracking-tight shadow-sm border border-indigo-100/50 dark:border-indigo-900">
           <Activity className="w-3.5 h-3.5" />
           <span className="truncate w-fit">
-            {paciente.servicio.split(" ").slice(1).join(" ") || "SIN SERVICIO"}
+            {paciente.servicio || "SIN SERVICIO"}
           </span>
         </div>
       </div>
@@ -63,8 +63,7 @@ export const TarjetaPacienteInternado = ({
                 {paciente.sala || "A confirmar"}
               </span>
               <span className="text-sm font-bold text-emerald-900 dark:text-emerald-200 leading-none mt-0.5">
-                {paciente.servicio.split(" ").slice(1).join(" ") ||
-                  "A confirmar"}
+                {paciente.servicio || "A confirmar"}
               </span>
             </div>
           </div>

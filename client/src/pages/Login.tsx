@@ -82,7 +82,7 @@ export default function LoginPage() {
               type="text"
               required
               autoFocus
-              placeholder="ej. rramirez"
+              placeholder="Ingrese nombre de usuario"
               className="w-full px-4 py-2.5 border border-input rounded-lg bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -116,7 +116,9 @@ export default function LoginPage() {
               className="block text-sm font-bold text-foreground/90"
             >
               Código Authenticator HSI
-              <span className="text-muted-foreground font-normal">(opcional)</span>
+              <span className="text-muted-foreground font-normal">
+                (opcional)
+              </span>
             </label>
             <input
               id="totpCode"

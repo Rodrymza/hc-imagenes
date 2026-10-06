@@ -3,10 +3,12 @@ import { AppError } from "../errors/AppError.js";
 import internacionRoutes from "../modules/internacion/internacion.routes.js";
 import guardiaRoutes from "../modules/guardia/guardia.routes.js";
 import internoRoutes from "../modules/interno/interno.routes.js";
+import mamografiaRoutes from "../modules/mamografia/mamografia.routes.js";
 import authRoutes from "../modules/auth/auth.routes.js";
 import {
   protegerRuta,
   modoAdministrador,
+  restringirA,
 } from "../modules/auth/auth.middleware.js";
 import { authAdminRoutes } from "../modules/auth/auth.admin.routes.js";
 
@@ -21,9 +23,20 @@ router.get("/error-test", () => {
   throw new AppError("Error de prueba", 400, "Detalle de prueba");
 });
 
-router.use("/internacion", protegerRuta, internacionRoutes);
-router.use("/guardia", protegerRuta, guardiaRoutes);
-router.use("/interno", protegerRuta, internoRoutes);
+router.use("/internacion", protegerRuta, restringirA("ADMIN", "USER", "MAMO"), internacionRoutes);
+router.use("/guardia", protegerRuta, restringirA("ADMIN", "USER", "MAMO"), guardiaRoutes);
+router.use(
+  "/interno",
+  protegerRuta,
+  restringirA("ADMIN", "USER", "MEDICO", "MAMO"),
+  internoRoutes,
+);
+router.use(
+  "/mamografia",
+  protegerRuta,
+  restringirA("ADMIN", "MAMO", "MEDICO"),
+  mamografiaRoutes,
+);
 router.use("/auth/users", protegerRuta, modoAdministrador, authAdminRoutes);
 router.use("/auth", authRoutes);
 export default router;

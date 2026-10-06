@@ -11,34 +11,38 @@ import {
   Receipt,
   Users,
   Scan,
+  Ribbon,
   ChevronDown,
   Menu,
   X,
   UserCog,
-  ArrowRightLeft,
   Bell,
   Sun,
   Moon,
   Monitor,
+  UserRoundCog,
 } from "lucide-react";
-import ChangeOperatorModal from "@/components/ChangeOperatorModal";
 import ConfigNotificacionesPanel from "@/components/ConfigNotificacionesPanel";
+import ChangeUserModal from "@/components/ChangeUserModal";
 import { useTheme } from "@/hooks/useTheme";
 
 export function Navbar() {
-  const { user, activeOperator, isAdminMode, logout, isLoading } = useAuth();
+  const { user, isAdminMode, logout, isLoading } = useAuth();
   const location = useLocation();
   const { theme, cycleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false); // Dropdown perfil
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // <-- Nuevo estado para móvil
-  const [showOperatorModal, setShowOperatorModal] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
+  const [showChangeUserModal, setShowChangeUserModal] = useState(false);
 
   const getIniciales = () => {
-    const op = activeOperator || user;
+    const op = user;
     if (!op) return "U";
     return `${op.nombre?.[0] || ""}${op.apellido?.[0] || ""}`.toUpperCase();
   };
+
+  const puedeVer = (roles: string[]) =>
+    !!user && roles.includes(user.rol);
 
   const handleReload = () => window.location.reload();
 
@@ -92,27 +96,42 @@ export function Navbar() {
 
           {/* 2. MENÚ DE NAVEGACIÓN (Desktop) */}
           <nav className="hidden lg:flex items-center gap-1">
-            <Link to="/internacion" className={linkClass("/internacion")}>
-              <ClipboardList className="h-4 w-4 text-emerald-600" /> Internación
-            </Link>
-            <Link to="/guardia" className={linkClass("/guardia")}>
-              <Siren className="h-4 w-4 text-red-600" /> Guardia
-            </Link>
-            <Link
-              to="/buscar-paciente"
-              className={linkClass("/buscar-paciente")}
-            >
-              <Search className="h-4 w-4 text-amber-500" /> Buscar
-            </Link>
-            <Link to="/consumos" className={linkClass("/consumos")}>
-              <Receipt className="h-4 w-4 text-emerald-600" /> Consumos
-            </Link>
-            <Link
-              to="/pacientes-internacion"
-              className={linkClass("/pacientes-internacion")}
-            >
-              <Users className="h-4 w-4 text-slate-500" /> Pacientes
-            </Link>
+            {puedeVer(["ADMIN", "USER", "MAMO"]) && (
+              <Link to="/internacion" className={linkClass("/internacion")}>
+                <ClipboardList className="h-4 w-4 text-emerald-600" /> Internación
+              </Link>
+            )}
+            {puedeVer(["ADMIN", "USER", "MAMO"]) && (
+              <Link to="/guardia" className={linkClass("/guardia")}>
+                <Siren className="h-4 w-4 text-red-600" /> Guardia
+              </Link>
+            )}
+            {puedeVer(["ADMIN", "USER", "MAMO"]) && (
+              <Link
+                to="/buscar-paciente"
+                className={linkClass("/buscar-paciente")}
+              >
+                <Search className="h-4 w-4 text-amber-500" /> Buscar
+              </Link>
+            )}
+            {puedeVer(["ADMIN", "USER", "MAMO"]) && (
+              <Link to="/consumos" className={linkClass("/consumos")}>
+                <Receipt className="h-4 w-4 text-emerald-600" /> Consumos
+              </Link>
+            )}
+            {puedeVer(["ADMIN", "MAMO", "MEDICO"]) && (
+              <Link to="/mamografia" className={linkClass("/mamografia")}>
+                <Ribbon className="h-4 w-4 text-rose-500" /> Mamografía
+              </Link>
+            )}
+            {puedeVer(["ADMIN", "USER", "MEDICO", "MAMO"]) && (
+              <Link
+                to="/pacientes-internacion"
+                className={linkClass("/pacientes-internacion")}
+              >
+                <Users className="h-4 w-4 text-slate-500" /> Pacientes
+              </Link>
+            )}
             <a
               href="http://10.101.0.46/viewer/index.php"
               target="_blank"
@@ -142,19 +161,19 @@ export function Navbar() {
               <RefreshCw className="h-5 w-5" />
             </button>
 
-            {/* CAMBIAR OPERADOR */}
+            {/* CAMBIAR USUARIO */}
             {user && (
               <button
-                onClick={() => setShowOperatorModal(true)}
+                onClick={() => setShowChangeUserModal(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-muted-foreground hover:text-emerald-700 dark:hover:text-emerald-400 hover:bg-accent border border-border hover:border-emerald-300 dark:hover:border-emerald-800 rounded-lg transition-all"
-                title="Cambiar operador"
+                title="Cambiar usuario"
               >
-                <ArrowRightLeft className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Operador</span>
+                <UserRoundCog className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Cambiar Usuario</span>
               </button>
             )}
 
-            {/* PERFIL / OPERADOR */}
+            {/* PERFIL / USUARIO */}
             <div className="relative pl-3 sm:pl-4 border-l border-border">
               {isLoading ? (
                 <div className="flex items-center gap-3 animate-pulse">
@@ -172,12 +191,10 @@ export function Navbar() {
                   >
                     <div className="hidden md:flex flex-col items-end mr-1">
                       <span className="text-sm font-black text-foreground leading-none group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                        {activeOperator
-                          ? `${activeOperator.apellido}, ${activeOperator.nombre}`
-                          : `${user.apellido}, ${user.nombre}`}
+                        {user ? `${user.apellido}, ${user.nombre}` : ""}
                       </span>
                       <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-tighter">
-                        Operador
+                        Usuario
                       </span>
                     </div>
                     <div className="h-9 w-9 rounded-full bg-emerald-600 flex items-center justify-center text-white text-sm font-black shadow-md border-2 border-white dark:border-card ring-2 ring-emerald-50 dark:ring-accent">
@@ -207,12 +224,6 @@ export function Navbar() {
                           <p className="text-sm font-black text-muted-foreground uppercase tracking-tighter italic">
                             {user.rol}
                           </p>
-                          {activeOperator && activeOperator.id !== user.id && (
-                            <p className="text-[11px] text-emerald-600 font-bold mt-1">
-                              Operando: {activeOperator.apellido},{" "}
-                              {activeOperator.nombre}
-                            </p>
-                          )}
                         </div>
                         {isAdminMode && (
                           <Link
@@ -235,6 +246,15 @@ export function Navbar() {
                           </button>
                         )}
                         <div className="h-px bg-border my-1" />
+                        <button
+                          onClick={() => {
+                            setIsMenuOpen(false);
+                            setShowChangeUserModal(true);
+                          }}
+                          className="w-full flex items-center gap-2 px-4 py-3 text-sm font-bold text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                        >
+                          <UserRoundCog className="h-4 w-4" /> Cambiar Usuario
+                        </button>
                         <button
                           onClick={() => {
                             setIsMenuOpen(false);
@@ -275,41 +295,60 @@ export function Navbar() {
         {/* 4. MENÚ MÓVIL DESPLEGABLE */}
         {isMobileMenuOpen && (
           <div className="lg:hidden absolute top-16 left-0 w-full bg-card border-b border-border shadow-xl py-4 px-4 flex flex-col gap-2 animate-in slide-in-from-top-2 duration-200">
-            <Link
-              to="/internacion"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={mobileLinkClass("/internacion")}
-            >
-              <ClipboardList className="h-5 w-5 text-emerald-600" /> Internación
-            </Link>
-            <Link
-              to="/guardia"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={mobileLinkClass("/guardia")}
-            >
-              <Siren className="h-5 w-5 text-red-600" /> Guardia
-            </Link>
-            <Link
-              to="/buscar-paciente"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={mobileLinkClass("/buscar-paciente")}
-            >
-              <Search className="h-5 w-5 text-amber-500" /> Buscar
-            </Link>
-            <Link
-              to="/consumos"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={mobileLinkClass("/consumos")}
-            >
-              <Receipt className="h-5 w-5 text-emerald-600" /> Consumos
-            </Link>
-            <Link
-              to="/pacientes-internacion"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className={mobileLinkClass("/pacientes-internacion")}
-            >
-              <Users className="h-5 w-5 text-slate-500" /> Pacientes
-            </Link>
+            {puedeVer(["ADMIN", "USER", "MAMO"]) && (
+              <Link
+                to="/internacion"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={mobileLinkClass("/internacion")}
+              >
+                <ClipboardList className="h-5 w-5 text-emerald-600" /> Internación
+              </Link>
+            )}
+            {puedeVer(["ADMIN", "USER", "MAMO"]) && (
+              <Link
+                to="/guardia"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={mobileLinkClass("/guardia")}
+              >
+                <Siren className="h-5 w-5 text-red-600" /> Guardia
+              </Link>
+            )}
+            {puedeVer(["ADMIN", "USER", "MAMO"]) && (
+              <Link
+                to="/buscar-paciente"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={mobileLinkClass("/buscar-paciente")}
+              >
+                <Search className="h-5 w-5 text-amber-500" /> Buscar
+              </Link>
+            )}
+            {puedeVer(["ADMIN", "USER", "MAMO"]) && (
+              <Link
+                to="/consumos"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={mobileLinkClass("/consumos")}
+              >
+                <Receipt className="h-5 w-5 text-emerald-600" /> Consumos
+              </Link>
+            )}
+            {puedeVer(["ADMIN", "MAMO", "MEDICO"]) && (
+              <Link
+                to="/mamografia"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={mobileLinkClass("/mamografia")}
+              >
+                <Ribbon className="h-5 w-5 text-rose-500" /> Mamografía
+              </Link>
+            )}
+            {puedeVer(["ADMIN", "USER", "MEDICO", "MAMO"]) && (
+              <Link
+                to="/pacientes-internacion"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={mobileLinkClass("/pacientes-internacion")}
+              >
+                <Users className="h-5 w-5 text-slate-500" /> Pacientes
+              </Link>
+            )}
             <div className="h-px bg-border my-2" />
             <a
               href="http://10.101.0.46/viewer/index.php"
@@ -324,9 +363,9 @@ export function Navbar() {
         )}
       </header>
 
-      <ChangeOperatorModal
-        open={showOperatorModal}
-        onClose={() => setShowOperatorModal(false)}
+      <ChangeUserModal
+        open={showChangeUserModal}
+        onClose={() => setShowChangeUserModal(false)}
       />
       <ConfigNotificacionesPanel
         open={showConfigModal}

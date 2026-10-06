@@ -1,5 +1,5 @@
 import type { IPedidoInternacion } from "@/types/pedidos";
-import { Eye, CalendarClock, AlertCircle } from "lucide-react";
+import { Eye, CalendarClock, AlertCircle, CheckCircle2 } from "lucide-react";
 import {
   capitalize,
   getEstadoEstilo,
@@ -12,12 +12,14 @@ interface PedidoRowProps {
   item: IPedidoInternacion;
   onVerDetalle: (item: IPedidoInternacion) => void;
   onToggleEstado?: (item: IPedidoInternacion) => void; // Opcional (para Guardia)
+  consumoEnviado?: boolean;
 }
 
 export const InternacionPedidoRow = ({
   item,
   onVerDetalle,
   onToggleEstado,
+  consumoEnviado = false,
 }: PedidoRowProps) => {
   // Procesamiento de datos visuales
   const [dia, hora] = item.fecha.split(" ");
@@ -64,8 +66,8 @@ export const InternacionPedidoRow = ({
           </span>
           <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground font-medium">
             {" "}
-            <span className="tracking-wider bg-muted px-1.5 py-0.5 rounded border border-border">
-              DNI: {item.dniString}
+            <span className="tracking-widest bg-muted px-1.5 py-0.5 rounded border border-border">
+              DNI: {item.dni}
             </span>
           </div>
         </div>
@@ -191,6 +193,11 @@ export const InternacionPedidoRow = ({
                 {estiloEstado.icon}
               </button>
             </div>
+          )}
+          {consumoEnviado && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wide bg-indigo-100 text-indigo-700 dark:bg-emerald-950/60 dark:text-indigo-300">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Consumo enviado
+            </span>
           )}
         </div>
       </td>

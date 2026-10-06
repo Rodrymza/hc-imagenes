@@ -5,9 +5,7 @@ import { IUsuarioDB } from "./auth.types.js";
 import { AppError } from "../../errors/AppError.js";
 
 const SELECT_SAFE =
-  "SELECT id, username, nombre, apellido, rol, hsi_username, pin FROM users";
-
-const PIN_REGEX = /^\d{4}$/;
+  "SELECT id, username, nombre, apellido, rol, hsi_username FROM users";
 
 export const authAdminController = {
   async getAll(_req: Request, res: Response, next: NextFunction) {
@@ -21,15 +19,11 @@ export const authAdminController = {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const { username, password, nombre, apellido, rol, hsi_username, hsi_password, pin } =
+      const { username, password, nombre, apellido, rol, hsi_username, hsi_password } =
         req.body;
 
       if (!username || !password) {
         throw new AppError("Username y password son requeridos", 400);
-      }
-
-      if (!pin || typeof pin !== "string" || !PIN_REGEX.test(pin)) {
-        throw new AppError("El PIN debe ser exactamente 4 dígitos", 400);
       }
 
       const existing = db
@@ -39,19 +33,12 @@ export const authAdminController = {
         throw new AppError("El usuario ya existe", 409);
       }
 
-      const pinExists = db
-        .prepare("SELECT id FROM users WHERE pin = ?")
-        .get(pin);
-      if (pinExists) {
-        throw new AppError("El PIN ya está en uso", 409);
-      }
-
       const hash = bcrypt.hashSync(password, 10);
 
       const result = db
         .prepare(
-          `INSERT INTO users (username, password, nombre, apellido, rol, hsi_username, hsi_password, pin)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+          `INSERT INTO users (username, password, nombre, apellido, rol, hsi_username, hsi_password)
+           VALUES (?, ?, ?, ?, ?, ?, ?)`,
         )
         .run(
           username,
@@ -61,7 +48,6 @@ export const authAdminController = {
           rol || "USER",
           hsi_username || "",
           hsi_password || "",
-          pin,
         );
 
       const user = db
@@ -77,7 +63,7 @@ export const authAdminController = {
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const { username, password, nombre, apellido, rol, hsi_username, hsi_password, pin } =
+      const { username, password, nombre, apellido, rol, hsi_username, hsi_password } =
         req.body;
 
       const existing = db.prepare("SELECT id FROM users WHERE id = ?").get(id);
@@ -94,24 +80,10 @@ export const authAdminController = {
         }
       }
 
-      if (pin !== undefined && pin !== "") {
-        if (typeof pin !== "string" || !PIN_REGEX.test(pin)) {
-          throw new AppError("El PIN debe ser exactamente 4 dígitos", 400);
-        }
-        const pinExists = db
-          .prepare("SELECT id FROM users WHERE pin = ? AND id != ?")
-          .get(pin, id);
-        if (pinExists) {
-          throw new AppError("El PIN ya está en uso", 409);
-        }
-      }
-
       let hash: string | undefined;
       if (password) {
         hash = bcrypt.hashSync(password, 10);
       }
-
-      const pinValue = pin === "" ? "" : pin || null;
 
       db.prepare(
         `UPDATE users SET
@@ -121,8 +93,7 @@ export const authAdminController = {
           apellido = COALESCE(?, apellido),
           rol = COALESCE(?, rol),
           hsi_username = COALESCE(?, hsi_username),
-          hsi_password = COALESCE(?, hsi_password),
-          pin = COALESCE(?, pin)
+          hsi_password = COALESCE(?, hsi_password)
          WHERE id = ?`,
       ).run(
         username || null,
@@ -132,7 +103,6 @@ export const authAdminController = {
         rol || null,
         hsi_username || null,
         hsi_password || null,
-        pinValue,
         id,
       );
 

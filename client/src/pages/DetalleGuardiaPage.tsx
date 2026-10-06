@@ -10,11 +10,17 @@ import {
   RefreshCw,
   FileText,
   Activity,
+  ExternalLink,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import type { IPedidoGuardia } from "@/types/pedidos";
-import { capitalize } from "@/components/pedidos/utils";
+import {
+  capitalize,
+  esTomografia,
+  getUrlFormularioTomografia,
+} from "@/components/pedidos/utils";
+import { useAuth } from "@/context/AuthContext";
 import { useConsumos } from "@/hooks/useConsumos";
 import { PanelConsumos } from "@/components/pedidos/PanelConsumos";
 import { PanelPacienteEncontrado } from "@/components/pedidos/PanelPacienteEncontrado";
@@ -57,10 +63,37 @@ export default function DetalleGuardiaPage() {
   const [filtroPractica, setFiltroPractica] = useState("todos");
   const [verificandoSesion, setVerificandoSesion] = useState(true);
 
+  const { user } = useAuth();
+  const tecnico = user
+    ? `${capitalize(user.apellido)}, ${capitalize(user.nombre)}`
+    : "";
+
   const pedidosActivos = useMemo(
     () => pedidosPaciente.filter(esPedidoActivo),
     [pedidosPaciente],
   );
+
+  const pedidosTomografiaActivos = useMemo(
+    () => pedidosActivos.filter((p) => esTomografia(p.tipoEstudio)),
+    [pedidosActivos],
+  );
+
+  const mostrarRegistrarTomografia =
+    pedidosTomografiaActivos.length > 0 && Boolean(pacienteGuardia);
+
+  const urlFormularioTomografia = mostrarRegistrarTomografia
+    ? getUrlFormularioTomografia(
+        {
+          nombre: `${pacienteGuardia!.apellido}, ${pacienteGuardia!.nombres}`,
+          dni: pacienteGuardia!.dniString,
+          sala: "",
+          diagnostico: pedidosTomografiaActivos[0]?.diagnostico ?? "",
+          servicio: "GUARDIA GENERAL",
+        },
+        tecnico,
+        "Guardia",
+      )
+    : "";
 
   const tiposPractica = useMemo(
     () => Array.from(new Set(pedidosPaciente.map((p) => p.tipoEstudio))).sort(),
@@ -78,7 +111,8 @@ export default function DetalleGuardiaPage() {
     loadingPaciente,
     buscarPacienteInterno,
     pacienteInterno,
-  } = useConsumos(pedidosActivos);
+    idEstudiosEnviados,
+  } = useConsumos(pedidosActivos, "GUARDIA");
 
   /* ====== Validación de acceso ====== */
   useEffect(() => {
@@ -212,6 +246,19 @@ export default function DetalleGuardiaPage() {
                       {pedidoGeneral?.ubicacion || "Guardia"}
                     </span>
                   </div>
+
+                  {mostrarRegistrarTomografia && (
+                    <a
+                      href={urlFormularioTomografia}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Se abre en una pestaña nueva"
+                      className="flex items-center justify-center gap-2 h-8 px-3 rounded-full border-2 border-teal-300/60 bg-teal-700 text-white text-xs font-black uppercase tracking-wider shadow-sm transition-all hover:bg-teal-800 active:scale-95 w-fit"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      Registrar Tomografía
+                    </a>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/70 font-medium border-t border-white/10 pt-1.5">
@@ -328,6 +375,9 @@ export default function DetalleGuardiaPage() {
                           estado={getEstadoPedido(pedido)}
                           procesando={procesando.has(pedido.idEstudio)}
                           onTransferir={handleTransferir}
+                          consumoEnviado={idEstudiosEnviados.has(
+                            pedido.idEstudio,
+                          )}
                         />
                       ))}
                     </tbody>
@@ -343,6 +393,7 @@ export default function DetalleGuardiaPage() {
                       estado={getEstadoPedido(pedido)}
                       procesando={procesando.has(pedido.idEstudio)}
                       onTransferir={handleTransferir}
+                      consumoEnviado={idEstudiosEnviados.has(pedido.idEstudio)}
                     />
                   ))}
                 </div>

@@ -5,24 +5,31 @@ import { guardiaService } from "./utils/guardia.factory.js";
 import { loginCon2FA, logoutHsi } from "./guardia.auth.service.js";
 import { mockLoginCon2FA } from "./guardia.mock.service.js";
 import { hasSesion, removeSesion } from "./guardia.session.js";
-import { resolveActiveOperatorId } from "../auth/auth.middleware.js";
-import { operatorService } from "../auth/auth.operator.service.js";
+import { db } from "../../db/database.js";
 
 const useMock = process.env.USE_MOCK_API === "true";
 
-function getOperatorUsername(req: Request): string {
-  const operatorId = resolveActiveOperatorId(req);
-  const operator = operatorService.obtenerPorId(operatorId);
-  if (!operator) {
-    throw new AppError("No se pudo identificar al operador activo", 401);
-  }
-  return operator.username;
+function getUsername(req: Request): string {
+  return req.user!.username;
+}
+
+function getHsiCredentials(username: string): {
+  hsi_username: string;
+  hsi_password: string;
+} | null {
+  return (
+    (db
+      .prepare(
+        "SELECT hsi_username, hsi_password FROM users WHERE username = ?",
+      )
+      .get(username) as { hsi_username: string; hsi_password: string } | undefined) || null
+  );
 }
 
 export const guardiaControler = {
   async loginGuardia(req: Request, res: Response, next: NextFunction) {
     try {
-      const operatorUsername = getOperatorUsername(req);
+      const username = getUsername(req);
       const { totpCode } = req.body;
 
       if (!totpCode && !useMock) {
@@ -33,20 +40,20 @@ export const guardiaControler = {
         );
       }
 
-      const operator = operatorService.obtenerPorUsername(operatorUsername);
-      if (!operator || !operator.hsi_username || !operator.hsi_password) {
+      const creds = getHsiCredentials(username);
+      if (!creds || !creds.hsi_username || !creds.hsi_password) {
         throw new AppError(
-          "Operador sin credenciales HSI",
+          "Usuario sin credenciales HSI",
           400,
-          "El operador activo no tiene credenciales HSI configuradas",
+          "El usuario no tiene credenciales HSI configuradas",
         );
       }
 
       const loginFn = useMock ? mockLoginCon2FA : loginCon2FA;
       const result = await loginFn(
-        operatorUsername,
-        operator.hsi_username,
-        operator.hsi_password,
+        username,
+        creds.hsi_username,
+        creds.hsi_password,
         totpCode || "mock",
       );
 
@@ -63,18 +70,18 @@ export const guardiaControler = {
 
   async logoutGuardia(req: Request, res: Response, next: NextFunction) {
     try {
-      const operatorUsername = getOperatorUsername(req);
+      const username = getUsername(req);
       if (useMock) {
-        removeSesion(operatorUsername);
-        console.log(`[MOCK] Sesión HSI eliminada para "${operatorUsername}"`);
+        removeSesion(username);
+        console.log(`[MOCK] Sesión HSI eliminada para "${username}"`);
       } else {
-        logoutHsi(operatorUsername);
+        logoutHsi(username);
       }
 
       return res.json({
         success: true,
         message: useMock
-          ? `[MOCK] Sesión HSI cerrada para ${operatorUsername}`
+          ? `[MOCK] Sesión HSI cerrada para ${username}`
           : "Sesión HSI cerrada",
       });
     } catch (error) {
@@ -84,12 +91,12 @@ export const guardiaControler = {
 
   async hsiStatus(req: Request, res: Response, next: NextFunction) {
     try {
-      const operatorUsername = getOperatorUsername(req);
-      const active = hasSesion(operatorUsername);
+      const username = getUsername(req);
+      const active = hasSesion(username);
 
       return res.json({
         hasSession: active,
-        operator: operatorUsername,
+        username: username,
       });
     } catch (error) {
       next(error);
@@ -102,14 +109,14 @@ export const guardiaControler = {
     next: NextFunction,
   ) {
     try {
-      const operatorUsername = getOperatorUsername(req);
+      const username = getUsername(req);
       const { fecha } = req.query;
 
       if (fecha && typeof fecha !== "string") {
         throw new AppError("Formato de fecha inválido", 400);
       }
       const pedidos = await guardiaService.obtenerPedidosGuardia(
-        operatorUsername,
+        username,
         fecha,
       );
       return res.json(pedidos);
@@ -120,7 +127,7 @@ export const guardiaControler = {
 
   async getPedidosPaciente(req: Request, res: Response, next: NextFunction) {
     try {
-      const operatorUsername = getOperatorUsername(req);
+      const username = getUsername(req);
       const { idPatient } = req.params;
 
       if (idPatient && typeof idPatient !== "string") {
@@ -133,7 +140,7 @@ export const guardiaControler = {
         );
       }
       const pedidosPaciente =
-        await guardiaService.obtenerPedidosPaciente(operatorUsername, idPatient);
+        await guardiaService.obtenerPedidosPaciente(username, idPatient);
 
       return res.json(pedidosPaciente);
     } catch (error) {
@@ -143,11 +150,11 @@ export const guardiaControler = {
 
   async finalizarPedido(req: Request, res: Response, next: NextFunction) {
     try {
-      const operatorUsername = getOperatorUsername(req);
+      const username = getUsername(req);
       const { idEstudio, idPatient } = req.params;
 
       await guardiaService.finalizarPedido(
-        operatorUsername,
+        username,
         idEstudio as string,
         idPatient as string,
       );
@@ -162,10 +169,10 @@ export const guardiaControler = {
 
   async transferirPedido(req: Request, res: Response, next: NextFunction) {
     try {
-      const operatorUsername = getOperatorUsername(req);
+      const username = getUsername(req);
       const { idEstudio } = req.params;
 
-      await guardiaService.transferirPedido(operatorUsername, idEstudio as string);
+      await guardiaService.transferirPedido(username, idEstudio as string);
       return res.json({
         succes: true,
         message: `Estudio ${idEstudio} transferido correctamente`,
@@ -177,7 +184,7 @@ export const guardiaControler = {
 
   async findPacienteGuardia(req: Request, res: Response, next: NextFunction) {
     try {
-      const operatorUsername = getOperatorUsername(req);
+      const username = getUsername(req);
       const { dniPaciente } = req.params;
 
       if (!dniPaciente) {
@@ -188,7 +195,7 @@ export const guardiaControler = {
       }
 
       const paciente =
-        await guardiaService.buscarDatosPacienteGuardia(operatorUsername, dniPaciente);
+        await guardiaService.buscarDatosPacienteGuardia(username, dniPaciente);
 
       if (!paciente) {
         throw new AppError(

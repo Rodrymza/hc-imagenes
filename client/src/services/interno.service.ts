@@ -12,6 +12,25 @@ export const InternoService = {
     return res.data;
   },
 
+  getEstudiosConsumo: async (ids: string[]): Promise<string[]> => {
+    if (ids.length === 0) return [];
+    const url = `/api/interno/estudios-consumo?ids=${encodeURIComponent(
+      ids.join(","),
+    )}`;
+    const res = await axios.get(url);
+    return res.data.idEstudios as string[];
+  },
+
+  marcarEstudiosConsumo: async (
+    idEstudios: string[],
+    origen: "GUARDIA" | "INTERNACION" | "AMBULATORIO",
+  ): Promise<void> => {
+    await axios.post("/api/interno/estudios-consumo", {
+      idEstudios,
+      origen,
+    });
+  },
+
   getPacientesInternados: async (): Promise<IPacienteInternado[]> => {
     const res = await axios.get("/api/interno/pacientes-internados");
     return res.data;
